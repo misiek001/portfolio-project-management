@@ -5,8 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Entity
+@Entity(name = "Employee")
+@Table(name = "employee")
 @Getter
 @Setter
 @NoArgsConstructor
