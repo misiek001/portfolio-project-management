@@ -9,13 +9,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-public class PersistenceConfiguration {
+public class TestPersistenceConfiguration {
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager(){
+        final HibernateTransactionManager platformTransactionManager = new HibernateTransactionManager();
+        platformTransactionManager.setSessionFactory(localSessionFactoryBean().getObject());
+        return platformTransactionManager;
+    }
 
     @Bean
     public DataSource dataSource(){

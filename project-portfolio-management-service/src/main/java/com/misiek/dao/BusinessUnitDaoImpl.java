@@ -1,9 +1,12 @@
 package com.misiek.dao;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
-public class BusinessUnitDao implements AbstractDao{
+@Repository
+public class BusinessUnitDaoImpl implements AbstractDao{
 
     @Override
     public Optional save(Object o) {

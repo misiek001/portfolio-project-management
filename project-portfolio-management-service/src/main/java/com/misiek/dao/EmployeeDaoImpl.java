@@ -4,6 +4,8 @@ import com.misiek.domain.Employee;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -14,9 +16,10 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class EmployeeDaoImpl implements AbstractDao<Employee> {
 
-    @PersistenceContext
+    @Autowired
     SessionFactory sessionFactory;
 
     @Override
