@@ -1,5 +1,6 @@
 package com.misiek.domain;
 
+import com.misiek.domain.employeeinproject.BusinessLeader;
 import com.misiek.domain.employeeinproject.ProjectManager;
 import com.misiek.domain.employeeinproject.ResourceManager;
 import com.misiek.domain.employeeinproject.SolutionArchitect;
@@ -24,13 +25,30 @@ public class Project {
 
     private String name;
 
-    // private ResourceManager resourceManager;
+    @ManyToOne(targetEntity = ResourceManager.class)
+    @JoinColumn(name = "resource_manager_id")
+    private ResourceManager resourceManager;
 
-  //  private BusinessRelationManager businessRelationManager;
+    @ManyToOne
+    @JoinColumn(name = "project_manager_id")
+    private ProjectManager projectManager;
 
-    //private ProjectManager projectManager;
+    @ManyToOne
+    @JoinColumn(name = "business_relation_manager_id")
+    private BusinessRelationManager businessRelationManager;
 
-   // private Set<SolutionArchitect> solutionArchitect;
+    @ManyToOne
+    @JoinColumn(name = "business_unit_leader_id")
+    private BusinessLeader businessUnitLeader;
+
+    @ManyToMany(cascade  ={
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "solution_architects_projects",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "business_unit_id"))
+    private Set<SolutionArchitect> solutionArchitect;
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
@@ -40,8 +58,6 @@ public class Project {
     private LocalDateTime plannedEndDate;
 
     private LocalDateTime realEndDate;
-
-   // private Employee businessUnitLeader;
 
     @ManyToMany(cascade  ={
             CascadeType.PERSIST,
@@ -77,38 +93,38 @@ public class Project {
     public void setName(String name) {
         this.name = name;
     }
-//
-//    public ResourceManager getResourceManager() {
-//        return resourceManager;
-//    }
-//
-//    public void setResourceManager(ResourceManager resourceManager) {
-//        this.resourceManager = resourceManager;
-//    }
 
-//    public BusinessRelationManager getBusinessRelationManager() {
-//        return businessRelationManager;
-//    }
-//
-//    public void setBusinessRelationManager(BusinessRelationManager businessRelationManager) {
-//        this.businessRelationManager = businessRelationManager;
-//    }
-//
-//    public ProjectManager getProjectManager() {
-//        return projectManager;
-//    }
-//
-//    public void setProjectManager(ProjectManager projectManager) {
-//        this.projectManager = projectManager;
-//    }
-//
-//    public Set<SolutionArchitect> getSolutionArchitect() {
-//        return solutionArchitect;
-//    }
-//
-//    public void setSolutionArchitect(Set<SolutionArchitect> solutionArchitect) {
-//        this.solutionArchitect = solutionArchitect;
-//    }
+    public ResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
+    public void setResourceManager(ResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
+    }
+
+    public BusinessRelationManager getBusinessRelationManager() {
+        return businessRelationManager;
+    }
+
+    public void setBusinessRelationManager(BusinessRelationManager businessRelationManager) {
+        this.businessRelationManager = businessRelationManager;
+    }
+
+    public ProjectManager getProjectManager() {
+        return projectManager;
+    }
+
+    public void setProjectManager(ProjectManager projectManager) {
+        this.projectManager = projectManager;
+    }
+
+    public Set<SolutionArchitect> getSolutionArchitect() {
+        return solutionArchitect;
+    }
+
+    public void setSolutionArchitect(Set<SolutionArchitect> solutionArchitect) {
+        this.solutionArchitect = solutionArchitect;
+    }
 
     public ProjectStatus getStatus() {
         return status;
@@ -142,13 +158,13 @@ public class Project {
         this.realEndDate = realEndDate;
     }
 
-//    public Employee getBusinessUnitLeader() {
-//        return businessUnitLeader;
-//    }
-//
-//    public void setBusinessUnitLeader(Employee businessUnitLeader) {
-//        this.businessUnitLeader = businessUnitLeader;
-//    }
+    public BusinessLeader getBusinessUnitLeader() {
+        return businessUnitLeader;
+    }
+
+    public void setBusinessUnitLeader(BusinessLeader businessUnitLeader) {
+        this.businessUnitLeader = businessUnitLeader;
+    }
 
     public Set<BusinessUnit> getBusinessUnits() {
         return businessUnits;

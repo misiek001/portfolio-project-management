@@ -1,30 +1,14 @@
 package com.misiek.dao;
 
+import com.misiek.domain.BusinessUnit;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
-public class BusinessUnitDaoImpl implements AbstractDao{
+public class BusinessUnitDaoImpl extends RawDao<BusinessUnit> {
 
-    @Override
-    public Optional save(Object o) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List findAll() {
-        return null;
-    }
-
-    @Override
-    public Optional find(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public void delete(Long id) {
-
+    public BusinessUnitDaoImpl(SessionFactory sessionFactory) {
+        super(sessionFactory);
+        this.clazz = BusinessUnit.class;
     }
 }
