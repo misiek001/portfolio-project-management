@@ -24,6 +24,7 @@ public abstract class RawDao<T> implements AbstractDao<T>  {
         this.sessionFactory = sessionFactory;
     }
 
+    @Override
     public Optional<T> save(T t) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.getTransaction();
@@ -42,6 +43,7 @@ public abstract class RawDao<T> implements AbstractDao<T>  {
         return returnedEntity;
     }
 
+    @Override
     public Optional<T> find(Long id) {
         try (Session session = sessionFactory.openSession()) {
             return Optional.ofNullable(session.get(clazz, id));

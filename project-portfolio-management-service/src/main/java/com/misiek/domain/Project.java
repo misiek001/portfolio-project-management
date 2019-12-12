@@ -25,8 +25,8 @@ public class Project {
 
     private String name;
 
-    @ManyToOne(targetEntity = ResourceManager.class)
-    @JoinColumn(name = "resource_manager_id")
+    @ManyToOne
+    @JoinColumn
     private ResourceManager resourceManager;
 
     @ManyToOne

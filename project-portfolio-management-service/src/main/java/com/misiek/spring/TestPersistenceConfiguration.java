@@ -1,8 +1,7 @@
 package com.misiek.spring;
 
-import com.misiek.domain.BusinessUnit;
-import com.misiek.domain.Employee;
-import com.misiek.domain.Project;
+import com.misiek.domain.*;
+import com.misiek.domain.employeeinproject.*;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +38,7 @@ public class TestPersistenceConfiguration {
         LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
         localSessionFactoryBean.setDataSource(dataSource());
         localSessionFactoryBean.setHibernateProperties(hibernateProperties());
-        localSessionFactoryBean.setAnnotatedClasses(Project.class, Employee.class, BusinessUnit.class);
+        localSessionFactoryBean.setAnnotatedClasses(Project.class, BusinessUnit.class, Employee.class, BusinessRelationManager.class,  Consultant.class, Director.class, Supervisor.class, ProjectRole.class, BusinessLeader.class, ProjectManager.class, ResourceManager.class, SolutionArchitect.class);
         return localSessionFactoryBean;
     }
 
