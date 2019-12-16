@@ -10,19 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>project-portfolio-management-service</artifactId>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
             <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
             <dependency>
@@ -31,18 +18,18 @@
                 <version>${hibernate.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+            <!-- https://mvnrepository.com/artifact/org.springframework/com.misiek.spring-jdbc -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
-                <version>${spring.version}</version>
+                <version>${com.spring.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->
+            <!-- https://mvnrepository.com/artifact/org.springframework/com.misiek.spring-orm -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
-                <version>${spring.version}</version>
+                <version>${com.spring.version}</version>
             </dependency>
 
             <!--In Memory DataBase-->

@@ -2,16 +2,10 @@ package com.misiek.domain;
 
 import com.misiek.domain.employeeinproject.IEmployee;
 import com.misiek.domain.employeeinproject.ProjectRole;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Employee implements IEmployee {
@@ -22,7 +16,7 @@ public abstract class Employee implements IEmployee {
 
    private String firstName;
 
-   private String LastName;
+   private String lastName;
 
    @ManyToOne
    private BusinessUnit businessUnit;
@@ -49,11 +43,11 @@ public abstract class Employee implements IEmployee {
    }
 
    public String getLastName() {
-      return LastName;
+      return lastName;
    }
 
    public void setLastName(String lastName) {
-      LastName = lastName;
+      this.lastName = lastName;
    }
 
    public BusinessUnit getBusinessUnit() {
@@ -78,5 +72,18 @@ public abstract class Employee implements IEmployee {
 
    public void setActive(boolean active) {
       isActive = active;
+   }
+
+   public void merge(Employee employee){
+      if ( employee.getFirstName() != null){
+         this.firstName = employee.getFirstName();
+      }
+      if (employee.getLastName() != null){
+         this.lastName = employee.getLastName();
+      }
+      if(employee.getBusinessUnit() != null){
+         this.businessUnit = employee.getBusinessUnit();
+      }
+
    }
 }

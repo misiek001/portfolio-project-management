@@ -20,4 +20,5 @@ public class ProjectServiceImpl extends RawService<Project> {
     public AbstractDao getDao() {
         return projectDao;
     }
+
 }

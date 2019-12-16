@@ -1,7 +1,6 @@
 package integrationtest;
 
 import com.misiek.dao.AbstractDao;
-import com.misiek.dao.RawDao;
 import com.misiek.domain.Project;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

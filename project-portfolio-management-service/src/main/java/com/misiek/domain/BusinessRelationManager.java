@@ -17,4 +17,19 @@ public class BusinessRelationManager extends Employee {
     @JoinColumn(name = "employee_id")
     private Director director;
 
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+
+    public Director getDirector() {
+        return director;
+    }
+
+    public void setDirector(Director director) {
+        this.director = director;
+    }
 }

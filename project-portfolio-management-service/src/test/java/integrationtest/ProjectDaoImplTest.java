@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 class ProjectDaoImplTest extends AbstractDaoImplTest<Project> {
 
     @Autowired
-    private ProjectDaoImpl projectDao;
+    public ProjectDaoImpl projectDao;
 
     public ProjectDaoImplTest() {
         this.clazz = Project.class;

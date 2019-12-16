@@ -11,4 +11,11 @@ public class Consultant extends Employee implements IProjectManager {
     @ManyToOne
     private Supervisor supervisor;
 
+    public Supervisor getSupervisor() {
+        return supervisor;
+    }
+
+    public void setSupervisor(Supervisor supervisor) {
+        this.supervisor = supervisor;
+    }
 }

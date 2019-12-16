@@ -4,19 +4,14 @@ import com.misiek.domain.employeeinproject.BusinessLeader;
 import com.misiek.domain.employeeinproject.ProjectManager;
 import com.misiek.domain.employeeinproject.ResourceManager;
 import com.misiek.domain.employeeinproject.SolutionArchitect;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "Project")
 @Table(name = "project")
-@Getter
-@Setter
-@NoArgsConstructor
 public class Project {
 
     @Id
@@ -26,7 +21,7 @@ public class Project {
     private String name;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "resource_manager_id")
     private ResourceManager resourceManager;
 
     @ManyToOne
@@ -57,7 +52,8 @@ public class Project {
 
     private LocalDateTime plannedEndDate;
 
-    private LocalDateTime realEndDate;
+    @OneToMany
+    private Set<RealEndDate> realEndDateSet = new HashSet<>();
 
     @ManyToMany(cascade  ={
             CascadeType.PERSIST,
@@ -69,13 +65,23 @@ public class Project {
     private Set<BusinessUnit> businessUnits;
 
     private void addBusinessUnit(BusinessUnit businessUnit){
-        businessUnits.add(businessUnit);
+        this.businessUnits.add(businessUnit);
         businessUnit.getProjects().add(this);
     }
 
     private void removeBusinessUnit(BusinessUnit businessUnit){
-        businessUnits.remove(businessUnit);
+        this.businessUnits.remove(businessUnit);
         businessUnit.getProjects().remove(this);
+    }
+
+    private void addRealEndDate(RealEndDate realEndDate){
+        this.realEndDateSet.add(realEndDate);
+        realEndDate.setProject(this);
+    }
+
+    private void removeRealEndDate(RealEndDate realEndDate){
+        this.realEndDateSet.remove(realEndDate);
+        realEndDate.setProject(null);
     }
 
     public Long getId() {
@@ -150,12 +156,12 @@ public class Project {
         this.plannedEndDate = plannedEndDate;
     }
 
-    public LocalDateTime getRealEndDate() {
-        return realEndDate;
+    public Set<RealEndDate> getRealEndDateSet() {
+        return realEndDateSet;
     }
 
-    public void setRealEndDate(LocalDateTime realEndDate) {
-        this.realEndDate = realEndDate;
+    public void setRealEndDateSet(Set<RealEndDate> realEndDateSet) {
+        this.realEndDateSet = realEndDateSet;
     }
 
     public BusinessLeader getBusinessUnitLeader() {
@@ -172,5 +178,11 @@ public class Project {
 
     public void setBusinessUnits(Set<BusinessUnit> businessUnits) {
         this.businessUnits = businessUnits;
+    }
+
+    public void merge(Project project){
+        if (project.getName() != null){
+            this.name = project.getName();
+        }
     }
 }
