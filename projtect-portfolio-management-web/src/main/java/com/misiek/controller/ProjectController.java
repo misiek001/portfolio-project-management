@@ -1,16 +1,26 @@
 package com.misiek.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.misiek.domain.Project;
+import com.misiek.service.IService;
+import com.misiek.service.ProjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping
-public class ProjectController {
+@RestController
+@RequestMapping("/projects")
+public class ProjectController extends RawController<Project> {
 
-    @GetMapping("/hello")
-    public String test() {
-        return "welcome";
+   private ProjectService projectService;
+
+    @Autowired
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
+    }
+
+    @Override
+    public IService getService() {
+        return projectService;
     }
 
 }

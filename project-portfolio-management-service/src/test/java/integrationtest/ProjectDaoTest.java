@@ -1,7 +1,7 @@
 package integrationtest;
 
-import com.misiek.dao.AbstractDao;
-import com.misiek.dao.ProjectDaoImpl;
+import com.misiek.dao.IDao;
+import com.misiek.dao.ProjectDao;
 import com.misiek.domain.Project;
 import com.misiek.spring.AppConfiguration;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = AppConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
-class ProjectDaoImplTest extends AbstractDaoImplTest<Project> {
+class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Autowired
-    public ProjectDaoImpl projectDao;
+    public ProjectDao projectDao;
 
-    public ProjectDaoImplTest() {
+    public ProjectDaoTest() {
         this.clazz = Project.class;
     }
 
@@ -30,7 +30,7 @@ class ProjectDaoImplTest extends AbstractDaoImplTest<Project> {
     }
 
     @Override
-    protected AbstractDao getDao() {
+    protected IDao getDao() {
         return projectDao;
     }
 

@@ -5,9 +5,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BusinessUnitDaoImpl extends RawDao<BusinessUnit> {
+public class BusinessUnitDao extends RawDao<BusinessUnit> {
 
-    public BusinessUnitDaoImpl(SessionFactory sessionFactory) {
+    public BusinessUnitDao(SessionFactory sessionFactory) {
         super(sessionFactory);
         this.clazz = BusinessUnit.class;
     }

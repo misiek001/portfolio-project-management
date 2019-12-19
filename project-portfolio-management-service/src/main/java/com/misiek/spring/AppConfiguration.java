@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = "com.misiek")
 public class AppConfiguration {
+
     public static void main(String[] args) {
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(TestPersistenceConfiguration.class);
     }

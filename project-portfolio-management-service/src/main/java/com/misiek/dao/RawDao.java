@@ -13,11 +13,11 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class RawDao<T> implements AbstractDao<T>  {
+public abstract class RawDao<T> implements IDao<T> {
 
-    Class<T> clazz;
+    protected Class<T> clazz;
 
-    SessionFactory sessionFactory;
+   protected SessionFactory sessionFactory;
 
     @Autowired
     public RawDao(SessionFactory sessionFactory) {

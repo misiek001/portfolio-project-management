@@ -1,6 +1,6 @@
 package com.misiek.service;
 
-import com.misiek.dao.AbstractDao;
+import com.misiek.dao.IDao;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public abstract class RawService<T> implements IService<T> {
         getDao().delete(id);
     }
 
-    public abstract AbstractDao getDao();
+    public abstract IDao getDao();
 
 }
 

@@ -5,9 +5,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EmployeeDaoImpl extends RawDao<Employee> {
+public class EmployeeDao extends RawDao<Employee> {
 
-    public EmployeeDaoImpl(SessionFactory sessionFactory) {
+    public EmployeeDao(SessionFactory sessionFactory) {
         super(sessionFactory);
         this.clazz = Employee.class;
     }

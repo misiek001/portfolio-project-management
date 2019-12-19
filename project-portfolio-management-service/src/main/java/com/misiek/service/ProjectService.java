@@ -1,23 +1,23 @@
 package com.misiek.service;
 
-import com.misiek.dao.AbstractDao;
-import com.misiek.dao.ProjectDaoImpl;
+import com.misiek.dao.IDao;
+import com.misiek.dao.ProjectDao;
 import com.misiek.domain.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProjectServiceImpl extends RawService<Project> {
+public class ProjectService extends RawService<Project> {
 
-    private ProjectDaoImpl projectDao;
+    private ProjectDao projectDao;
 
     @Autowired
-    public ProjectServiceImpl(ProjectDaoImpl projectDao) {
+    public ProjectService(ProjectDao projectDao) {
         this.projectDao = projectDao;
     }
 
     @Override
-    public AbstractDao getDao() {
+    public IDao getDao() {
         return projectDao;
     }
 

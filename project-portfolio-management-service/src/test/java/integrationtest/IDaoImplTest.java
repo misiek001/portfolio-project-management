@@ -1,6 +1,6 @@
 package integrationtest;
 
-import com.misiek.dao.AbstractDao;
+import com.misiek.dao.IDao;
 import com.misiek.domain.Project;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class AbstractDaoImplTest<T> implements DaoTest {
+public abstract class IDaoImplTest<T> implements DaoTest {
 
     protected Class<T> clazz;
 
@@ -55,7 +55,7 @@ public abstract class AbstractDaoImplTest<T> implements DaoTest {
 
     protected abstract  T createNewEntity();
 
-    protected abstract AbstractDao getDao();
+    protected abstract IDao getDao();
 
     public Class<T> getClazz() {
         return clazz;
