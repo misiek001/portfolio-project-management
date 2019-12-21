@@ -24,8 +24,6 @@ public abstract class Employee implements IEmployee {
    @OneToMany
    private Set<ProjectRole> projectRoleSet;
 
-   private boolean isActive;
-
    public Long getId() {
       return id;
    }
@@ -66,13 +64,6 @@ public abstract class Employee implements IEmployee {
       this.projectRoleSet = projectRoleSet;
    }
 
-   public boolean isActive() {
-      return isActive;
-   }
-
-   public void setActive(boolean active) {
-      isActive = active;
-   }
 
    public void merge(Employee employee){
       if ( employee.getFirstName() != null){

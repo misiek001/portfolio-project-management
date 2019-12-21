@@ -27,6 +27,14 @@ public class BusinessUnit {
         this.projects = projects;
     }
 
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
+    }
+
     public Long getId() {
         return id;
     }
