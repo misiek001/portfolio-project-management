@@ -1,5 +1,6 @@
 package com.misiek.spring;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,8 +17,8 @@ import java.util.Map;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = "com.misiek.controller")
-public class WebConfig implements WebMvcConfigurer {
+@ComponentScan(basePackages = "com.misiek")
+public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private ContentNegotiationManager contentNegotiationManager;
@@ -35,4 +36,8 @@ public class WebConfig implements WebMvcConfigurer {
         viewResolver.setContentNegotiationManager(contentNegotiationManager);
         return viewResolver;
 }
+    @Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
+    }
 }

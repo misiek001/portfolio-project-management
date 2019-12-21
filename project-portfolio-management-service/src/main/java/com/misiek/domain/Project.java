@@ -180,6 +180,8 @@ public class Project {
         this.businessUnits = businessUnits;
     }
 
+
+
     public void merge(Project project){
         if (project.getName() != null){
             this.name = project.getName();

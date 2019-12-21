@@ -3,7 +3,7 @@ package integrationtest;
 import com.misiek.dao.ProjectDao;
 import com.misiek.domain.Project;
 import com.misiek.service.ProjectService;
-import com.misiek.spring.AppConfiguration;
+import com.misiek.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppConfiguration.class)
+@ContextConfiguration(classes = ServiceConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
 public class ProjectServiceTest {
