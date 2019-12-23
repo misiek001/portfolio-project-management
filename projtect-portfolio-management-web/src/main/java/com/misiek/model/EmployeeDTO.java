@@ -1,7 +1,5 @@
 package com.misiek.model;
 
-import java.util.Set;
-
 public class EmployeeDTO {
 
     private Long id;
@@ -11,8 +9,6 @@ public class EmployeeDTO {
     private String lastName;
 
     private BusinessUnitDTO businessUnit;
-
-    private Set<ProjectRoleDTO> projectRoleSet;
 
     public Long getId() {
         return id;
@@ -46,11 +42,4 @@ public class EmployeeDTO {
         this.businessUnit = businessUnit;
     }
 
-    public Set<ProjectRoleDTO> getProjectRoleSet() {
-        return projectRoleSet;
-    }
-
-    public void setProjectRoleSet(Set<ProjectRoleDTO> projectRoleSet) {
-        this.projectRoleSet = projectRoleSet;
-    }
 }

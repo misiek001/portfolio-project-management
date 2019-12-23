@@ -8,7 +8,7 @@ public class ProjectDTO {
 
     private Long Id;
 
-    private String name;
+    private String projectName;
 
     private ResourceManagerDTO resourceManager;
 
@@ -38,12 +38,12 @@ public class ProjectDTO {
         Id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public ResourceManagerDTO getResourceManager() {

@@ -34,15 +34,15 @@ public class ProjectServiceTest {
     @BeforeEach
     void init() {
         Project project1 = new Project();
-        project1.setName("Project1");
+        project1.setProjectName("Project1");
         projectDao.save(project1);
 
         Project project2 = new Project();
-        project2.setName("Project2");
+        project2.setProjectName("Project2");
         projectDao.save(project2);
 
         Project project3 = new Project();
-        project3.setName("Project3");
+        project3.setProjectName("Project3");
         projectDao.save(project3);
     }
 
@@ -68,7 +68,7 @@ public class ProjectServiceTest {
     @Test
     void save_ThenSuccess(){
         Project project4 = new Project();
-        project4.setName("Project4");
+        project4.setProjectName("Project4");
         assertTrue(projectService.save(project4).isPresent());
     }
 }

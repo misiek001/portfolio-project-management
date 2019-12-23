@@ -18,7 +18,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    private String name;
+    private String projectName;
 
     @ManyToOne
     @JoinColumn(name = "resource_manager_id")
@@ -34,7 +34,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "business_unit_leader_id")
-    private BusinessLeader businessUnitLeader;
+    private BusinessLeader businessLeader;
 
     @ManyToMany(cascade  ={
             CascadeType.PERSIST,
@@ -43,7 +43,7 @@ public class Project {
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "business_unit_id"))
-    private Set<SolutionArchitect> solutionArchitect;
+    private Set<SolutionArchitect> solutionArchitect = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
@@ -62,24 +62,24 @@ public class Project {
     @JoinTable(name = "business_unit_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "business_unit_id"))
-    private Set<BusinessUnit> businessUnits;
+    private Set<BusinessUnit> businessUnits = new HashSet<>();
 
-    private void addBusinessUnit(BusinessUnit businessUnit){
+    public void addBusinessUnit(BusinessUnit businessUnit){
         this.businessUnits.add(businessUnit);
         businessUnit.getProjects().add(this);
     }
 
-    private void removeBusinessUnit(BusinessUnit businessUnit){
+    public void removeBusinessUnit(BusinessUnit businessUnit){
         this.businessUnits.remove(businessUnit);
         businessUnit.getProjects().remove(this);
     }
 
-    private void addRealEndDate(RealEndDate realEndDate){
+    public void addRealEndDate(RealEndDate realEndDate){
         this.realEndDateSet.add(realEndDate);
         realEndDate.setProject(this);
     }
 
-    private void removeRealEndDate(RealEndDate realEndDate){
+    public void removeRealEndDate(RealEndDate realEndDate){
         this.realEndDateSet.remove(realEndDate);
         realEndDate.setProject(null);
     }
@@ -92,12 +92,12 @@ public class Project {
         Id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public ResourceManager getResourceManager() {
@@ -164,12 +164,12 @@ public class Project {
         this.realEndDateSet = realEndDateSet;
     }
 
-    public BusinessLeader getBusinessUnitLeader() {
-        return businessUnitLeader;
+    public BusinessLeader getBusinessLeader() {
+        return businessLeader;
     }
 
-    public void setBusinessUnitLeader(BusinessLeader businessUnitLeader) {
-        this.businessUnitLeader = businessUnitLeader;
+    public void setBusinessLeader(BusinessLeader businessLeader) {
+        this.businessLeader = businessLeader;
     }
 
     public Set<BusinessUnit> getBusinessUnits() {
@@ -183,8 +183,8 @@ public class Project {
 
 
     public void merge(Project project){
-        if (project.getName() != null){
-            this.name = project.getName();
+        if (project.getProjectName() != null){
+            this.projectName = project.getProjectName();
         }
     }
 }
