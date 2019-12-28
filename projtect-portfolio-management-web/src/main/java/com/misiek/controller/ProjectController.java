@@ -1,8 +1,8 @@
 package com.misiek.controller;
 
 import com.misiek.domain.Project;
-import com.misiek.mapping.DTOtoEntityMapper;
-import com.misiek.mapping.EntityToDTOMapper;
+import com.misiek.mapping.Mapper;
+import com.misiek.mapping.ProjectMapper;
 import com.misiek.service.IService;
 import com.misiek.service.ProjectService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +14,11 @@ public class ProjectController extends RawController<Project> {
 
    private final ProjectService projectService;
 
-    public ProjectController(DTOtoEntityMapper dtOtoEntityMapper, EntityToDTOMapper entityToDTOMapper, ProjectService projectService) {
-        super(dtOtoEntityMapper, entityToDTOMapper);
+   private final ProjectMapper projectMapper;
+
+    public ProjectController(ProjectService projectService, ProjectMapper projectMapper) {
         this.projectService = projectService;
+        this.projectMapper = projectMapper;
     }
 
     @Override
@@ -24,5 +26,8 @@ public class ProjectController extends RawController<Project> {
         return projectService;
     }
 
-
+    @Override
+    public Mapper getMapper() {
+        return null;
+    }
 }

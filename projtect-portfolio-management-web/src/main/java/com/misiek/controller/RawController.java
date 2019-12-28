@@ -1,9 +1,7 @@
 package com.misiek.controller;
 
-import com.misiek.mapping.DTOtoEntityMapper;
-import com.misiek.mapping.EntityToDTOMapper;
+import com.misiek.mapping.Mapper;
 import com.misiek.service.IService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,16 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 public abstract class RawController<T> implements IController<T> {
-
-    protected DTOtoEntityMapper dtOtoEntityMapper;
-
-    protected EntityToDTOMapper entityToDTOMapper;
-
-    @Autowired
-    public RawController(DTOtoEntityMapper dtOtoEntityMapper, EntityToDTOMapper entityToDTOMapper) {
-        this.dtOtoEntityMapper = dtOtoEntityMapper;
-        this.entityToDTOMapper = entityToDTOMapper;
-    }
 
     @PostMapping
     @Override
@@ -51,4 +39,6 @@ public abstract class RawController<T> implements IController<T> {
     }
 
     public abstract IService getService();
+
+    public abstract Mapper getMapper();
 }

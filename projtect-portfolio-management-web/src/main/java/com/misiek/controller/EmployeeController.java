@@ -1,8 +1,7 @@
 package com.misiek.controller;
 
 import com.misiek.domain.Employee;
-import com.misiek.mapping.DTOtoEntityMapper;
-import com.misiek.mapping.EntityToDTOMapper;
+import com.misiek.mapping.Mapper;
 import com.misiek.service.EmployeeService;
 import com.misiek.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/employees")
 public class EmployeeController<T> extends RawController<Employee> {
 
-    private  EmployeeService employeeService;
+    private final   EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(DTOtoEntityMapper dtOtoEntityMapper, EntityToDTOMapper entityToDTOMapper, EmployeeService employeeService) {
-        super(dtOtoEntityMapper, entityToDTOMapper);
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
@@ -26,4 +24,8 @@ public class EmployeeController<T> extends RawController<Employee> {
         return employeeService;
     }
 
+    @Override
+    public Mapper getMapper() {
+        return null;
+    }
 }
