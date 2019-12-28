@@ -10,11 +10,10 @@ import java.util.List;
 
 public abstract class RawController<T> implements IController<T> {
 
-    @PostMapping
+
     @Override
-    public ResponseEntity<T> save(@RequestBody T t) {
-       T result = (T) getService().save(t);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    public T save(T t) {
+        return (T) getService().save(t);
     }
 
     @GetMapping
@@ -24,9 +23,9 @@ public abstract class RawController<T> implements IController<T> {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+
     @Override
-    public ResponseEntity<T> find(@PathVariable Long id) {
+    public ResponseEntity<T> find(Long id) {
         T result = (T) getService().find(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

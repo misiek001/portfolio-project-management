@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IController<T> {
 
-    ResponseEntity<T> save(T t);
+    T save(T t);
 
     ResponseEntity<List<T>> findAll();
 

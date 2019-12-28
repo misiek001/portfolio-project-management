@@ -18,7 +18,7 @@ public class BusinessLeaderMapper extends Mapper<BusinessLeaderDTO, BusinessLead
 
     @Override
     public BusinessLeaderDTO convertToDto(BusinessLeader businessLeader) {
-        return null;
+        return modelMapper.map(businessLeader, BusinessLeaderDTO.class);
     }
 
     @Override

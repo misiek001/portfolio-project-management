@@ -14,7 +14,7 @@ public class BusinessEmployeeMapper extends Mapper<BusinessEmployeeDTO, Business
 
     @Override
     public BusinessEmployeeDTO convertToDto(BusinessEmployee businessEmployee) {
-        return null;
+       return  modelMapper.map(businessEmployee, BusinessEmployeeDTO.class);
     }
 
     @Override

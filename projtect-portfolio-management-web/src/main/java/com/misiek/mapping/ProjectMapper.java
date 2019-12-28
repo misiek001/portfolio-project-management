@@ -2,6 +2,7 @@ package com.misiek.mapping;
 
 import com.misiek.domain.Project;
 import com.misiek.model.ProjectDTO;
+import com.misiek.model.creation.ProjectCreatedDTO;
 import com.misiek.model.creation.ProjectCreationDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -29,9 +30,11 @@ public class ProjectMapper extends Mapper<ProjectDTO, Project> {
     }
 
     public Project mapProjectCreationDTOtoProject(ProjectCreationDTO projectCreationDTO) {
-        Project result = modelMapper.map(projectCreationDTO, Project.class);
-        result.setBusinessRelationManager(businessRelationManagerMapper.convertToEntity(projectCreationDTO.getBusinessRelationManager()));
-        result.setBusinessLeader(businessLeaderMapper.convertToEntity(projectCreationDTO.getBusinessLeader()));
-        return result;
+        return  modelMapper.map(projectCreationDTO, Project.class);
+
+    }
+
+    public ProjectCreatedDTO mapCreatedProjectToDTO(Project project){
+        return modelMapper.map(project, ProjectCreatedDTO.class);
     }
 }
