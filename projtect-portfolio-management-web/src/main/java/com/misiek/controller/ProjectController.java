@@ -52,6 +52,18 @@ public class ProjectController extends RawController<Project> {
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
     }
 
+    @PostMapping("/test")
+    public ResponseEntity<ProjectCreatedDTO> saveTest(@RequestBody ProjectCreationDTO projectCreationDTO){
+        Project projectToSave = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
+        projectToSave.setProjectManager(null);
+        projectToSave.setBusinessRelationManager(null);
+        projectToSave.setBusinessLeader(null);
+        projectToSave.setBusinessUnits(null);
+        Project saveProject = save(projectToSave);
+        ProjectCreatedDTO projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(saveProject);
+        return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
+    }
+
     @GetMapping("/test")
     public ResponseEntity<ProjectCreationDTO> test(){
         projectCreationDTO = new ProjectCreationDTO();

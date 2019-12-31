@@ -13,7 +13,7 @@ public abstract class RawController<T> implements IController<T> {
 
     @Override
     public T save(T t) {
-        return (T) getService().save(t);
+        return (T) getService().save(t).get();
     }
 
     @GetMapping
