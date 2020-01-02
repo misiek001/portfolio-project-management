@@ -19,13 +19,6 @@ import java.util.Properties;
 public class TestPersistenceConfiguration {
 
     @Bean
-    public PlatformTransactionManager platformTransactionManager(){
-        final HibernateTransactionManager platformTransactionManager = new HibernateTransactionManager();
-        platformTransactionManager.setSessionFactory(localSessionFactoryBean().getObject());
-        return platformTransactionManager;
-    }
-
-    @Bean
     public DataSource dataSource(){
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         return builder
@@ -49,6 +42,13 @@ public class TestPersistenceConfiguration {
         properties.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop");
         return properties;
 
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager(){
+        final HibernateTransactionManager platformTransactionManager = new HibernateTransactionManager();
+        platformTransactionManager.setSessionFactory(localSessionFactoryBean().getObject());
+        return platformTransactionManager;
     }
 
 }

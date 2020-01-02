@@ -1,24 +1,32 @@
-package integrationtest;
+package com.misiek.dao;
 
-import com.misiek.dao.IDao;
-import com.misiek.dao.ProjectDao;
 import com.misiek.domain.Project;
 import com.misiek.spring.ServiceConfiguration;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith({SpringExtension.class})
 @ContextConfiguration(classes = ServiceConfiguration.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Rollback
 @Transactional
 class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Autowired
     public ProjectDao projectDao;
+
+    @BeforeAll
+    static void init(@Autowired ProjectDao projectDao){
+        projectDao.save(new Project());
+        projectDao.save(new Project());
+        projectDao.save(new Project());
+    }
+
+
 
     public ProjectDaoTest() {
         this.clazz = Project.class;
@@ -33,6 +41,5 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
     protected IDao getDao() {
         return projectDao;
     }
-
 
 }

@@ -11,4 +11,5 @@ public class EmployeeDao extends RawDao<Employee> {
         super(sessionFactory);
         this.clazz = Employee.class;
     }
+
 }

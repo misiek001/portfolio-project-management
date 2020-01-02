@@ -32,10 +32,13 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
 
         operationBusinessUnit.setName("Operation Business Unit");
         Long operationBusinessUnitIt =  businessUnitDao.save(operationBusinessUnit).get().getId();
+        System.out.println(operationBusinessUnitIt);
 
         BusinessUnit ITBusinessUnit = new BusinessUnit();
         ITBusinessUnit.setName("IT Business Unit");
         Long ITBusinessUnitId =  businessUnitDao.save(ITBusinessUnit).get().getId();
+
+        System.out.println(ITBusinessUnitId);
 
         Director ITDirector = new Director();
         ITDirector.setFirstName("Director First Name");
@@ -43,6 +46,7 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         ITDirector.setBusinessUnit(businessUnitDao.find(operationBusinessUnitIt).get());
 
         Long directorID =  employeeDao.save(ITDirector).get().getId();
+        System.out.println(directorID);
 
         Supervisor ITSupervisor = new Supervisor();
         ITSupervisor.setFirstName("Supervisor First Name");
@@ -51,6 +55,7 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         ITSupervisor.setDirector((Director) employeeDao.find(directorID).get());
 
        Long supervisorId =  employeeDao.save(ITSupervisor).get().getId();
+        System.out.println(supervisorId);
 
         BusinessRelationManager businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setFirstName("BRM First Name");
@@ -59,6 +64,7 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         businessRelationManager.setDirector((Director) employeeDao.find(directorID).get());
 
         Long brmId =  employeeDao.save(businessRelationManager).get().getId();
+        System.out.println(brmId);
 
         Consultant ITConsultant = new Consultant();
         ITConsultant.setFirstName("Consultant First Name");
@@ -67,6 +73,7 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         ITConsultant.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
 
         Long consultantID = employeeDao.save(ITConsultant).get().getId();
+        System.out.println(consultantID);
 
         BusinessEmployee businessEmployee = new BusinessEmployee();
         businessEmployee.setFirstName("BE First Name");
@@ -74,5 +81,6 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         businessEmployee.setBusinessUnit(businessUnitDao.find(operationBusinessUnitIt).get());
 
         Long businessEmployeeId = employeeDao.save(businessEmployee).get().getId();
+        System.out.println(businessEmployeeId);
     }
 }

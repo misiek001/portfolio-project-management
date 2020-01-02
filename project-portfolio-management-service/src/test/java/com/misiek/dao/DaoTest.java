@@ -1,8 +1,6 @@
-package integrationtest;
+package com.misiek.dao;
 
 public interface DaoTest {
-
-    void init();
 
     void find_ThenSuccess();
 

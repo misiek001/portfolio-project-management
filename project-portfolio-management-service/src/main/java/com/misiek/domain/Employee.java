@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Employee implements IEmployee {
 
    @Id
@@ -21,7 +21,10 @@ public abstract class Employee implements IEmployee {
    @ManyToOne
    private BusinessUnit businessUnit;
 
-   @OneToMany
+   @OneToMany(cascade  ={
+           CascadeType.PERSIST,
+           CascadeType.MERGE
+   })
    private Set<ProjectRole> projectRoleSet;
 
    public Long getId() {

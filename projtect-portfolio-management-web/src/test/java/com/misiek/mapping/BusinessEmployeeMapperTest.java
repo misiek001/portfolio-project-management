@@ -33,13 +33,11 @@ class BusinessEmployeeMapperTest {
     static void init(){
         businessEmployeeDTO = new BusinessEmployeeDTO();
         businessEmployeeDTO.setId(random.nextLong());
-        businessEmployeeDTO.setFirstName("BL First Name");
-        businessEmployeeDTO.setLastName("BL Last Name");
+
 
         businessEmployee = new BusinessEmployee();
         businessEmployee.setId(businessEmployeeDTO.getId());
-        businessEmployee.setFirstName(businessEmployeeDTO.getFirstName());
-        businessEmployee.setLastName(businessEmployeeDTO.getLastName());
+
     }
 
     @Test
@@ -47,8 +45,7 @@ class BusinessEmployeeMapperTest {
         BusinessEmployeeDTO createdBusinessEmployeeDTO = businessEmployeeMapper.convertToDto(businessEmployee);
 
         assertEquals(createdBusinessEmployeeDTO.getId(), businessEmployeeDTO.getId());
-        assertEquals(createdBusinessEmployeeDTO.getFirstName(), businessEmployeeDTO.getFirstName());
-        assertEquals(createdBusinessEmployeeDTO.getLastName(), businessEmployeeDTO.getLastName());
+
     }
 
     @Test

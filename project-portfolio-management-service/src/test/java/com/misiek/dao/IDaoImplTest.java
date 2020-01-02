@@ -1,8 +1,6 @@
-package integrationtest;
+package com.misiek.dao;
 
-import com.misiek.dao.IDao;
 import com.misiek.domain.Project;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,18 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class IDaoImplTest<T> implements DaoTest {
 
     protected Class<T> clazz;
-
-    @Override
-    @BeforeEach
-    public void init() {
-        int n = 3;
-        int counter = 0;
-        while (counter < n){
-            T t = createNewEntity();
-            getDao().save(t);
-            counter++;
-        }
-    }
 
     @Override
     @Test
@@ -53,9 +39,9 @@ public abstract class IDaoImplTest<T> implements DaoTest {
         assertTrue(getDao().save(t).isPresent());
     }
 
-    protected abstract  T createNewEntity();
+    abstract T createNewEntity();
 
-    protected abstract IDao getDao();
+    abstract IDao getDao();
 
     public Class<T> getClazz() {
         return clazz;

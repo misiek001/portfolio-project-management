@@ -9,6 +9,7 @@ import com.misiek.model.BusinessRelationManagerDTO;
 import com.misiek.model.BusinessUnitDTO;
 import com.misiek.model.creation.ProjectCreatedDTO;
 import com.misiek.model.creation.ProjectCreationDTO;
+import com.misiek.service.EmployeeService;
 import com.misiek.service.IService;
 import com.misiek.service.ProjectService;
 import org.springframework.http.HttpStatus;
@@ -25,9 +26,12 @@ public class ProjectController extends RawController<Project> {
 
    private final ProjectMapper projectMapper;
 
-    public ProjectController(ProjectService projectService, ProjectMapper projectMapper) {
+   private final EmployeeService employeeService;
+
+    public ProjectController(ProjectService projectService, ProjectMapper projectMapper, EmployeeService employeeService) {
         this.projectService = projectService;
         this.projectMapper = projectMapper;
+        this.employeeService = employeeService;
     }
 
     private static Random random = new Random();
@@ -55,10 +59,6 @@ public class ProjectController extends RawController<Project> {
     @PostMapping("/test")
     public ResponseEntity<ProjectCreatedDTO> saveTest(@RequestBody ProjectCreationDTO projectCreationDTO){
         Project projectToSave = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
-        projectToSave.setProjectManager(null);
-        projectToSave.setBusinessRelationManager(null);
-        projectToSave.setBusinessLeader(null);
-        projectToSave.setBusinessUnits(null);
         Project saveProject = save(projectToSave);
         ProjectCreatedDTO projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(saveProject);
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
@@ -71,27 +71,24 @@ public class ProjectController extends RawController<Project> {
 
         businessRelationManagerDTO = new BusinessRelationManagerDTO();
         businessRelationManagerDTO.setId(random.nextLong());
-        businessRelationManagerDTO.setFirstName("BRM First Name");
-        businessRelationManagerDTO.setLastName("BRM Last Name");
+
         projectCreationDTO.setBusinessRelationManager(businessRelationManagerDTO);
 
         businessLeaderDTO = new BusinessLeaderDTO();
         businessEmployeeDTO = new BusinessEmployeeDTO();
         businessEmployeeDTO.setId(random.nextLong());
-        businessEmployeeDTO.setFirstName("BL First Name");
-        businessEmployeeDTO.setLastName("BL Last Name");
-        businessLeaderDTO.setId(random.nextLong());
+
         businessLeaderDTO.setEmployee(businessEmployeeDTO);
         projectCreationDTO.setBusinessLeader(businessLeaderDTO);
 
         businessUnitDTOFirst = new BusinessUnitDTO();
         businessUnitDTOFirst.setId(random.nextLong());
-        businessUnitDTOFirst.setName("First Business Unit");
+
         projectCreationDTO.addBusinessUnit(businessUnitDTOFirst);
 
         businessUnitDTOSecond = new BusinessUnitDTO();
         businessUnitDTOSecond.setId(random.nextLong());
-        businessUnitDTOSecond.setName("Second Business Unit");
+
         projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
         return new ResponseEntity<>(projectCreationDTO, HttpStatus.OK);

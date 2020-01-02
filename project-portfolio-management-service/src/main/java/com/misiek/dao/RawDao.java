@@ -17,7 +17,7 @@ public abstract class RawDao<T> implements IDao<T> {
 
     protected Class<T> clazz;
 
-   protected SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
 
     @Autowired
     public RawDao(SessionFactory sessionFactory) {
@@ -45,6 +45,7 @@ public abstract class RawDao<T> implements IDao<T> {
 
     @Override
     public Optional<T> find(Long id) {
+
         try (Session session = sessionFactory.openSession()) {
             return Optional.ofNullable(session.get(clazz, id));
         }

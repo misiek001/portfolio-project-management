@@ -40,22 +40,18 @@ class BusinessLeaderMapperTest {
     static void init(){
         businessEmployeeDTO = new BusinessEmployeeDTO();
         businessEmployeeDTO.setId(random.nextLong());
-        businessEmployeeDTO.setFirstName("BL First Name");
-        businessEmployeeDTO.setLastName("BL Last Name");
 
         businessLeaderDTO = new BusinessLeaderDTO();
 
-        businessLeaderDTO.setId(random.nextLong());
         businessLeaderDTO.setEmployee(businessEmployeeDTO);
 
         businessEmployee = new BusinessEmployee();
         businessEmployee.setId(businessEmployeeDTO.getId());
-        businessEmployee.setFirstName(businessEmployeeDTO.getFirstName());
-        businessEmployee.setLastName(businessEmployeeDTO.getLastName());
+
 
 
         businessLeader = new BusinessLeader();
-        businessLeader.setId(businessLeaderDTO.getId());
+
         businessLeader.setEmployee(businessEmployee);
 
 
@@ -65,10 +61,8 @@ class BusinessLeaderMapperTest {
     void convertToDto() {
         BusinessLeaderDTO createdBusinessLeaderDTO = businessLeaderMapper.convertToDto(businessLeader);
 
-        assertEquals(createdBusinessLeaderDTO.getId(), businessLeaderDTO.getId());
         assertEquals(createdBusinessLeaderDTO.getEmployee().getId(), businessLeaderDTO.getEmployee().getId());
-        assertEquals(createdBusinessLeaderDTO.getEmployee().getFirstName(), businessLeaderDTO.getEmployee().getFirstName());
-        assertEquals(createdBusinessLeaderDTO.getEmployee().getLastName(), businessLeaderDTO.getEmployee().getLastName());
+
     }
 
     @Test
