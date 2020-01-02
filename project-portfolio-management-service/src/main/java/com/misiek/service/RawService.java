@@ -1,10 +1,14 @@
 package com.misiek.service;
 
 import com.misiek.dao.IDao;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 public abstract class RawService<T> implements IService<T> {
 
     @Override

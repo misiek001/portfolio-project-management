@@ -9,9 +9,7 @@ import com.misiek.model.BusinessRelationManagerDTO;
 import com.misiek.model.BusinessUnitDTO;
 import com.misiek.model.creation.ProjectCreatedDTO;
 import com.misiek.model.creation.ProjectCreationDTO;
-import com.misiek.service.EmployeeService;
-import com.misiek.service.IService;
-import com.misiek.service.ProjectService;
+import com.misiek.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +20,16 @@ import java.util.Random;
 @RequestMapping("/projects")
 public class ProjectController extends RawController<Project> {
 
-   private final ProjectService projectService;
+    private final IProjectService projectService;
+
+    private final IEmployeeService employeeService;
 
    private final ProjectMapper projectMapper;
 
-   private final EmployeeService employeeService;
-
-    public ProjectController(ProjectService projectService, ProjectMapper projectMapper, EmployeeService employeeService) {
+    public ProjectController(IProjectService projectService, IEmployeeService employeeService, ProjectMapper projectMapper) {
         this.projectService = projectService;
-        this.projectMapper = projectMapper;
         this.employeeService = employeeService;
+        this.projectMapper = projectMapper;
     }
 
     private static Random random = new Random();

@@ -2,7 +2,7 @@ package com.misiek.controller;
 
 import com.misiek.domain.Employee;
 import com.misiek.mapping.Mapper;
-import com.misiek.service.EmployeeService;
+import com.misiek.service.IEmployeeService;
 import com.misiek.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/employees")
 public class EmployeeController<T> extends RawController<Employee> {
 
-    private final   EmployeeService employeeService;
+    private final IEmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+    public EmployeeController(IEmployeeService iEmployeeService) {
+        this.employeeService = iEmployeeService;
     }
 
     @Override

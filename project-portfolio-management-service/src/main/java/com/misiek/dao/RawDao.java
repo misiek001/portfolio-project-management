@@ -30,7 +30,9 @@ public abstract class RawDao<T> implements IDao<T> {
         Transaction transaction = session.getTransaction();
         Optional<T> returnedEntity = Optional.empty();
         try {
-            transaction.begin();
+            if (!transaction.isActive()) {
+                transaction.begin();
+            }
             session.persist(t);
             transaction.commit();
             returnedEntity = Optional.of(t);
@@ -58,7 +60,9 @@ public abstract class RawDao<T> implements IDao<T> {
         Optional<T> entityToDelete = Optional.ofNullable(session.get(clazz, id));
         if (entityToDelete.isPresent()) {
             try {
-                transaction.begin();
+                if (!transaction.isActive()) {
+                    transaction.begin();
+                }
                 session.delete(entityToDelete.get());
                 transaction.commit();
             } catch (RuntimeException e){

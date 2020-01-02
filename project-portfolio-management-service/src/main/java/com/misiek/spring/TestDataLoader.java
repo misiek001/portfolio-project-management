@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -26,6 +27,7 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
     }
 
     @Override
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
         BusinessUnit operationBusinessUnit = new BusinessUnit();
