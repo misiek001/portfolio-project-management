@@ -1,5 +1,8 @@
 package com.misiek.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +20,7 @@ public class BusinessUnit {
     private Set<Employee> employees = new HashSet<>();
 
     @ManyToMany(mappedBy = "businessUnits")
+    @Fetch(value = FetchMode.JOIN)
     private Set<Project> projects = new HashSet<>();
 
     public Set<Project> getProjects() {

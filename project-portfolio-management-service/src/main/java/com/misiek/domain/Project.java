@@ -4,6 +4,8 @@ import com.misiek.domain.employeeinproject.BusinessLeader;
 import com.misiek.domain.employeeinproject.ProjectManager;
 import com.misiek.domain.employeeinproject.ResourceManager;
 import com.misiek.domain.employeeinproject.SolutionArchitect;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -56,12 +58,13 @@ public class Project {
     private Set<RealEndDate> realEndDateSet = new HashSet<>();
 
     @ManyToMany(cascade  ={
-            CascadeType.PERSIST,
-            CascadeType.MERGE
+            CascadeType.MERGE,
+            CascadeType.PERSIST
     })
     @JoinTable(name = "business_unit_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "business_unit_id"))
+    @Fetch(value = FetchMode.JOIN)
     private Set<BusinessUnit> businessUnits = new HashSet<>();
 
     public void addBusinessUnit(BusinessUnit businessUnit){
@@ -179,8 +182,6 @@ public class Project {
     public void setBusinessUnits(Set<BusinessUnit> businessUnits) {
         this.businessUnits = businessUnits;
     }
-
-
 
     public void merge(Project project){
         if (project.getProjectName() != null){

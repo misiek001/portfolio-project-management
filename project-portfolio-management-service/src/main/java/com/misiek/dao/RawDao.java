@@ -2,10 +2,8 @@ package com.misiek.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -26,28 +24,15 @@ public abstract class RawDao<T> implements IDao<T> {
 
     @Override
     public Optional<T> save(T t) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.getTransaction();
-        Optional<T> returnedEntity = Optional.empty();
-        try {
-            if (!transaction.isActive()) {
-                transaction.begin();
-            }
-            session.persist(t);
-            transaction.commit();
-            returnedEntity = Optional.of(t);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            transaction.rollback();
-        } finally {
-            session.close();
+        try (Session session = sessionFactory.openSession()) {
+            session.save(t);
+            return Optional.ofNullable(t);
         }
-        return returnedEntity;
+
     }
 
     @Override
     public Optional<T> find(Long id) {
-
         try (Session session = sessionFactory.openSession()) {
             return Optional.ofNullable(session.get(clazz, id));
         }
@@ -55,24 +40,8 @@ public abstract class RawDao<T> implements IDao<T> {
 
     @Override
     public void delete(Long id) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.getTransaction();
-        Optional<T> entityToDelete = Optional.ofNullable(session.get(clazz, id));
-        if (entityToDelete.isPresent()) {
-            try {
-                if (!transaction.isActive()) {
-                    transaction.begin();
-                }
-                session.delete(entityToDelete.get());
-                transaction.commit();
-            } catch (RuntimeException e){
-                transaction.rollback();
-            } finally {
-                session.close();
-            }
-        }
-        else {
-            throw new NoResultException();
+        try (Session session = sessionFactory.openSession()) {
+            session.delete(id);
         }
     }
 

@@ -1,4 +1,6 @@
 package com.misiek.dao;
 
-public interface IBusinessUnitDao<T> extends IDao<T> {
+import com.misiek.domain.BusinessUnit;
+
+public interface IBusinessUnitDao extends IDao<BusinessUnit> {
 }

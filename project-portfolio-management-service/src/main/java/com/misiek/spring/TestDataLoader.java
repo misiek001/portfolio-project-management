@@ -1,54 +1,67 @@
 package com.misiek.spring;
 
-import com.misiek.dao.BusinessUnitDao;
-import com.misiek.dao.EmployeeDao;
-import com.misiek.dao.ProjectDao;
+import com.misiek.dao.IBusinessUnitDao;
+import com.misiek.dao.IEmployeeDao;
+import com.misiek.dao.IProjectDao;
 import com.misiek.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
-    private final BusinessUnitDao businessUnitDao;
+    private final SessionFactory sessionFactory;
 
-    private final EmployeeDao employeeDao;
+    private final IBusinessUnitDao businessUnitDao;
 
-    private final ProjectDao projectDao;
+    private final IEmployeeDao employeeDao;
 
-    @Autowired
-    public TestDataLoader(BusinessUnitDao businessUnitDao, EmployeeDao employeeDao, ProjectDao projectDao) {
+    private final IProjectDao projectDao;
+
+    public TestDataLoader(SessionFactory sessionFactory, IBusinessUnitDao businessUnitDao, IEmployeeDao employeeDao, IProjectDao projectDao) {
+        this.sessionFactory = sessionFactory;
         this.businessUnitDao = businessUnitDao;
         this.employeeDao = employeeDao;
         this.projectDao = projectDao;
     }
 
     @Override
-    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
 
         BusinessUnit operationBusinessUnit = new BusinessUnit();
 
         operationBusinessUnit.setName("Operation Business Unit");
-        Long operationBusinessUnitIt =  businessUnitDao.save(operationBusinessUnit).get().getId();
-        System.out.println(operationBusinessUnitIt);
+        Long operationBusinessUnitId =  businessUnitDao.save(operationBusinessUnit).get().getId();
+
+        transaction.commit();
+        transaction = session.getTransaction();
+        transaction.begin();
 
         BusinessUnit ITBusinessUnit = new BusinessUnit();
         ITBusinessUnit.setName("IT Business Unit");
         Long ITBusinessUnitId =  businessUnitDao.save(ITBusinessUnit).get().getId();
 
-        System.out.println(ITBusinessUnitId);
+        transaction.commit();
+        transaction = session.getTransaction();
+        transaction.begin();
 
         Director ITDirector = new Director();
         ITDirector.setFirstName("Director First Name");
         ITDirector.setLastName("Director Last  Name");
-        ITDirector.setBusinessUnit(businessUnitDao.find(operationBusinessUnitIt).get());
+        ITDirector.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
 
         Long directorID =  employeeDao.save(ITDirector).get().getId();
-        System.out.println(directorID);
+
+        transaction.commit();
+        transaction = session.getTransaction();
+        transaction.begin();
 
         Supervisor ITSupervisor = new Supervisor();
         ITSupervisor.setFirstName("Supervisor First Name");
@@ -57,7 +70,10 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         ITSupervisor.setDirector((Director) employeeDao.find(directorID).get());
 
        Long supervisorId =  employeeDao.save(ITSupervisor).get().getId();
-        System.out.println(supervisorId);
+
+        transaction.commit();
+        transaction = session.getTransaction();
+        transaction.begin();
 
         BusinessRelationManager businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setFirstName("BRM First Name");
@@ -66,7 +82,10 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         businessRelationManager.setDirector((Director) employeeDao.find(directorID).get());
 
         Long brmId =  employeeDao.save(businessRelationManager).get().getId();
-        System.out.println(brmId);
+
+        transaction.commit();
+        transaction = session.getTransaction();
+        transaction.begin();
 
         Consultant ITConsultant = new Consultant();
         ITConsultant.setFirstName("Consultant First Name");
@@ -75,14 +94,22 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         ITConsultant.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
 
         Long consultantID = employeeDao.save(ITConsultant).get().getId();
-        System.out.println(consultantID);
+
+        transaction.commit();
+        transaction = session.getTransaction();
+        transaction.begin();
 
         BusinessEmployee businessEmployee = new BusinessEmployee();
         businessEmployee.setFirstName("BE First Name");
         businessEmployee.setLastName("BE Last Name");
-        businessEmployee.setBusinessUnit(businessUnitDao.find(operationBusinessUnitIt).get());
+        businessEmployee.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
 
         Long businessEmployeeId = employeeDao.save(businessEmployee).get().getId();
-        System.out.println(businessEmployeeId);
+
+        transaction.commit();
+
+
+
     }
+
 }
