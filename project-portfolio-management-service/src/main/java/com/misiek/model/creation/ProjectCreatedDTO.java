@@ -25,4 +25,5 @@ public class ProjectCreatedDTO extends ProjectCreationDTO {
     public void setProjectStatus(ProjectStatusDTO projectStatus) {
         this.projectStatus = projectStatus;
     }
+
 }

@@ -3,6 +3,8 @@ package com.misiek.service;
 import com.misiek.dao.IDao;
 import com.misiek.dao.ProjectDao;
 import com.misiek.domain.Project;
+import com.misiek.mapping.ProjectMapper;
+import com.misiek.model.creation.ProjectCreationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -21,15 +23,18 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     private final IBusinessUnitService businessUnitService;
 
+    private final ProjectMapper projectMapper;
+
     @Autowired
-    public ProjectService(ProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService) {
+    public ProjectService(ProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, ProjectMapper projectMapper) {
         this.projectDao = projectDao;
         this.employeeService = employeeService;
         this.businessUnitService = businessUnitService;
+        this.projectMapper = projectMapper;
     }
 
-    @Override
-    public Optional<Project> save(Project project) {
+    public Optional<Project> save(ProjectCreationDTO projectCreationDTO) {
+        Project project = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
         return super.save(project);
     }
 

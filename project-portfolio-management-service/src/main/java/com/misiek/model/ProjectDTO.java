@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProjectDTO {
+public class ProjectDTO implements IProjectDTO {
 
     private Long Id;
 

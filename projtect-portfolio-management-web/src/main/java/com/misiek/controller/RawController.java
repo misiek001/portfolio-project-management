@@ -1,31 +1,32 @@
 package com.misiek.controller;
 
-import com.misiek.mapping.Mapper;
 import com.misiek.service.IService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-public abstract class RawController<T> implements IController<T> {
+public abstract class RawController implements IController {
 
     @Override
-    public T save(T t) {
-        return (T) getService().save(t).get();
+    public <U, T> U save(T t) {
+        return (U) getService().save(t).get();
     }
 
     @GetMapping
     @Override
-    public ResponseEntity<List<T>> findAll() {
-        List<T> result = getService().findAll();
+    public <U>  ResponseEntity<List<U>> findAll() {
+        List<U> result = getService().findAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @Override
-    public ResponseEntity<T> find(Long id) {
-        T result = (T) getService().find(id);
+    public <U> ResponseEntity<U> find(Long id) {
+        U result = (U) getService().find(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -38,5 +39,4 @@ public abstract class RawController<T> implements IController<T> {
 
     public abstract IService getService();
 
-    public abstract Mapper getMapper();
 }

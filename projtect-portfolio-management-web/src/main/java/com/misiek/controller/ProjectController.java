@@ -1,35 +1,29 @@
 package com.misiek.controller;
 
-import com.misiek.domain.Project;
-import com.misiek.mapping.Mapper;
-import com.misiek.mapping.ProjectMapper;
-import com.misiek.model.BusinessEmployeeDTO;
-import com.misiek.model.BusinessLeaderDTO;
-import com.misiek.model.BusinessRelationManagerDTO;
-import com.misiek.model.BusinessUnitDTO;
+import com.misiek.model.*;
 import com.misiek.model.creation.ProjectCreatedDTO;
 import com.misiek.model.creation.ProjectCreationDTO;
-import com.misiek.service.*;
+import com.misiek.service.IEmployeeService;
+import com.misiek.service.IProjectService;
+import com.misiek.service.IService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Random;
 
 @RestController
 @RequestMapping("/projects")
-public class ProjectController extends RawController<Project> {
+public class ProjectController extends RawController {
 
     private final IProjectService projectService;
 
     private final IEmployeeService employeeService;
 
-   private final ProjectMapper projectMapper;
-
-    public ProjectController(IProjectService projectService, IEmployeeService employeeService, ProjectMapper projectMapper) {
+    public ProjectController(IProjectService projectService, IEmployeeService employeeService) {
         this.projectService = projectService;
         this.employeeService = employeeService;
-        this.projectMapper = projectMapper;
     }
 
     private static Random random = new Random();
@@ -48,18 +42,31 @@ public class ProjectController extends RawController<Project> {
 
     @PostMapping
     public ResponseEntity<ProjectCreatedDTO> save(@RequestBody ProjectCreationDTO projectCreationDTO){
-        Project projectToSave = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
-        Project savedProject = save(projectToSave);
-        ProjectCreatedDTO projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(savedProject);
-        return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
+        ProjectCreatedDTO projectCreatedDTO = super.save(projectCreationDTO);
+        return new ResponseEntity<>(projectCreatedDTO, HttpStatus.OK);
+    }
+
+    public ProjectCreatedDTO save (ProjectCreatedDTO t) {
+        return super.save(t);
+    }
+
+
+    public  ResponseEntity<List<ProjectDTO>> findAll() {
+        return super.findAll();
+    }
+
+    public ResponseEntity<ProjectDTO> find(Long id) {
+        return super.find(id);
+    }
+
+    public ResponseEntity<Void> delete(Long id) {
+        return super.delete(id);
     }
 
     @PostMapping("/test")
     public ResponseEntity<ProjectCreatedDTO> saveTest(@RequestBody ProjectCreationDTO projectCreationDTO){
-        Project projectToSave = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
-        Project saveProject = save(projectToSave);
-        ProjectCreatedDTO projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(saveProject);
-        return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
+        ProjectCreatedDTO projectCreatedDTO = super.save(projectCreationDTO);
+        return new ResponseEntity<>(projectCreatedDTO, HttpStatus.OK);
     }
 
     @GetMapping("/test")
@@ -92,8 +99,5 @@ public class ProjectController extends RawController<Project> {
         return new ResponseEntity<>(projectCreationDTO, HttpStatus.OK);
     }
 
-    @Override
-    public Mapper getMapper() {
-        return projectMapper;
-    }
+
 }

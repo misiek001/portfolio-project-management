@@ -4,13 +4,13 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface IController<T> {
+public interface IController{
 
-    T save(T t);
+    <U, T> U save(T t);
 
-    ResponseEntity<List<T>> findAll();
+    <U> ResponseEntity<List<U>> findAll();
 
-    ResponseEntity<T> find(Long id);
+    <U> ResponseEntity<U> find(Long id);
 
     ResponseEntity<Void> delete(Long id);
 }

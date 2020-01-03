@@ -31,83 +31,84 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.getTransaction();
-        transaction.begin();
 
-        BusinessUnit operationBusinessUnit = new BusinessUnit();
+        try(Session session = sessionFactory.openSession();){
+            Transaction transaction = session.getTransaction();
+            transaction.begin();
 
-        operationBusinessUnit.setName("Operation Business Unit");
-        Long operationBusinessUnitId =  businessUnitDao.save(operationBusinessUnit).get().getId();
+            BusinessUnit operationBusinessUnit = new BusinessUnit();
 
-        transaction.commit();
-        transaction = session.getTransaction();
-        transaction.begin();
+            operationBusinessUnit.setName("Operation Business Unit");
+            Long operationBusinessUnitId =  businessUnitDao.save(operationBusinessUnit).get().getId();
 
-        BusinessUnit ITBusinessUnit = new BusinessUnit();
-        ITBusinessUnit.setName("IT Business Unit");
-        Long ITBusinessUnitId =  businessUnitDao.save(ITBusinessUnit).get().getId();
+            transaction.commit();
+            transaction = session.getTransaction();
+            transaction.begin();
 
-        transaction.commit();
-        transaction = session.getTransaction();
-        transaction.begin();
+            BusinessUnit ITBusinessUnit = new BusinessUnit();
+            ITBusinessUnit.setName("IT Business Unit");
+            Long ITBusinessUnitId =  businessUnitDao.save(ITBusinessUnit).get().getId();
 
-        Director ITDirector = new Director();
-        ITDirector.setFirstName("Director First Name");
-        ITDirector.setLastName("Director Last  Name");
-        ITDirector.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
+            transaction.commit();
+            transaction = session.getTransaction();
+            transaction.begin();
 
-        Long directorID =  employeeDao.save(ITDirector).get().getId();
+            Director ITDirector = new Director();
+            ITDirector.setFirstName("Director First Name");
+            ITDirector.setLastName("Director Last  Name");
+            ITDirector.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
 
-        transaction.commit();
-        transaction = session.getTransaction();
-        transaction.begin();
+            Long directorID =  employeeDao.save(ITDirector).get().getId();
 
-        Supervisor ITSupervisor = new Supervisor();
-        ITSupervisor.setFirstName("Supervisor First Name");
-        ITSupervisor.setLastName("Supervisor Last Name");
-        ITSupervisor.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
-        ITSupervisor.setDirector((Director) employeeDao.find(directorID).get());
+            transaction.commit();
+            transaction = session.getTransaction();
+            transaction.begin();
 
-       Long supervisorId =  employeeDao.save(ITSupervisor).get().getId();
+            Supervisor ITSupervisor = new Supervisor();
+            ITSupervisor.setFirstName("Supervisor First Name");
+            ITSupervisor.setLastName("Supervisor Last Name");
+            ITSupervisor.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
+            ITSupervisor.setDirector((Director) employeeDao.find(directorID).get());
 
-        transaction.commit();
-        transaction = session.getTransaction();
-        transaction.begin();
+            Long supervisorId =  employeeDao.save(ITSupervisor).get().getId();
 
-        BusinessRelationManager businessRelationManager = new BusinessRelationManager();
-        businessRelationManager.setFirstName("BRM First Name");
-        businessRelationManager.setLastName("BRM Last Name");
-        businessRelationManager.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
-        businessRelationManager.setDirector((Director) employeeDao.find(directorID).get());
+            transaction.commit();
+            transaction = session.getTransaction();
+            transaction.begin();
 
-        Long brmId =  employeeDao.save(businessRelationManager).get().getId();
+            BusinessRelationManager businessRelationManager = new BusinessRelationManager();
+            businessRelationManager.setFirstName("BRM First Name");
+            businessRelationManager.setLastName("BRM Last Name");
+            businessRelationManager.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
+            businessRelationManager.setDirector((Director) employeeDao.find(directorID).get());
 
-        transaction.commit();
-        transaction = session.getTransaction();
-        transaction.begin();
+            Long brmId =  employeeDao.save(businessRelationManager).get().getId();
 
-        Consultant ITConsultant = new Consultant();
-        ITConsultant.setFirstName("Consultant First Name");
-        ITConsultant.setLastName("Consultant Last Name");
-        ITConsultant.setSupervisor((Supervisor) employeeDao.find(supervisorId).get());
-        ITConsultant.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
+            transaction.commit();
+            transaction = session.getTransaction();
+            transaction.begin();
 
-        Long consultantID = employeeDao.save(ITConsultant).get().getId();
+            Consultant ITConsultant = new Consultant();
+            ITConsultant.setFirstName("Consultant First Name");
+            ITConsultant.setLastName("Consultant Last Name");
+            ITConsultant.setSupervisor((Supervisor) employeeDao.find(supervisorId).get());
+            ITConsultant.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
 
-        transaction.commit();
-        transaction = session.getTransaction();
-        transaction.begin();
+            Long consultantID = employeeDao.save(ITConsultant).get().getId();
 
-        BusinessEmployee businessEmployee = new BusinessEmployee();
-        businessEmployee.setFirstName("BE First Name");
-        businessEmployee.setLastName("BE Last Name");
-        businessEmployee.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
+            transaction.commit();
+            transaction = session.getTransaction();
+            transaction.begin();
 
-        Long businessEmployeeId = employeeDao.save(businessEmployee).get().getId();
+            BusinessEmployee businessEmployee = new BusinessEmployee();
+            businessEmployee.setFirstName("BE First Name");
+            businessEmployee.setLastName("BE Last Name");
+            businessEmployee.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
 
-        transaction.commit();
+            Long businessEmployeeId = employeeDao.save(businessEmployee).get().getId();
 
+            transaction.commit();
+        }
 
 
     }

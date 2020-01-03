@@ -1,17 +1,14 @@
 package com.misiek.model.creation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.misiek.model.BusinessLeaderDTO;
-import com.misiek.model.BusinessRelationManagerDTO;
-import com.misiek.model.BusinessUnitDTO;
-import com.misiek.model.ProjectStatusDTO;
+import com.misiek.model.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProjectCreationDTO {
+public class ProjectCreationDTO implements IProjectDTO {
 
     @NotNull
     String projectName;
