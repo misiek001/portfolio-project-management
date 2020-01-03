@@ -8,25 +8,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith({SpringExtension.class})
 @ContextConfiguration(classes = ServiceConfiguration.class)
+@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 @Rollback
-@Transactional
 class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Autowired
-    public ProjectDao projectDao;
+    public IProjectDao projectDao;
 
     @BeforeAll
     static void init(@Autowired ProjectDao projectDao){
-        projectDao.save(new Project());
-        projectDao.save(new Project());
-        projectDao.save(new Project());
+        Project projectToSave = new Project();
+        projectToSave.setProjectName("First Project");
+        projectDao.save(projectToSave);
+        projectToSave = new Project();
+        projectToSave.setProjectName("Second Project");
+        projectDao.save(projectToSave);
+        projectToSave = new Project();
+        projectToSave.setProjectName("Third Project");
+        projectDao.save(projectToSave);
     }
-
-
 
     public ProjectDaoTest() {
         this.clazz = Project.class;

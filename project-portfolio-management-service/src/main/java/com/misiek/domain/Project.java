@@ -6,10 +6,12 @@ import com.misiek.domain.employeeinproject.ResourceManager;
 import com.misiek.domain.employeeinproject.SolutionArchitect;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "Project")
@@ -20,6 +22,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
+    @NaturalId
     private String projectName;
 
     @ManyToOne
@@ -187,5 +190,18 @@ public class Project {
         if (project.getProjectName() != null){
             this.projectName = project.getProjectName();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Project project = (Project) o;
+        return projectName.equals(project.projectName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectName);
     }
 }

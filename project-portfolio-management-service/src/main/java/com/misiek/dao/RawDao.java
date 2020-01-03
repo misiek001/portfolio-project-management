@@ -41,7 +41,8 @@ public abstract class RawDao<T> implements IDao<T> {
     @Override
     public void delete(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            session.delete(id);
+            Optional<T> projectToDelete = find(id);
+            session.delete(projectToDelete.get());
         }
     }
 

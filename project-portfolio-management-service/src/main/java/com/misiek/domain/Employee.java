@@ -2,8 +2,10 @@ package com.misiek.domain;
 
 import com.misiek.domain.employeeinproject.IEmployee;
 import com.misiek.domain.employeeinproject.ProjectRole;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -17,6 +19,9 @@ public abstract class Employee implements IEmployee {
    private String firstName;
 
    private String lastName;
+
+   @NaturalId
+   private String businessId;
 
    @ManyToOne
    private BusinessUnit businessUnit;
@@ -67,6 +72,18 @@ public abstract class Employee implements IEmployee {
       this.projectRoleSet = projectRoleSet;
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Employee employee = (Employee) o;
+      return businessId.equals(employee.businessId);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(businessId);
+   }
 
    public void merge(Employee employee){
       if ( employee.getFirstName() != null){
@@ -78,6 +95,8 @@ public abstract class Employee implements IEmployee {
       if(employee.getBusinessUnit() != null){
          this.businessUnit = employee.getBusinessUnit();
       }
+
+
 
    }
 }
