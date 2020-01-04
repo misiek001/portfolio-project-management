@@ -1,12 +1,12 @@
-package com.mbor.mapping;
+package com.misiek.mapping;
 
-import com.mbor.domain.BusinessUnit;
-import com.mbor.domain.Project;
-import com.mbor.domain.ProjectStatus;
-import com.mbor.model.BusinessUnitDTO;
-import com.mbor.model.ProjectDTO;
-import com.mbor.model.creation.ProjectCreatedDTO;
-import com.mbor.model.creation.ProjectCreationDTO;
+import com.misiek.domain.BusinessUnit;
+import com.misiek.domain.Project;
+import com.misiek.domain.ProjectStatus;
+import com.misiek.model.BusinessUnitDTO;
+import com.misiek.model.ProjectDTO;
+import com.misiek.model.creation.ProjectCreatedDTO;
+import com.misiek.model.creation.ProjectCreationDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
