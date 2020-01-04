@@ -3,11 +3,13 @@ package com.misiek.mapping;
 import com.misiek.domain.BusinessEmployee;
 import com.misiek.model.BusinessEmployeeDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessEmployeeMapper extends Mapper<BusinessEmployeeDTO, BusinessEmployee> {
 
+    @Autowired
     public BusinessEmployeeMapper(ModelMapper modelMapper) {
         super(modelMapper);
     }

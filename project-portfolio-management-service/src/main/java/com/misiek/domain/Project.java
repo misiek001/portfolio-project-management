@@ -4,6 +4,7 @@ import com.misiek.domain.employeeinproject.BusinessLeader;
 import com.misiek.domain.employeeinproject.ProjectManager;
 import com.misiek.domain.employeeinproject.ResourceManager;
 import com.misiek.domain.employeeinproject.SolutionArchitect;
+import com.misiek.model.IProjectDTO;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 @Entity(name = "Project")
 @Table(name = "project")
-public class Project {
+public class Project implements IProjectDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +36,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "business_relation_manager_id")
+    @Fetch(value = FetchMode.JOIN)
     private BusinessRelationManager businessRelationManager;
 
     @ManyToOne
@@ -120,6 +122,12 @@ public class Project {
 
     public void setBusinessRelationManager(BusinessRelationManager businessRelationManager) {
         this.businessRelationManager = businessRelationManager;
+        businessRelationManager.getProjects().add(this);
+    }
+
+    public void removeBusinessRelationManager(BusinessRelationManager businessRelationManager){
+        this.businessRelationManager = null;
+        businessRelationManager.getProjects().remove(this);
     }
 
     public ProjectManager getProjectManager() {
@@ -176,6 +184,12 @@ public class Project {
 
     public void setBusinessLeader(BusinessLeader businessLeader) {
         this.businessLeader = businessLeader;
+        businessLeader.getProjects().add(this);
+    }
+
+    public void removeBusinessLeader(BusinessLeader businessLeader){
+        this.businessLeader = null;
+        businessLeader.getProjects().remove(this);
     }
 
     public Set<BusinessUnit> getBusinessUnits() {

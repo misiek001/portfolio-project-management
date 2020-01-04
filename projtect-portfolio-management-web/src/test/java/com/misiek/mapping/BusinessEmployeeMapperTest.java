@@ -53,7 +53,5 @@ class BusinessEmployeeMapperTest {
         BusinessEmployee createdBusinessEmployee = businessEmployeeMapper.convertToEntity((businessEmployeeDTO));
 
         assertEquals(createdBusinessEmployee.getId(), businessEmployee.getId());
-        assertEquals(createdBusinessEmployee.getFirstName(), businessEmployee.getFirstName());
-        assertEquals(createdBusinessEmployee.getLastName(), businessEmployee.getLastName());
     }
 }

@@ -11,4 +11,5 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
         super(sessionFactory);
         this.clazz = Project.class;
     }
+
 }

@@ -1,5 +1,5 @@
 package com.misiek.model;
 
-public class EmployeeDTO extends IdDTO{
+public class EmployeeDTO extends IdDTO {
 
 }

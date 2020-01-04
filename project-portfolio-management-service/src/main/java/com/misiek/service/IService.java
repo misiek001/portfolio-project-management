@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface IService<T> {
 
-    Optional<T> save(T t);
+    Optional<T> saveInternal(T t);
 
     List<T> findAll();
 

@@ -2,15 +2,17 @@ package com.misiek.domain;
 
 import com.misiek.domain.employeeinproject.IEmployee;
 import com.misiek.domain.employeeinproject.ProjectRole;
-import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Employee implements IEmployee {
+
 
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,17 +22,16 @@ public abstract class Employee implements IEmployee {
 
    private String lastName;
 
-   @NaturalId
-   private String businessId;
-
    @ManyToOne
+   @JoinColumn(name = "business_unit_id")
    private BusinessUnit businessUnit;
 
    @OneToMany(cascade  ={
            CascadeType.PERSIST,
            CascadeType.MERGE
    })
-   private Set<ProjectRole> projectRoleSet;
+   @Fetch(FetchMode.JOIN)
+   private Set<ProjectRole> projectRoleSet = new HashSet<>();
 
    public Long getId() {
       return id;
@@ -72,31 +73,16 @@ public abstract class Employee implements IEmployee {
       this.projectRoleSet = projectRoleSet;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Employee employee = (Employee) o;
-      return businessId.equals(employee.businessId);
+   public void addProjectRole(ProjectRole projectRole){
+      projectRoleSet.add(projectRole);
+      projectRole.setEmployee(this);
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hash(businessId);
+   public void removeProjectRole(ProjectRole projectRole){
+      projectRoleSet.remove(projectRole);
+      projectRole.setEmployee(null);
    }
 
-   public void merge(Employee employee){
-      if ( employee.getFirstName() != null){
-         this.firstName = employee.getFirstName();
-      }
-      if (employee.getLastName() != null){
-         this.lastName = employee.getLastName();
-      }
-      if(employee.getBusinessUnit() != null){
-         this.businessUnit = employee.getBusinessUnit();
-      }
 
 
-
-   }
 }

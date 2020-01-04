@@ -12,7 +12,7 @@ import java.util.Optional;
 public abstract class RawService<T> implements IService<T> {
 
     @Override
-    public Optional<T> save(T t) {
+    public Optional<T> saveInternal(T t) {
         return getDao().save(t);
     }
 

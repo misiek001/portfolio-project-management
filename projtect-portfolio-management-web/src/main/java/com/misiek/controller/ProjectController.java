@@ -5,7 +5,6 @@ import com.misiek.model.creation.ProjectCreatedDTO;
 import com.misiek.model.creation.ProjectCreationDTO;
 import com.misiek.service.IEmployeeService;
 import com.misiek.service.IProjectService;
-import com.misiek.service.IService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,21 +34,11 @@ public class ProjectController extends RawController {
     private static BusinessUnitDTO businessUnitDTOFirst;
     private static BusinessUnitDTO businessUnitDTOSecond;
 
-    @Override
-    public IService getService() {
-        return projectService;
-    }
-
     @PostMapping
     public ResponseEntity<ProjectCreatedDTO> save(@RequestBody ProjectCreationDTO projectCreationDTO){
-        ProjectCreatedDTO projectCreatedDTO = super.save(projectCreationDTO);
+        ProjectCreatedDTO projectCreatedDTO = (ProjectCreatedDTO) projectService.save(projectCreationDTO).get();
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.OK);
     }
-
-    public ProjectCreatedDTO save (ProjectCreatedDTO t) {
-        return super.save(t);
-    }
-
 
     public  ResponseEntity<List<ProjectDTO>> findAll() {
         return super.findAll();
@@ -65,7 +54,8 @@ public class ProjectController extends RawController {
 
     @PostMapping("/test")
     public ResponseEntity<ProjectCreatedDTO> saveTest(@RequestBody ProjectCreationDTO projectCreationDTO){
-        ProjectCreatedDTO projectCreatedDTO = super.save(projectCreationDTO);
+        employeeService.find(5L);
+        ProjectCreatedDTO projectCreatedDTO = (ProjectCreatedDTO) projectService.save(projectCreationDTO).get();
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.OK);
     }
 
@@ -99,5 +89,9 @@ public class ProjectController extends RawController {
         return new ResponseEntity<>(projectCreationDTO, HttpStatus.OK);
     }
 
+    @Override
+    public IProjectService getService() {
+        return projectService;
+    }
 
 }

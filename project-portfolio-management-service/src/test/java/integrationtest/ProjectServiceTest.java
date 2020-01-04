@@ -73,7 +73,7 @@ public class ProjectServiceTest {
     void save_ThenSuccess(){
         Project project4 = new Project();
         project4.setProjectName("Fourth Project");
-        assertTrue(projectService.save(project4).isPresent());
+        assertTrue(projectService.saveInternal(project4).isPresent());
         assertEquals(4, projectService.findAll().size());
     }
 

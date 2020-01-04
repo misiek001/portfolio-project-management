@@ -20,6 +20,7 @@ public class BusinessUnit {
     private String name;
 
     @OneToMany(mappedBy = "businessUnit")
+    @Fetch(value = FetchMode.JOIN)
     private Set<Employee> employees = new HashSet<>();
 
     @ManyToMany(mappedBy = "businessUnits")

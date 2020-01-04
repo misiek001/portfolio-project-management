@@ -1,11 +1,16 @@
 package com.misiek.mapping;
 
+import com.misiek.domain.BusinessUnit;
 import com.misiek.domain.Project;
+import com.misiek.domain.ProjectStatus;
 import com.misiek.model.ProjectDTO;
 import com.misiek.model.creation.ProjectCreatedDTO;
 import com.misiek.model.creation.ProjectCreationDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class ProjectMapper extends Mapper<ProjectDTO, Project> {
@@ -30,11 +35,23 @@ public class ProjectMapper extends Mapper<ProjectDTO, Project> {
     }
 
     public Project mapProjectCreationDTOtoProject(ProjectCreationDTO projectCreationDTO) {
-        return  modelMapper.map(projectCreationDTO, Project.class);
-
+        Project project = new Project();
+        project.setProjectName(projectCreationDTO.getProjectName());
+        project.setStatus(ProjectStatus.valueOf(projectCreationDTO.getProjectStatus().name()));
+        project.setBusinessRelationManager(businessRelationManagerMapper.convertToEntity(projectCreationDTO.getBusinessRelationManager()));
+        project.setBusinessLeader(businessLeaderMapper.convertToEntity(projectCreationDTO.getBusinessLeader()));
+        project.getBusinessLeader().getEmployee().addProjectRole(project.getBusinessLeader());
+        Set<BusinessUnit> businessUnits = projectCreationDTO.getBusinessUnits().stream().map(businessUnitDTO -> {
+            BusinessUnit businessUnit = new BusinessUnit();
+            businessUnit.setId(businessUnitDTO.getId());
+            businessUnit.setName(businessUnitDTO.getName());
+            return businessUnit;
+        }).collect(Collectors.toSet());
+        project.setBusinessUnits(businessUnits);
+        return project;
     }
 
-    public ProjectCreatedDTO mapCreatedProjectToDTO(Project project){
+    public ProjectCreatedDTO mapCreatedProjectToDTO(Project project) {
         return modelMapper.map(project, ProjectCreatedDTO.class);
     }
 }

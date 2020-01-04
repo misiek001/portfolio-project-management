@@ -7,12 +7,12 @@ import com.misiek.domain.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 @Service
-public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+public class TestDataLoader {
 
     private final SessionFactory sessionFactory;
 
@@ -29,8 +29,9 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
         this.projectDao = projectDao;
     }
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+
+    @PostConstruct
+    public void onApplicationEvent() {
 
         try(Session session = sessionFactory.openSession();){
             Transaction transaction = session.getTransaction();
@@ -108,6 +109,8 @@ public class TestDataLoader implements ApplicationListener<ContextRefreshedEvent
             Long businessEmployeeId = employeeDao.save(businessEmployee).get().getId();
 
             transaction.commit();
+
+            employeeDao.find(businessEmployeeId);
         }
 
 

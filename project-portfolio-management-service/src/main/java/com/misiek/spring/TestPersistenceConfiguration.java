@@ -41,7 +41,7 @@ public class TestPersistenceConfiguration {
         Properties properties = new Properties();
         properties.setProperty(AvailableSettings.DIALECT, H2Dialect.class.getName());
         properties.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(true));
-        properties.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop");
+        properties.setProperty(AvailableSettings.HBM2DDL_AUTO, "update");
         return properties;
 
     }

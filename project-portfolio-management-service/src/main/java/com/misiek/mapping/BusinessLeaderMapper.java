@@ -4,6 +4,7 @@ import com.misiek.domain.employeeinproject.BusinessLeader;
 import com.misiek.model.BusinessEmployeeDTO;
 import com.misiek.model.BusinessLeaderDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,6 +12,7 @@ public class BusinessLeaderMapper extends Mapper<BusinessLeaderDTO, BusinessLead
 
     private final BusinessEmployeeMapper businessEmployeeMapper;
 
+    @Autowired
     public BusinessLeaderMapper(ModelMapper modelMapper, BusinessEmployeeMapper businessEmployeeMapper) {
         super(modelMapper);
         this.businessEmployeeMapper = businessEmployeeMapper;

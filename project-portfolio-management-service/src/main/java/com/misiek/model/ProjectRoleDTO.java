@@ -1,14 +1,14 @@
 package com.misiek.model;
 
-public class ProjectRoleDTO  {
+public class ProjectRoleDTO<T extends EmployeeDTO> extends IdDTO  {
 
-    EmployeeDTO employee;
+    T employee;
 
     public EmployeeDTO getEmployee() {
         return employee;
     }
 
-    public void setEmployee(EmployeeDTO employee) {
+    public void setEmployee(T employee) {
         this.employee = employee;
     }
 

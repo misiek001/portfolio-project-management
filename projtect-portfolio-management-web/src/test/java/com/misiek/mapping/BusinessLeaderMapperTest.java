@@ -71,7 +71,5 @@ class BusinessLeaderMapperTest {
 
         assertEquals(createdBusinessLeader.getId(), businessLeader.getId());
         assertEquals(createdBusinessLeader.getEmployee().getId(), businessLeader.getEmployee().getId());
-        assertEquals(createdBusinessLeader.getEmployee().getFirstName(), businessLeader.getEmployee().getFirstName());
-        assertEquals(createdBusinessLeader.getEmployee().getLastName(), businessLeader.getEmployee().getLastName());
     }
 }
