@@ -17,7 +17,7 @@ import java.util.Map;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = "com.misiek")
+@ComponentScan(basePackages = "com.misiek.controller")
 public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
