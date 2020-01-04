@@ -1,9 +1,9 @@
 package integrationtest;
 
-import com.misiek.dao.ProjectDao;
-import com.misiek.domain.Project;
-import com.misiek.service.IProjectService;
-import com.misiek.spring.ServiceConfiguration;
+import com.mbor.dao.ProjectDao;
+import com.mbor.domain.Project;
+import com.mbor.service.IProjectService;
+import com.mbor.spring.ServiceConfiguration;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
