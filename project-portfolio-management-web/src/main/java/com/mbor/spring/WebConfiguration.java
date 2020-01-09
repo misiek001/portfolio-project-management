@@ -17,7 +17,7 @@ import java.util.Map;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = "com.mbor.controller")
+@ComponentScan(basePackages = {"com.mbor.controller", "com.mbor.mapping"})
 public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired

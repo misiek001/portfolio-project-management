@@ -10,7 +10,6 @@
     <modules>
         <module>project-portfolio-management-service</module>
         <module>project-portfolio-management-web</module>
-        <module>project-portfolio-management-authorization-server</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -32,6 +31,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${com.spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
             <version>${com.spring.version}</version>
         </dependency>
 

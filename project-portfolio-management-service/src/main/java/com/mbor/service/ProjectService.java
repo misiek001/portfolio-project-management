@@ -57,6 +57,7 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
         }
         project.setBusinessLeader(businessLeader);
         project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(project.getBusinessRelationManager().getId()).get());
+        project.getBusinessRelationManager().getProjects().forEach(project1 -> System.out.println(project1.getProjectName()));
 
         Set<BusinessUnit> businessUnitSet = new HashSet<>();
         businessUnitSet.forEach(businessUnit -> project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnit.getId()).get()));
