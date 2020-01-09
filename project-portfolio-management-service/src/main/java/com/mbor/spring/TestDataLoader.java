@@ -55,8 +55,7 @@ public class TestDataLoader {
             transaction.begin();
 
             Director ITDirector = new Director();
-            ITDirector.setFirstName("Director First Name");
-            ITDirector.setLastName("Director Last  Name");
+            ITDirector.setUserName("DirectorUserName");
             ITDirector.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
 
             Long directorID =  employeeDao.save(ITDirector).get().getId();
@@ -66,8 +65,7 @@ public class TestDataLoader {
             transaction.begin();
 
             Supervisor ITSupervisor = new Supervisor();
-            ITSupervisor.setFirstName("Supervisor First Name");
-            ITSupervisor.setLastName("Supervisor Last Name");
+            ITSupervisor.setUserName("ITSupervisorUserName");
             ITSupervisor.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
             ITSupervisor.setDirector((Director) employeeDao.find(directorID).get());
 
@@ -78,8 +76,7 @@ public class TestDataLoader {
             transaction.begin();
 
             BusinessRelationManager businessRelationManager = new BusinessRelationManager();
-            businessRelationManager.setFirstName("BRM First Name");
-            businessRelationManager.setLastName("BRM Last Name");
+            businessRelationManager.setUserName("BRMrUserName");
             businessRelationManager.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
             businessRelationManager.setDirector((Director) employeeDao.find(directorID).get());
 
@@ -90,8 +87,7 @@ public class TestDataLoader {
             transaction.begin();
 
             Consultant ITConsultant = new Consultant();
-            ITConsultant.setFirstName("Consultant First Name");
-            ITConsultant.setLastName("Consultant Last Name");
+            ITConsultant.setUserName("ConsultantUserName");
             ITConsultant.setSupervisor((Supervisor) employeeDao.find(supervisorId).get());
             ITConsultant.setBusinessUnit(businessUnitDao.find(ITBusinessUnitId).get());
 
@@ -102,8 +98,7 @@ public class TestDataLoader {
             transaction.begin();
 
             BusinessEmployee businessEmployee = new BusinessEmployee();
-            businessEmployee.setFirstName("BE First Name");
-            businessEmployee.setLastName("BE Last Name");
+            businessEmployee.setUserName("BusinessEmployeeUserName");
             businessEmployee.setBusinessUnit(businessUnitDao.find(operationBusinessUnitId).get());
 
             Long businessEmployeeId = employeeDao.save(businessEmployee).get().getId();

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Random;
+
 @ExtendWith({SpringExtension.class})
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @Rollback
@@ -29,7 +31,10 @@ class BRMEmployeeDaoTest extends IDaoImplTest<BusinessRelationManager> {
 
     @Override
     BusinessRelationManager createNewEntity() {
-        return new BusinessRelationManager();
+        Random random = new Random();
+        BusinessRelationManager brm = new BusinessRelationManager();
+        brm.setUserName("BRMUserName" + random.nextLong());
+        return brm;
     }
 
     @Override

@@ -1,10 +1,6 @@
 package com.mbor.domain;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 public class User {
@@ -19,7 +15,6 @@ public class User {
 
     private boolean isLocked = false;
 
-    private Set<? extends GrantedAuthority> grantedAuthorities = new HashSet<>();
 
     @OneToOne
     private Employee employee;
@@ -54,14 +49,6 @@ public class User {
 
     public void setLocked(boolean locked) {
         isLocked = locked;
-    }
-
-    public Set<? extends GrantedAuthority> getGrantedAuthorities() {
-        return grantedAuthorities;
-    }
-
-    public void setGrantedAuthorities(Set<GrantedAuthority> grantedAuthorities) {
-        this.grantedAuthorities = grantedAuthorities;
     }
 
     public Employee getEmployee() {

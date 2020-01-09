@@ -4,9 +4,11 @@ import com.mbor.domain.employeeinproject.IEmployee;
 import com.mbor.domain.employeeinproject.ProjectRole;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -21,6 +23,9 @@ public abstract class Employee implements IEmployee {
    private String firstName;
 
    private String lastName;
+
+   @NaturalId
+   private String userName;
 
    @ManyToOne
    @JoinColumn(name = "business_unit_id")
@@ -83,6 +88,24 @@ public abstract class Employee implements IEmployee {
       projectRole.setEmployee(null);
    }
 
+   public String getUserName() {
+      return userName;
+   }
 
+   public void setUserName(String userName) {
+      this.userName = userName;
+   }
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Employee employee = (Employee) o;
+      return userName.equals(employee.userName);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(userName);
+   }
 }

@@ -33,7 +33,7 @@ public class TestPersistenceConfiguration {
         LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
         localSessionFactoryBean.setDataSource(dataSource());
         localSessionFactoryBean.setHibernateProperties(hibernateProperties());
-        localSessionFactoryBean.setAnnotatedClasses(RealEndDate.class, Project.class, BusinessUnit.class, Employee.class, BusinessRelationManager.class, BusinessEmployee.class,  Consultant.class, Director.class, Supervisor.class, ProjectRole.class, BusinessLeader.class, ProjectManager.class, ResourceManager.class, SolutionArchitect.class);
+        localSessionFactoryBean.setAnnotatedClasses(RealEndDate.class, Project.class, BusinessUnit.class, Employee.class, BusinessRelationManager.class, BusinessEmployee.class,  Consultant.class, Director.class, Supervisor.class, ProjectRole.class, BusinessLeader.class, ProjectManager.class, ResourceManager.class, SolutionArchitect.class, User.class);
         return localSessionFactoryBean;
     }
 
