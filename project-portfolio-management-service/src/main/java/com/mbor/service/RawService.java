@@ -1,10 +1,12 @@
 package com.mbor.service;
 
 import com.mbor.dao.IDao;
+import org.hibernate.HibernateException;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,8 +14,13 @@ import java.util.Optional;
 public abstract class RawService<T> implements IService<T> {
 
     @Override
-    public Optional<T> saveInternal(T t) {
-        return getDao().save(t);
+    public T saveInternal(T t) {
+        try {
+            Optional<T> result = getDao().save(t);
+            return result.orElseThrow(RuntimeException::new);
+        } catch (HibernateException e){
+            throw new RuntimeException("Unexpected error during saving:  " + e.getMessage());
+        }
     }
 
     @Override
@@ -22,8 +29,13 @@ public abstract class RawService<T> implements IService<T> {
     }
 
     @Override
-    public Optional<T> find(Long id) {
-        return getDao().find(id);
+    public T find(Long id) {
+          Optional<T> result =  getDao().find(id);
+          if(result.isPresent()){
+              return result.get();
+          } else {
+              throw new NoResultException("No resource with id: " + id);
+          }
     }
 
     @Override

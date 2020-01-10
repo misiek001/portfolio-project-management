@@ -2,6 +2,7 @@ package com.mbor.spring;
 
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
+import com.mbor.domain.security.User;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;

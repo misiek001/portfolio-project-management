@@ -49,20 +49,20 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
         BusinessLeader businessLeader;
         if(project.getBusinessLeader().getId() == null){
             businessLeader = new BusinessLeader();
-            BusinessEmployee businessEmployee = (BusinessEmployee) employeeService.find(project.getBusinessLeader().getEmployee().getId()).get();
+            BusinessEmployee businessEmployee = (BusinessEmployee) employeeService.find(project.getBusinessLeader().getEmployee().getId());
             businessLeader.setEmployee(businessEmployee);
             projectRoleService.saveInternal(businessLeader);
         } else {
-            businessLeader = (BusinessLeader) projectRoleService.find(project.getBusinessLeader().getId()).get();
+            businessLeader = (BusinessLeader) projectRoleService.find(project.getBusinessLeader().getId());
         }
         project.setBusinessLeader(businessLeader);
-        project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(project.getBusinessRelationManager().getId()).get());
+        project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(project.getBusinessRelationManager().getId()));
         project.getBusinessRelationManager().getProjects().forEach(project1 -> System.out.println(project1.getProjectName()));
 
         Set<BusinessUnit> businessUnitSet = new HashSet<>();
-        businessUnitSet.forEach(businessUnit -> project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnit.getId()).get()));
-        Optional<Project> savedProject =  super.saveInternal(project);
-        ProjectCreatedDTO  projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(savedProject.get());
+        businessUnitSet.forEach(businessUnit -> project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnit.getId())));
+        Project savedProject =  super.saveInternal(project);
+        ProjectCreatedDTO  projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(savedProject);
         return Optional.ofNullable(projectCreatedDTO);
     }
 

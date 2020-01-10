@@ -1,7 +1,7 @@
 package com.mbor.dao;
 
 import com.mbor.domain.Consultant;
-import com.mbor.domain.User;
+import com.mbor.domain.security.User;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

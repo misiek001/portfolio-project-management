@@ -1,6 +1,6 @@
 package com.mbor.dao;
 
-import com.mbor.domain.User;
+import com.mbor.domain.security.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 import java.util.Optional;
 
 @Repository
-public class UserDao extends RawDao<User> {
+public class UserDao extends RawDao<User> implements IUserDao{
 
     public UserDao(SessionFactory sessionFactory) {
         super(sessionFactory);

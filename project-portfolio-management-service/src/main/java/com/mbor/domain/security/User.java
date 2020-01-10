@@ -1,6 +1,9 @@
-package com.mbor.domain;
+package com.mbor.domain.security;
+
+import com.mbor.domain.Employee;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class User {
@@ -15,6 +18,9 @@ public class User {
 
     private boolean isLocked = false;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
 
     @OneToOne
     private Employee employee;
@@ -57,5 +63,13 @@ public class User {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 }
