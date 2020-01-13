@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Isolation;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 @Rollback
+@ActiveProfiles("test")
 class UserDaoTest {
 
     private static Long employeeID;
@@ -33,7 +35,7 @@ class UserDaoTest {
     private UserDao userDao;
 
     @BeforeAll
-    static void  setup(@Autowired IEmployeeDao employeeDao, @Autowired UserDao userDao){
+    static void  setup (@Autowired IEmployeeDao employeeDao, @Autowired UserDao userDao){
         Random random = new Random();
         Consultant consultant = new Consultant();
         consultant.setUserName("ConsultantUserName" + random.nextLong());
@@ -54,7 +56,6 @@ class UserDaoTest {
         String username = userDao.save(user).get().getEmployee().getUserName();
 
         assertNotNull(userDao.findByUsername(username).get());
-
     }
 
 }

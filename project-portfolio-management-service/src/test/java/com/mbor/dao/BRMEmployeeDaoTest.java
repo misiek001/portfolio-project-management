@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Isolation;
@@ -21,6 +22,7 @@ import java.util.Random;
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @Rollback
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+@ActiveProfiles("test")
 class BRMEmployeeDaoTest extends IDaoImplTest<BusinessRelationManager> {
 
     @Autowired
@@ -28,6 +30,7 @@ class BRMEmployeeDaoTest extends IDaoImplTest<BusinessRelationManager> {
 
     @Autowired
     SessionFactory sessionFactory;
+
 
     @Override
     BusinessRelationManager createNewEntity() {

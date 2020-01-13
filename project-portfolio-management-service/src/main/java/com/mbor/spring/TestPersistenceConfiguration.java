@@ -2,11 +2,14 @@ package com.mbor.spring;
 
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
+import com.mbor.domain.security.Privilege;
+import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -19,6 +22,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@Profile("!prod")
 public class TestPersistenceConfiguration {
 
     @Bean
@@ -34,7 +38,7 @@ public class TestPersistenceConfiguration {
         LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
         localSessionFactoryBean.setDataSource(dataSource());
         localSessionFactoryBean.setHibernateProperties(hibernateProperties());
-        localSessionFactoryBean.setAnnotatedClasses(RealEndDate.class, Project.class, BusinessUnit.class, Employee.class, BusinessRelationManager.class, BusinessEmployee.class,  Consultant.class, Director.class, Supervisor.class, ProjectRole.class, BusinessLeader.class, ProjectManager.class, ResourceManager.class, SolutionArchitect.class, User.class);
+        localSessionFactoryBean.setAnnotatedClasses(RealEndDate.class, Project.class, BusinessUnit.class, Employee.class, BusinessRelationManager.class, BusinessEmployee.class,  Consultant.class, Director.class, Supervisor.class, ProjectRole.class, BusinessLeader.class, ProjectManager.class, ResourceManager.class, SolutionArchitect.class, User.class, Role.class, Privilege.class);
         return localSessionFactoryBean;
     }
 

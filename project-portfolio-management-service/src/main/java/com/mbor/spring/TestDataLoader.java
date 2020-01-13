@@ -7,11 +7,13 @@ import com.mbor.domain.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 @Service
+@Profile("dev")
 public class TestDataLoader {
 
     private final SessionFactory sessionFactory;

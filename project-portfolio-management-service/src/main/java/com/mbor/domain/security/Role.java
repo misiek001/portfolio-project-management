@@ -5,6 +5,7 @@ import org.hibernate.annotations.NaturalId;
 import javax.persistence.*;
 import java.util.Collection;
 
+@Entity
 public class Role {
 
     @Id

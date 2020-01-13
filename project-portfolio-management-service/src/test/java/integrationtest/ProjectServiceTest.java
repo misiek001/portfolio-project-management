@@ -11,20 +11,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @Rollback
 @Transactional
+@ActiveProfiles("test")
 public class ProjectServiceTest {
 
     @Autowired
@@ -48,8 +49,8 @@ public class ProjectServiceTest {
 
     @Test
     void find_ThenSuccess(){
-        Optional<Project> result = projectService.find(1l);
-        assertTrue(result.isPresent());
+        Project result = (Project) projectService.find(1l);
+        assertNotNull(result);
     }
 
     @Test
@@ -73,7 +74,7 @@ public class ProjectServiceTest {
     void save_ThenSuccess(){
         Project project4 = new Project();
         project4.setProjectName("Fourth Project");
-        assertTrue(projectService.saveInternal(project4).isPresent());
+        assertNotNull(projectService.saveInternal(project4));
         assertEquals(4, projectService.findAll().size());
     }
 
