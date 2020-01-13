@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BusinessRelationManagerMapper extends EmployeeMapper <BusinessRelationManagerDTO, BusinessRelationManager, EmployeeCreationDTO, EmployeeCreatedDTO> {
 
-    public BusinessRelationManagerMapper(ModelMapper modelMapper, Class<BusinessRelationManagerDTO> dtoClazz, Class<BusinessRelationManager> entityClazz, Class<EmployeeCreationDTO> creationDtoClazz, Class<EmployeeCreatedDTO> createdDtoClazz) {
-        super(modelMapper, dtoClazz, entityClazz, creationDtoClazz, createdDtoClazz);
+    public BusinessRelationManagerMapper(ModelMapper modelMapper) {
+        super(modelMapper, BusinessRelationManagerDTO.class, BusinessRelationManager.class, EmployeeCreationDTO.class, EmployeeCreatedDTO.class);
     }
 }

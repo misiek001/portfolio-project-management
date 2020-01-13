@@ -103,7 +103,7 @@ class DTOtoEntityMapperTest {
 
     @Test
      void  mapProjectCreationDTOtoProject() {
-        Project createdProject = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
+        Project createdProject = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
 
         assertEquals(createdProject.getId(), expectedProject.getId());
         assertEquals(createdProject.getProjectName(), expectedProject.getProjectName());

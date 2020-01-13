@@ -4,12 +4,12 @@ import com.mbor.domain.Employee;
 import com.mbor.model.EmployeeDTO;
 import org.modelmapper.ModelMapper;
 
-public class EmployeeMapper<T extends EmployeeDTO, U extends Employee, S, V>  extends CreatMapper <T, U, S, V> {
+public abstract class EmployeeMapper<T extends EmployeeDTO, U extends Employee, S, V>  extends CreatMapper <T, U, S, V> {
 
-    private final Class<T> dtoClazz;
-    private final Class<U> entityClazz;
-    private final Class<S> creationDtoClazz;
-    private final Class<V> createdDtoClazz;
+    protected Class<T> dtoClazz;
+    protected Class<U> entityClazz;
+    protected Class<S> creationDtoClazz;
+    protected Class<V> createdDtoClazz;
 
     public EmployeeMapper(ModelMapper modelMapper, Class<T> dtoClazz, Class<U> entityClazz, Class<S> creationDtoClazz, Class<V> createdDtoClazz) {
         super(modelMapper);

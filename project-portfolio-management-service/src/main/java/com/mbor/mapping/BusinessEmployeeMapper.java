@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class BusinessEmployeeMapper extends EmployeeMapper<BusinessEmployeeDTO, BusinessEmployee, EmployeeCreationDTO, EmployeeCreatedDTO>  {
 
-    public BusinessEmployeeMapper(ModelMapper modelMapper, Class<BusinessEmployeeDTO> dtoClazz, Class<BusinessEmployee> entityClazz, Class<EmployeeCreationDTO> creationDtoClazz, Class<EmployeeCreatedDTO> createdDtoClazz) {
-        super(modelMapper, dtoClazz, entityClazz, creationDtoClazz, createdDtoClazz);
+    public BusinessEmployeeMapper(ModelMapper modelMapper) {
+        super(modelMapper, BusinessEmployeeDTO.class, BusinessEmployee.class, EmployeeCreationDTO.class, EmployeeCreatedDTO.class);
     }
 
     public Employee mapEmployeeCreationDTOtoEmployee(EmployeeCreationDTO employeeCreationDTO){

@@ -129,7 +129,7 @@ class ProjectMapperTest {
     @Test
     void mapProjectCreationDTOtoProject() {
 
-        Project createdProject = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
+        Project createdProject = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
 
         assertEquals(createdProject.getId(), expectedProject.getId());
         assertEquals(createdProject.getProjectName(), expectedProject.getProjectName());
@@ -145,7 +145,7 @@ class ProjectMapperTest {
 
     @Test
     void mapCreatedProjectToDTO() {
-        ProjectCreatedDTO projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(expectedProject);
+        ProjectCreatedDTO projectCreatedDTO = projectMapper.convertEntityToCreatedDto(expectedProject);
         assertEquals(projectCreatedDTO.getId(), expectedProjectCreatedDTO.getId());
         assertEquals(projectCreatedDTO.getProjectName(), expectedProjectCreatedDTO.getProjectName());
         assertEquals(projectCreatedDTO.getBusinessRelationManager().getId(), expectedProjectCreatedDTO.getBusinessRelationManager().getId());

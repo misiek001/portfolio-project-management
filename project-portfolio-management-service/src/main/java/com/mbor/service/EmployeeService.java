@@ -45,18 +45,24 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
 
     @Override
     public EmployeeCreatedDTO save(EmployeeCreationDTO employeeCreationDTO) {
-        Employee employee = getEmployee(employeeCreationDTO);
+        EmployeeType employeeType = employeeCreationDTO.getEmployeeType();
+        Employee employee = prepareEmployee(employeeCreationDTO, employeeType);
         setEmployeeUserName(employee);
-        Employee returnedEmployee = getDao().save(employee);
-
+        Employee returnedEmployee = super.saveInternal(employee);
+        return prepareEmployeeCreatedDto(returnedEmployee, employeeType);
     }
 
-    private Employee getEmployee (EmployeeCreationDTO employeeCreationDTO){
-        return mappers.get(employeeCreationDTO.getEmployeeType()).convertCreationDtoToEntity(employeeCreationDTO);
+    private Employee prepareEmployee(EmployeeCreationDTO employeeCreationDTO, EmployeeType employeeType){
+        return mappers.get(employeeType).convertCreationDtoToEntity(employeeCreationDTO);
+    }
+
+    private EmployeeCreatedDTO prepareEmployeeCreatedDto(Employee employee, EmployeeType employeeType){
+        return (EmployeeCreatedDTO) mappers.get(employeeType).convertEntityToCreatedDto(employee);
     }
 
     private void setEmployeeUserName(Employee employee){
         String userName = employee.getFirstName().concat(employee.getLastName()).concat(String.valueOf(random.nextLong()));
+        employee.setUserName(userName);
     }
 
     @Autowired
