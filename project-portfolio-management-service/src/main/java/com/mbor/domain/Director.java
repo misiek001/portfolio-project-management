@@ -19,4 +19,19 @@ public class Director extends Employee {
     @Fetch(value = FetchMode.JOIN)
     private Set<BusinessRelationManager> businessRelationManagers = new HashSet<>();
 
+    public Set<Supervisor> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Set<Supervisor> employees) {
+        this.employees = employees;
+    }
+
+    public Set<BusinessRelationManager> getBusinessRelationManagers() {
+        return businessRelationManagers;
+    }
+
+    public void setBusinessRelationManagers(Set<BusinessRelationManager> businessRelationManagers) {
+        this.businessRelationManagers = businessRelationManagers;
+    }
 }

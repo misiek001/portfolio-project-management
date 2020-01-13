@@ -34,7 +34,7 @@ public abstract class RawController implements IController {
     @Override
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         getService().delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     public abstract IService getService();

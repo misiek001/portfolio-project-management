@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -44,8 +43,8 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
     }
 
     @Override
-    public  Optional<ProjectCreatedDTO> save(ProjectCreationDTO projectCreationDTO) {
-        Project project = projectMapper.mapProjectCreationDTOtoProject(projectCreationDTO);
+    public  ProjectCreatedDTO save(ProjectCreationDTO projectCreationDTO) {
+        Project project = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
         BusinessLeader businessLeader;
         if(project.getBusinessLeader().getId() == null){
             businessLeader = new BusinessLeader();
@@ -62,8 +61,7 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
         Set<BusinessUnit> businessUnitSet = new HashSet<>();
         businessUnitSet.forEach(businessUnit -> project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnit.getId())));
         Project savedProject =  super.saveInternal(project);
-        ProjectCreatedDTO  projectCreatedDTO = projectMapper.mapCreatedProjectToDTO(savedProject);
-        return Optional.ofNullable(projectCreatedDTO);
+        return projectMapper.convertEntityToCreatedDto(savedProject);
     }
 
     @Override

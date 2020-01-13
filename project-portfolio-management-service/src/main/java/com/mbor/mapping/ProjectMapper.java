@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class ProjectMapper extends Mapper<ProjectDTO, Project> {
+public class ProjectMapper extends CreatMapper<ProjectDTO, Project, ProjectCreationDTO, ProjectCreatedDTO> {
 
     private final BusinessLeaderMapper businessLeaderMapper;
     private final BusinessRelationManagerMapper businessRelationManagerMapper;
@@ -27,33 +27,18 @@ public class ProjectMapper extends Mapper<ProjectDTO, Project> {
 
     @Override
     public ProjectDTO convertToDto(Project project) {
+
         return null;
     }
 
     @Override
     public Project convertToEntity(ProjectDTO projectDTO) {
+
         return null;
     }
 
-    public Project mapProjectCreationDTOtoProject(ProjectCreationDTO projectCreationDTO) {
-        Project project = new Project();
-        project.setProjectName(projectCreationDTO.getProjectName());
-        project.setStatus(ProjectStatus.valueOf(projectCreationDTO.getProjectStatus().name()));
-        project.setBusinessRelationManager(businessRelationManagerMapper.convertToEntity(projectCreationDTO.getBusinessRelationManager()));
-        project.setBusinessLeader(businessLeaderMapper.convertToEntity(projectCreationDTO.getBusinessLeader()));
-        project.getBusinessLeader().getEmployee().addProjectRole(project.getBusinessLeader());
-        Set<BusinessUnit> businessUnits = projectCreationDTO.getBusinessUnits().stream()
-                .map(businessUnitDTO -> {
-                    BusinessUnit businessUnit = new BusinessUnit();
-                    businessUnit.setId(businessUnitDTO.getId());
-                    businessUnit.setName(businessUnitDTO.getName());
-                return businessUnit;
-        }).collect(Collectors.toSet());
-        project.setBusinessUnits(businessUnits);
-        return project;
-    }
-
-    public ProjectCreatedDTO mapCreatedProjectToDTO(Project project) {
+    @Override
+    public ProjectCreatedDTO convertEntityToCreatedDto(Project project) {
         ProjectCreatedDTO projectCreatedDTO = modelMapper.map(project, ProjectCreatedDTO.class);
         projectCreatedDTO.setBusinessLeader(businessLeaderMapper.convertToDto(project.getBusinessLeader()));
         Set<BusinessUnitDTO> businessUnitDTOSet = project.getBusinessUnits().stream()
@@ -65,6 +50,25 @@ public class ProjectMapper extends Mapper<ProjectDTO, Project> {
                 }).collect(Collectors.toSet());
         projectCreatedDTO.setBusinessUnits(businessUnitDTOSet);
         return projectCreatedDTO;
+    }
+
+    @Override
+    public Project convertCreationDtoToEntity(ProjectCreationDTO projectCreationDTO) {
+        Project project = new Project();
+        project.setProjectName(projectCreationDTO.getProjectName());
+        project.setStatus(ProjectStatus.valueOf(projectCreationDTO.getProjectStatus().name()));
+        project.setBusinessRelationManager(businessRelationManagerMapper.convertToEntity(projectCreationDTO.getBusinessRelationManager()));
+        project.setBusinessLeader(businessLeaderMapper.convertToEntity(projectCreationDTO.getBusinessLeader()));
+        project.getBusinessLeader().getEmployee().addProjectRole(project.getBusinessLeader());
+        Set<BusinessUnit> businessUnits = projectCreationDTO.getBusinessUnits().stream()
+                .map(businessUnitDTO -> {
+                    BusinessUnit businessUnit = new BusinessUnit();
+                    businessUnit.setId(businessUnitDTO.getId());
+                    businessUnit.setName(businessUnitDTO.getName());
+                    return businessUnit;
+                }).collect(Collectors.toSet());
+        project.setBusinessUnits(businessUnits);
+        return project;
     }
 
 }

@@ -15,7 +15,6 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Employee implements IEmployee {
 
-
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
