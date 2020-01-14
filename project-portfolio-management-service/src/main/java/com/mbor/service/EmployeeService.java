@@ -2,7 +2,9 @@ package com.mbor.service;
 
 import com.mbor.dao.EmployeeDao;
 import com.mbor.dao.IDao;
+import com.mbor.dao.UserDao;
 import com.mbor.domain.Employee;
+import com.mbor.domain.security.User;
 import com.mbor.mapping.BusinessEmployeeMapper;
 import com.mbor.mapping.BusinessRelationManagerMapper;
 import com.mbor.mapping.EmployeeMapper;
@@ -27,15 +29,17 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
 
     private ApplicationContext context;
 
-    private EmployeeDao employeeDao;
+    private final EmployeeDao employeeDao;
 
     private Map<EmployeeType, EmployeeMapper> mappers = new HashMap();
 
     private Random random = new Random();
 
-    @Autowired
-    public EmployeeService(EmployeeDao employeeDao) {
+    private final  UserDao userDao;
+
+    public EmployeeService(EmployeeDao employeeDao, UserDao userDao) {
         this.employeeDao = employeeDao;
+        this.userDao = userDao;
     }
 
     @Override
@@ -49,6 +53,7 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
         Employee employee = prepareEmployee(employeeCreationDTO, employeeType);
         setEmployeeUserName(employee);
         Employee returnedEmployee = super.saveInternal(employee);
+        createUser(employee);
         return prepareEmployeeCreatedDto(returnedEmployee, employeeType);
     }
 
@@ -63,6 +68,13 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
     private void setEmployeeUserName(Employee employee){
         String userName = employee.getFirstName().concat(employee.getLastName()).concat(String.valueOf(random.nextLong()));
         employee.setUserName(userName);
+    }
+
+    //Todo Extend Functionality
+    private void createUser(Employee employee){
+        User user = new User();
+        user.setEmployee(employee);
+        userDao.save(user);
     }
 
     @Autowired
