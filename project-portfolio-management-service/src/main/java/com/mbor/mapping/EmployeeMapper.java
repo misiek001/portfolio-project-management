@@ -4,7 +4,7 @@ import com.mbor.domain.Employee;
 import com.mbor.model.EmployeeDTO;
 import org.modelmapper.ModelMapper;
 
-public abstract class EmployeeMapper<T extends EmployeeDTO, U extends Employee, S, V>  extends CreatMapper <T, U, S, V> {
+public abstract class EmployeeMapper<T extends EmployeeDTO, U extends Employee, S, V>  extends CreationPojoMapper<T, U, S, V> {
 
     protected Class<T> dtoClazz;
     protected Class<U> entityClazz;

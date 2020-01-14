@@ -36,7 +36,7 @@ public class TestController {
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/getProject")
+    @GetMapping(params = {"creationDto=project"})
     public ResponseEntity<ProjectCreationDTO> test(){
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName("Project Name");
@@ -66,7 +66,7 @@ public class TestController {
         return new ResponseEntity<>(projectCreationDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/getEmployee")
+    @GetMapping(params = {"creationDto=employee"})
     public ResponseEntity<EmployeeCreationDTO> getEmployee(){
         EmployeeCreationDTO employeeCreationDTO = new EmployeeCreationDTO();
         employeeCreationDTO.setFirstName("First Name");
@@ -75,6 +75,15 @@ public class TestController {
         employeeCreationDTO.setBusinessUnitId(1l);
 
         return new ResponseEntity<>(employeeCreationDTO, HttpStatus.OK);
+
+    }
+
+    @GetMapping(params = {"creationDto=businessUnit"})
+    public ResponseEntity<BusinessUnitCreationDTO> getBusinessUnit(){
+        BusinessUnitCreationDTO businessUnitCreationDTO = new BusinessUnitCreationDTO();
+        businessUnitCreationDTO.setName("BusinessUnitName");
+
+        return new ResponseEntity<>(businessUnitCreationDTO, HttpStatus.OK);
 
     }
 

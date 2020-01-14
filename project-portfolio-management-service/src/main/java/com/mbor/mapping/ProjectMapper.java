@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class ProjectMapper extends CreatMapper<ProjectDTO, Project, ProjectCreationDTO, ProjectCreatedDTO> {
+public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, ProjectCreationDTO, ProjectCreatedDTO> {
 
     private final BusinessLeaderMapper businessLeaderMapper;
     private final BusinessRelationManagerMapper businessRelationManagerMapper;
