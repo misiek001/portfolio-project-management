@@ -1,9 +1,8 @@
-package com.mbor.mapping;
+package com.mbor.mapper;
 
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.model.*;
-import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.spring.WebConfiguration;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,13 +16,14 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = WebConfiguration.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-class ProjectMapperTest {
+class DTOtoEntityMapperTest {
+
     private static Random random = new Random();
 
     private static ProjectCreationDTO projectCreationDTO;
@@ -39,8 +39,6 @@ class ProjectMapperTest {
     private static BusinessLeader businessLeader;
     private static BusinessUnit businessUnitFirst;
     private static BusinessUnit businessUnitSecond;
-
-    private static ProjectCreatedDTO expectedProjectCreatedDTO;
 
     @Autowired
     ProjectMapper projectMapper;
@@ -61,7 +59,6 @@ class ProjectMapperTest {
 
         businessRelationManagerDTO = new BusinessRelationManagerDTO();
         businessRelationManagerDTO.setId(random.nextLong());
-
         projectCreationDTO.setBusinessRelationManager(businessRelationManagerDTO);
 
         businessLeaderDTO = new BusinessLeaderDTO();
@@ -73,12 +70,10 @@ class ProjectMapperTest {
 
         businessUnitDTOFirst = new BusinessUnitDTO();
         businessUnitDTOFirst.setId(random.nextLong());
-
         projectCreationDTO.addBusinessUnit(businessUnitDTOFirst);
 
         businessUnitDTOSecond = new BusinessUnitDTO();
         businessUnitDTOSecond.setId(random.nextLong());
-
         projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
         //Creating Expected Project
@@ -89,13 +84,11 @@ class ProjectMapperTest {
 
         businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setId(businessRelationManagerDTO.getId());
-
         expectedProject.setBusinessRelationManager(businessRelationManager);
 
         businessLeader = new BusinessLeader();
         businessEmployee = new BusinessEmployee();
         businessEmployee.setId(businessEmployeeDTO.getId());
-
         businessLeader.setEmployee(businessEmployee);
         expectedProject.setBusinessLeader(businessLeader);
 
@@ -106,29 +99,10 @@ class ProjectMapperTest {
         businessUnitSecond.setId(businessUnitDTOSecond.getId());
         expectedProject.addBusinessUnit(businessUnitFirst);
         expectedProject.addBusinessUnit(businessUnitSecond);
-
-        //Creating expected ProjectCreatedDTO
-        expectedProjectCreatedDTO = new ProjectCreatedDTO();
-        expectedProjectCreatedDTO.setId(expectedProject.getId());
-        expectedProjectCreatedDTO.setProjectName(expectedProject.getProjectName());
-        expectedProjectCreatedDTO.setBusinessLeader(businessLeaderDTO);
-        expectedProjectCreatedDTO.setBusinessRelationManager(businessRelationManagerDTO);
-        expectedProjectCreatedDTO.getBusinessUnits().add(businessUnitDTOFirst);
-        expectedProjectCreatedDTO.getBusinessUnits().add(businessUnitDTOSecond);
-        expectedProjectCreatedDTO.setProjectStatus(ProjectStatusDTO.ANALYSIS);
     }
 
     @Test
-    void convertToDto() {
-    }
-
-    @Test
-    void convertToEntity() {
-    }
-
-    @Test
-    void mapProjectCreationDTOtoProject() {
-
+     void  mapProjectCreationDTOtoProject() {
         Project createdProject = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
 
         assertEquals(createdProject.getId(), expectedProject.getId());
@@ -144,12 +118,30 @@ class ProjectMapperTest {
     }
 
     @Test
-    void mapCreatedProjectToDTO() {
-        ProjectCreatedDTO projectCreatedDTO = projectMapper.convertEntityToCreatedDto(expectedProject);
-        assertEquals(projectCreatedDTO.getId(), expectedProjectCreatedDTO.getId());
-        assertEquals(projectCreatedDTO.getProjectName(), expectedProjectCreatedDTO.getProjectName());
-        assertEquals(projectCreatedDTO.getBusinessRelationManager().getId(), expectedProjectCreatedDTO.getBusinessRelationManager().getId());
-        assertEquals(projectCreatedDTO.getBusinessLeader().getEmployee().getId(), expectedProjectCreatedDTO.getBusinessLeader().getEmployee().getId());
-        assertEquals(projectCreatedDTO.getProjectStatus().name(), expectedProjectCreatedDTO.getProjectStatus().name());
+    void mapBusinessRelationManagerDTOtoEntity(){
+        BusinessRelationManager createdBRM = businessRelationManagerMapper.convertToEntity(businessRelationManagerDTO);
+
+        assertEquals(createdBRM.getId(), businessRelationManager.getId());
+        assertEquals(createdBRM.getFirstName(), businessRelationManager.getFirstName());
+        assertEquals(createdBRM.getLastName(), businessRelationManager.getLastName());
     }
+
+    @Test
+    void mamBusinessLeaderDTOToEntity() {
+        BusinessLeader createdBusinessLeader = businessLeaderMapper.convertToEntity(businessLeaderDTO);
+
+        assertEquals(createdBusinessLeader.getId(), businessLeader.getId());
+        assertEquals(createdBusinessLeader.getEmployee().getId(), businessLeader.getEmployee().getId());
+        assertEquals(createdBusinessLeader.getEmployee().getFirstName(), businessLeader.getEmployee().getFirstName());
+        assertEquals(createdBusinessLeader.getEmployee().getLastName(), businessLeader.getEmployee().getLastName());
+    }
+
+    @Test
+    void mapBusinessEmployeeDTOtoEntity() {
+        BusinessEmployee createdBusinessEmployee = businessEmployeeMapper.convertToEntity((businessEmployeeDTO));
+        assertEquals(createdBusinessEmployee.getId(), businessEmployee.getId());
+        assertEquals(createdBusinessEmployee.getFirstName(), businessEmployee.getFirstName());
+        assertEquals(createdBusinessEmployee.getLastName(), businessEmployee.getLastName());
+    }
+
 }

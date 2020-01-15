@@ -1,19 +1,24 @@
 package com.mbor.model.creation;
 
-import javax.validation.constraints.NotNull;
+import com.mbor.validation.EmployeeAssignment;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
+@EmployeeAssignment()
 public class EmployeeCreationDTO {
 
-    @NotNull
+    @NotBlank
     private String firstName;
 
-    @NotNull
+    @NotBlank
     private String lastName;
 
     @NotNull
     private EmployeeType employeeType;
 
-    @NotNull
+    @Positive
     private Long businessUnitId;
 
     //Todo Custom validation for emptyDirectorID and EmployeeType

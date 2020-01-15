@@ -7,7 +7,7 @@ import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.Project;
 import com.mbor.domain.employeeinproject.BusinessLeader;
-import com.mbor.mapping.ProjectMapper;
+import com.mbor.mapper.ProjectMapper;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import org.springframework.beans.factory.annotation.Autowired;

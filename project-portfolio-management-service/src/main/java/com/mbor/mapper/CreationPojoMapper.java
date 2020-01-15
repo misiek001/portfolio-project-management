@@ -1,4 +1,4 @@
-package com.mbor.mapping;
+package com.mbor.mapper;
 
 import org.modelmapper.ModelMapper;
 

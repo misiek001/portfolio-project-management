@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"com.mbor.dao", "com.mbor.service", "com.mbor.mapping", "com.mbor.spring"})
+@ComponentScan(basePackages = {"com.mbor.dao", "com.mbor.service", "com.mbor.mapper", "com.mbor.spring"})
 public class ServiceConfiguration {
 
     @Bean

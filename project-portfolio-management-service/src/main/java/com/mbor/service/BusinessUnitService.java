@@ -3,7 +3,7 @@ package com.mbor.service;
 import com.mbor.dao.IBusinessUnitDao;
 import com.mbor.dao.IDao;
 import com.mbor.domain.BusinessUnit;
-import com.mbor.mapping.BusinessUnitMapper;
+import com.mbor.mapper.BusinessUnitMapper;
 import com.mbor.model.creation.BusinessUnitCreatedDTO;
 import com.mbor.model.creation.BusinessUnitCreationDTO;
 import org.springframework.beans.factory.annotation.Autowired;

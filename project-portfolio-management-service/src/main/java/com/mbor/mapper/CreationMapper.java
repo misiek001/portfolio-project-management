@@ -1,4 +1,4 @@
-package com.mbor.mapping;
+package com.mbor.mapper;
 
 public interface CreationMapper<T, U, S, V> extends PojoMapper<T, U> {
 

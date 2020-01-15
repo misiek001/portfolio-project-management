@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController extends RawController {
@@ -24,7 +26,7 @@ public class EmployeeController extends RawController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeCreatedDTO> save(@RequestBody EmployeeCreationDTO employeeCreationDTO){
+    public ResponseEntity<EmployeeCreatedDTO> save(@Valid @RequestBody EmployeeCreationDTO employeeCreationDTO){
        EmployeeCreatedDTO employeeCreatedDTO  =  employeeService.save(employeeCreationDTO);
        return new ResponseEntity<>(employeeCreatedDTO, HttpStatus.OK);
     }

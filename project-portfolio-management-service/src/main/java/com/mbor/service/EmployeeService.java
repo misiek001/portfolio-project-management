@@ -5,9 +5,7 @@ import com.mbor.dao.IDao;
 import com.mbor.dao.UserDao;
 import com.mbor.domain.Employee;
 import com.mbor.domain.security.User;
-import com.mbor.mapping.BusinessEmployeeMapper;
-import com.mbor.mapping.BusinessRelationManagerMapper;
-import com.mbor.mapping.EmployeeMapper;
+import com.mbor.mapper.*;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
 import com.mbor.model.creation.EmployeeType;
@@ -85,6 +83,8 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
     public void initMappers(){
         mappers.put(EmployeeType.BusinessEmployee, context.getBean("businessEmployeeMapper", BusinessEmployeeMapper.class));
         mappers.put(EmployeeType.BusinessRelationManager, context.getBean("businessRelationManagerMapper", BusinessRelationManagerMapper.class));
+        mappers.put(EmployeeType.Supervisor, context.getBean("supervisorMapper", SupervisorMapper.class));
+        mappers.put(EmployeeType.Director, context.getBean("directorMapper", DirectorMapper.class));
     }
 
 

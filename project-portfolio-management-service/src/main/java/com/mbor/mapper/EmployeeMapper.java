@@ -1,4 +1,4 @@
-package com.mbor.mapping;
+package com.mbor.mapper;
 
 import com.mbor.domain.Employee;
 import com.mbor.model.EmployeeDTO;
