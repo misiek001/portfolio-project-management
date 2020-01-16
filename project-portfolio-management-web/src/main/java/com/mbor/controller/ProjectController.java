@@ -3,14 +3,11 @@ package com.mbor.controller;
 import com.mbor.model.ProjectDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
-import com.mbor.service.IEmployeeService;
+import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.service.IProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,16 +17,14 @@ public class ProjectController extends RawController {
 
     private final IProjectService projectService;
 
-    private final IEmployeeService employeeService;
 
-    public ProjectController(IProjectService projectService, IEmployeeService employeeService) {
+    public ProjectController(IProjectService projectService) {
         this.projectService = projectService;
-        this.employeeService = employeeService;
     }
 
     @PostMapping
     public ResponseEntity<ProjectCreatedDTO> save(@RequestBody ProjectCreationDTO projectCreationDTO){
-        ProjectCreatedDTO projectCreatedDTO =  projectService.save(projectCreationDTO);
+        ProjectCreatedDTO projectCreatedDTO =  getService().save(projectCreationDTO);
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.OK);
     }
 
@@ -41,6 +36,11 @@ public class ProjectController extends RawController {
         return super.find(id);
     }
 
+    @PostMapping(params = "search=true")
+    public ResponseEntity<List<ProjectDTO>> findByCriteria(@RequestBody SearchProjectDTO searchProjectDTO){
+        List<ProjectDTO> projects = getService().findByMultipleCriteria(searchProjectDTO);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
     public ResponseEntity<Void> delete(Long id) {
         return super.delete(id);
     }

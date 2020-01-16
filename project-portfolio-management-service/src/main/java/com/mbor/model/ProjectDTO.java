@@ -10,6 +10,8 @@ public class ProjectDTO implements IProjectDTO {
 
     private String projectName;
 
+    private ProjectClassDTO projectClass;
+
     private ResourceManagerDTO resourceManager;
 
     private ProjectManagerDTO projectManager;
@@ -44,6 +46,14 @@ public class ProjectDTO implements IProjectDTO {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public ProjectClassDTO getProjectClass() {
+        return projectClass;
+    }
+
+    public void setProjectClass(ProjectClassDTO projectClass) {
+        this.projectClass = projectClass;
     }
 
     public ResourceManagerDTO getResourceManager() {

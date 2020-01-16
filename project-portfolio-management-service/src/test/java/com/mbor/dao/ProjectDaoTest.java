@@ -28,7 +28,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
     static Random random = new Random();
 
     @BeforeAll
-    static void init(@Autowired ProjectDao projectDao){
+    static void init(@Autowired IProjectDao projectDao){
         for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
             Project project = new Project();
             project.setProjectName("ProjectName" + random.nextLong());

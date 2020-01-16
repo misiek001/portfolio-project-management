@@ -1,6 +1,5 @@
 package com.mbor.spring;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,9 +35,5 @@ public class WebConfiguration implements WebMvcConfigurer {
         viewResolver.setContentNegotiationManager(contentNegotiationManager);
         return viewResolver;
 }
-    @Bean
-    public ModelMapper modelMapper(){
-        return new ModelMapper();
-    }
 
 }

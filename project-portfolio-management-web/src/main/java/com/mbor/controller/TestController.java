@@ -1,10 +1,8 @@
 package com.mbor.controller;
 
-import com.mbor.model.BusinessEmployeeDTO;
-import com.mbor.model.BusinessLeaderDTO;
-import com.mbor.model.BusinessRelationManagerDTO;
-import com.mbor.model.BusinessUnitDTO;
+import com.mbor.model.*;
 import com.mbor.model.creation.*;
+import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.service.IEmployeeService;
 import com.mbor.service.IProjectService;
 import org.springframework.context.annotation.Profile;
@@ -12,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Random;
 
 @RestController
@@ -85,6 +84,16 @@ public class TestController {
 
         return new ResponseEntity<>(businessUnitCreationDTO, HttpStatus.OK);
 
+    }
+
+    @GetMapping(params = {"prepareDto=SearchProject"})
+    public ResponseEntity<SearchProjectDTO> getSearchProjectDto(){
+        SearchProjectDTO searchProjectDTO = new SearchProjectDTO();
+        searchProjectDTO.setBusinessUnitName("Business");
+        searchProjectDTO.setProjectClassDTOList(Arrays.asList(ProjectClassDTO.I, ProjectClassDTO.II));
+        searchProjectDTO.setProjectName("Project");
+        searchProjectDTO.setProjectStatusDTOList(Arrays.asList(ProjectStatusDTO.ANALYSIS, ProjectStatusDTO.IN_PROGRESS));
+        return new ResponseEntity<>(searchProjectDTO, HttpStatus.OK);
     }
 
 }

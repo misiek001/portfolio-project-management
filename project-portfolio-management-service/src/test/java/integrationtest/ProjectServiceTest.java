@@ -1,6 +1,6 @@
 package integrationtest;
 
-import com.mbor.dao.ProjectDao;
+import com.mbor.dao.IProjectDao;
 import com.mbor.domain.Project;
 import com.mbor.service.IProjectService;
 import com.mbor.spring.ServiceConfiguration;
@@ -35,7 +35,7 @@ public class ProjectServiceTest {
     SessionFactory sessionFactory;
 
     @BeforeAll
-    static void init(@Autowired ProjectDao projectDao) {
+    static void init(@Autowired IProjectDao projectDao) {
         Project projectToSave = new Project();
         projectToSave.setProjectName("First Project");
         projectDao.save(projectToSave);

@@ -26,6 +26,8 @@ public class Project implements IProjectDTO {
     @NaturalId
     private String projectName;
 
+    private ProjectClass projectClass;
+
     @ManyToOne
     @JoinColumn(name = "resource_manager_id")
     private ResourceManager resourceManager;
@@ -204,6 +206,14 @@ public class Project implements IProjectDTO {
         if (project.getProjectName() != null){
             this.projectName = project.getProjectName();
         }
+    }
+
+    public ProjectClass getProjectClass() {
+        return projectClass;
+    }
+
+    public void setProjectClass(ProjectClass projectClass) {
+        this.projectClass = projectClass;
     }
 
     @Override
