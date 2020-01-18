@@ -21,7 +21,7 @@ public class SearchProjectDTO {
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate projectStartDate;
+    private LocalDate projectStartDateLaterThat;
 
     public String getProjectName() {
         return projectName;
@@ -55,11 +55,11 @@ public class SearchProjectDTO {
         this.projectStatusDTOList = projectStatusDTOList;
     }
 
-    public LocalDate getProjectStartDate() {
-        return projectStartDate;
+    public LocalDate getProjectStartDateLaterThat() {
+        return projectStartDateLaterThat;
     }
 
-    public void setProjectStartDate(LocalDate projectStartDate) {
-        this.projectStartDate = projectStartDate;
+    public void setProjectStartDateLaterThat(LocalDate projectStartDateLaterThat) {
+        this.projectStartDateLaterThat = projectStartDateLaterThat;
     }
 }

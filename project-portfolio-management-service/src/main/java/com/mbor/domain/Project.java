@@ -51,7 +51,7 @@ public class Project implements IProjectDTO {
     })
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "business_unit_id"))
+            inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
     private Set<SolutionArchitect> solutionArchitect = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
@@ -66,7 +66,7 @@ public class Project implements IProjectDTO {
 
     @ManyToMany(cascade  ={
             CascadeType.MERGE,
-            CascadeType.PERSIST
+            CascadeType.PERSIST,
     })
     @JoinTable(name = "business_unit_projects",
             joinColumns = @JoinColumn(name = "project_id"),

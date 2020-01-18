@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,8 +63,11 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
         project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(project.getBusinessRelationManager().getId()));
         project.getBusinessRelationManager().getProjects().forEach(project1 -> System.out.println(project1.getProjectName()));
 
-        Set<BusinessUnit> businessUnitSet = new HashSet<>();
-        businessUnitSet.forEach(businessUnit -> project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnit.getId())));
+        Set<Long> businessUnitIdSet = new HashSet<>();
+        project.getBusinessUnits().forEach(businessUnit -> businessUnitIdSet.add(businessUnit.getId()));
+        businessUnitIdSet.forEach(businessUnitId -> project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnitId)));
+        project.getBusinessUnits().clear();
+        businessUnitIdSet.forEach(id -> {project.addBusinessUnit((BusinessUnit) businessUnitService.find(id));});
         Project savedProject =  super.saveInternal(project);
         return projectMapper.convertEntityToCreatedDto(savedProject);
     }
@@ -71,18 +75,27 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
     @Override
     public List<ProjectDTO> findByMultipleCriteria(SearchProjectDTO searchProjectDTO) {
         String projectName = searchProjectDTO.getProjectName();
-        List<ProjectClass> projectClass =  searchProjectDTO.getProjectClassDTOList()
-                .stream()
-                .map(mapProjectClassDTOToProjectClass())
-                .collect(Collectors.toList());
+        List<ProjectClass> projectClass = null;
+        if(searchProjectDTO.getProjectClassDTOList() != null){
+            projectClass = searchProjectDTO.getProjectClassDTOList()
+                    .stream()
+                    .map(mapProjectClassDTOToProjectClass())
+                    .collect(Collectors.toList());
+        }
         String businessUnitName = searchProjectDTO.getBusinessUnitName();
-        List<ProjectStatus> projectStatusList = searchProjectDTO.getProjectStatusDTOList()
-                .stream()
-                .map(mapProjectStatusDTOToProjectStatus())
-                .collect(Collectors.toList());
-        LocalDate projectStartDate = searchProjectDTO.getProjectStartDate();
-        List<Project>  result = getDao().findByMultipleCriteria(projectName, projectClass, businessUnitName, projectStatusList, projectStartDate);
-        return null;
+        List<ProjectStatus> projectStatusList = null;
+        if(searchProjectDTO.getProjectStatusDTOList() != null){
+            projectStatusList = searchProjectDTO.getProjectStatusDTOList()
+                    .stream()
+                    .map(mapProjectStatusDTOToProjectStatus())
+                    .collect(Collectors.toList());
+        }
+        LocalDate projectStartDate = searchProjectDTO.getProjectStartDateLaterThat();
+        System.out.println(businessUnitService.find(1l));
+        List<Project>  foundProject = getDao().findByMultipleCriteria(projectName, projectClass, businessUnitName, projectStatusList, projectStartDate);
+        List<ProjectDTO> projectDTOList = new ArrayList<>();
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        return projectDTOList;
     }
 
     private Function<ProjectClassDTO, ProjectClass> mapProjectClassDTOToProjectClass(){
