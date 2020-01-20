@@ -1,5 +1,6 @@
 package com.mbor.dao;
 
+import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.Project;
 import com.mbor.domain.ProjectClass;
 import com.mbor.domain.ProjectStatus;
@@ -61,4 +62,14 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
         }
     }
 
+    @Override
+    public Project testSaveProject(Project project) {
+        try(Session session = sessionFactory.openSession()) {
+            BusinessUnit businessUnit = new BusinessUnit();
+            businessUnit.setName("asfasdfasd");
+            project.addBusinessUnit(businessUnit);
+            session.save(project);
+            return project;
+        }
+    }
 }

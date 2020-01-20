@@ -5,6 +5,7 @@ import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.model.IProjectDTO;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
@@ -15,13 +16,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity(name = "Project")
-@Table(name = "project")
+@Entity
 public class Project implements IProjectDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    @Column(nullable = false, unique = true)
+    private Long id;
 
     @NaturalId
     private String projectName;
@@ -45,13 +46,11 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "business_unit_leader_id")
     private BusinessLeader businessLeader;
 
-    @ManyToMany(cascade  ={
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
+    @ManyToMany
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<SolutionArchitect> solutionArchitect = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
@@ -64,14 +63,12 @@ public class Project implements IProjectDTO {
     @OneToMany
     private Set<RealEndDate> realEndDateSet = new HashSet<>();
 
-    @ManyToMany(cascade  ={
-            CascadeType.MERGE,
-            CascadeType.PERSIST,
-    })
-    @JoinTable(name = "business_unit_projects",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "business_unit_id"))
+    @ManyToMany
+    @JoinTable(name = "projects_business_units",
+            joinColumns = {@JoinColumn(name = "project_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "business_unit_id", referencedColumnName = "id")})
     @Fetch(value = FetchMode.JOIN)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<BusinessUnit> businessUnits = new HashSet<>();
 
     public void addBusinessUnit(BusinessUnit businessUnit){
@@ -95,11 +92,11 @@ public class Project implements IProjectDTO {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getProjectName() {
@@ -116,6 +113,7 @@ public class Project implements IProjectDTO {
 
     public void setResourceManager(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
+        resourceManager.getProjects().add(this);
     }
 
     public BusinessRelationManager getBusinessRelationManager() {
@@ -136,8 +134,9 @@ public class Project implements IProjectDTO {
         return projectManager;
     }
 
-    public void setProjectManager(ProjectManager projectManager) {
+    public void setProjectManager(ProjectManager projectManager){
         this.projectManager = projectManager;
+        projectManager.getProjects().add(this);
     }
 
     public Set<SolutionArchitect> getSolutionArchitect() {

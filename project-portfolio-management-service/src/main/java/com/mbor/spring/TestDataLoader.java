@@ -4,20 +4,21 @@ import com.mbor.dao.IBusinessUnitDao;
 import com.mbor.dao.IEmployeeDao;
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
+import com.mbor.domain.employeeinproject.IProjectManager;
+import com.mbor.domain.employeeinproject.ProjectManager;
+import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.service.IBusinessUnitService;
 import com.mbor.service.IEmployeeService;
+import com.mbor.service.IProjectRoleService;
 import com.mbor.service.IProjectService;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+//@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 @Profile("dev")
 public class TestDataLoader {
 
@@ -35,7 +36,9 @@ public class TestDataLoader {
 
     private final IProjectService projectService;
 
-    public TestDataLoader(SessionFactory sessionFactory, IBusinessUnitDao businessUnitDao, IEmployeeDao employeeDao, IProjectDao projectDao, IBusinessUnitService businessUnitService, IEmployeeService employeeService, IProjectService projectService) {
+    private final IProjectRoleService projectRoleService;
+
+    public TestDataLoader(SessionFactory sessionFactory, IBusinessUnitDao businessUnitDao, IEmployeeDao employeeDao, IProjectDao projectDao, IBusinessUnitService businessUnitService, IEmployeeService employeeService, IProjectService projectService, IProjectRoleService projectRoleService) {
         this.sessionFactory = sessionFactory;
         this.businessUnitDao = businessUnitDao;
         this.employeeDao = employeeDao;
@@ -43,6 +46,7 @@ public class TestDataLoader {
         this.businessUnitService = businessUnitService;
         this.employeeService = employeeService;
         this.projectService = projectService;
+        this.projectRoleService = projectRoleService;
     }
 
     @PostConstruct
@@ -102,18 +106,30 @@ public class TestDataLoader {
         project.setProjectName("First Project Name");
         operationBusinessUnit = (BusinessUnit) businessUnitService.find(operationBusinessUnitId);
         project.addBusinessUnit(operationBusinessUnit);
+        ResourceManager resourceManager = new ResourceManager();
+        resourceManager.setEmployee((Supervisor) employeeService.find(supervisorId));
+        projectRoleService.saveInternal(resourceManager);
+        project.setResourceManager(resourceManager);
+        ProjectManager projectManager = new ProjectManager();
+        projectManager.setEmployee((IProjectManager) employeeService.find(consultantID));
+        projectRoleService.saveInternal(projectManager);
+        project.setProjectManager(projectManager);
         project.setProjectClass(ProjectClass.I);
         projectService.saveInternal(project);
 
 
         project = new Project();
         project.setProjectName("Second Project Name");
-        project.addBusinessUnit((BusinessUnit) businessUnitService.find(ITBusinessUnitId));
         project.setProjectClass(ProjectClass.II);
-        projectService.saveInternal(project);
+        projectService.saveTest(project);
+
+        Project persistedProject = (Project) projectService.find(2l);
+        System.out.println(businessUnitService.findAll());
 
         ITBusinessUnit = (BusinessUnit) businessUnitService.find(ITBusinessUnitId);
+        ITBusinessUnit.getProjects();
         operationBusinessUnit = (BusinessUnit) businessUnitService.find(operationBusinessUnitId);
+        operationBusinessUnit.getProjects();
         System.out.println(ITBusinessUnitId);
     }
 }

@@ -2,6 +2,7 @@ package com.mbor.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.TypedQuery;
@@ -25,10 +26,18 @@ public abstract class RawDao<T> implements IDao<T> {
     @Override
     public Optional<T> save(T t) {
         try (Session session = sessionFactory.openSession()) {
-            session.save(t);
-            return Optional.ofNullable(t);
+            Transaction transaction = session.getTransaction();
+            try {
+                transaction.begin();
+                session.save(t);
+                transaction.commit();
+                return Optional.ofNullable(t);
+            } catch (RuntimeException e){
+                e.printStackTrace();
+                transaction.rollback();
+            }
         }
-
+        return Optional.empty();
     }
 
     @Override

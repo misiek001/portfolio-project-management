@@ -5,10 +5,12 @@ import com.mbor.domain.Employee;
 import javax.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class ProjectRole<IEmployee> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column( nullable = false, unique = true)
     Long id;
 
     @ManyToOne(targetEntity = Employee.class)

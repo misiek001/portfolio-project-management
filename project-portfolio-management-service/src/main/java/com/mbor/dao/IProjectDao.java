@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface IProjectDao extends IDao<Project> {
 
-    public List<Project> findByMultipleCriteria(String projectName, List<ProjectClass> projectClassList, String businessUnitName, List<ProjectStatus> projectStatusList, LocalDate projectStartDate);
+     List<Project> findByMultipleCriteria(String projectName, List<ProjectClass> projectClassList, String businessUnitName, List<ProjectStatus> projectStatusList, LocalDate projectStartDate);
 
+     Project testSaveProject(Project project);
 }
