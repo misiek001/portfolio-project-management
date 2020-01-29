@@ -12,14 +12,16 @@ import java.util.Optional;
 @Repository
 public class UserDao extends RawDao<User> implements IUserDao{
 
-    public Optional<User> findByUsername(String userName) {
+    public UserDao() {
+        this.clazz = User.class;
+    }
 
+    public Optional<User> findByUsername(String userName) {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
-            Root<User> root = criteriaQuery.from(User.class);
+            CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(clazz);
+            Root<User> root = criteriaQuery.from(clazz);
             criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("employee").get("userName"), userName));
             TypedQuery<User> allQuery = entityManager.createQuery(criteriaQuery);
             return  Optional.ofNullable(allQuery.getSingleResult());
-
     }
 }

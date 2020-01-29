@@ -28,11 +28,11 @@ public class Project implements IProjectDTO {
 
     private ProjectClass projectClass;
 
-    @ManyToOne( cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "resource_manager_id")
     private ResourceManager resourceManager;
 
-    @ManyToOne( cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "project_manager_id")
     private ProjectManager projectManager;
 

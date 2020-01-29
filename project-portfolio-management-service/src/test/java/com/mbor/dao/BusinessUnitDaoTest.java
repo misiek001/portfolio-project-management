@@ -1,6 +1,6 @@
 package com.mbor.dao;
 
-import com.mbor.domain.Project;
+import com.mbor.domain.BusinessUnit;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,10 +22,10 @@ import javax.transaction.SystemException;
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
-class ProjectDaoTest extends IDaoImplTest<Project> {
+class BusinessUnitDaoTest extends IDaoImplTest<BusinessUnit> {
 
     @Autowired
-    public IProjectDao projectDao;
+    IBusinessUnitDao businessUnitDao;
 
     @BeforeAll
     static void init(@Autowired EntityManagerFactory entityManagerFactory) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
@@ -33,23 +33,22 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
         for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
-            Project project = new Project();
-            project.setProjectName("ProjectName" + random.nextLong());
-            entityManager.persist(project);
+            BusinessUnit businessUnit = new BusinessUnit();
+            businessUnit.setName("BusinessUnit" + random.nextLong());
+            entityManager.persist(businessUnit);
         }
         transaction.commit();
     }
 
     @Override
-    protected Project createNewEntity() {
-        Project project = new Project();
-        project.setProjectName("ProjectName" + ProjectDaoTest.random.nextLong());
-        return  project;
+    protected IDao getDao() {
+        return businessUnitDao;
     }
 
     @Override
-    protected IDao getDao() {
-        return projectDao;
+    protected BusinessUnit createNewEntity() {
+        BusinessUnit businessUnit = new BusinessUnit();
+        businessUnit.setName("BusinessUnit" + random.nextLong());
+        return businessUnit;
     }
-
 }

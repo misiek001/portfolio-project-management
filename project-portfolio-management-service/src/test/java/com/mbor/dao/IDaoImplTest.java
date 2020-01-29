@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,7 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Transactional
 public abstract class IDaoImplTest<T> implements DaoTest {
 
-    static int createdEntitiesNumber = 3;
+    protected static int createdEntitiesNumber = 3;
+
+    protected static Random random = new Random();
 
     @Override
     @Test
@@ -42,7 +45,7 @@ public abstract class IDaoImplTest<T> implements DaoTest {
         assertTrue(getDao().save(t).isPresent());
     }
 
-    abstract T createNewEntity();
+    protected abstract T createNewEntity();
 
-    abstract IDao getDao();
+    protected abstract IDao getDao();
 }

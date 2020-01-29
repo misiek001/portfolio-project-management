@@ -1,6 +1,9 @@
-package com.mbor.dao;
+package com.mbor.dao.employeedao;
 
-import com.mbor.domain.Project;
+import com.mbor.dao.EmployeeDao;
+import com.mbor.dao.IDao;
+import com.mbor.dao.IDaoImplTest;
+import com.mbor.domain.BusinessRelationManager;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,15 +20,24 @@ import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
+import java.util.Random;
 
 @ExtendWith({SpringExtension.class})
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
-class ProjectDaoTest extends IDaoImplTest<Project> {
+class BusinessRelationManagerEmployeeDaoTest extends IDaoImplTest<BusinessRelationManager> {
 
     @Autowired
-    public IProjectDao projectDao;
+    EmployeeDao employeeDao;
+
+    @Override
+    protected BusinessRelationManager createNewEntity() {
+        Random random = new Random();
+        BusinessRelationManager brm = new BusinessRelationManager();
+        brm.setUserName("BRMUserName" + random.nextLong());
+        return brm;
+    }
 
     @BeforeAll
     static void init(@Autowired EntityManagerFactory entityManagerFactory) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
@@ -33,23 +45,14 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
         for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
-            Project project = new Project();
-            project.setProjectName("ProjectName" + random.nextLong());
-            entityManager.persist(project);
+            BusinessRelationManager  businessRelationManager = new BusinessRelationManager();
+            businessRelationManager.setUserName("BRMUserName" + random.nextLong());
+            entityManager.persist(businessRelationManager);
         }
         transaction.commit();
     }
-
-    @Override
-    protected Project createNewEntity() {
-        Project project = new Project();
-        project.setProjectName("ProjectName" + ProjectDaoTest.random.nextLong());
-        return  project;
-    }
-
     @Override
     protected IDao getDao() {
-        return projectDao;
+        return employeeDao;
     }
-
 }
