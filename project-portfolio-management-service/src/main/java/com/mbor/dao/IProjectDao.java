@@ -11,5 +11,4 @@ public interface IProjectDao extends IDao<Project> {
 
      List<Project> findByMultipleCriteria(String projectName, List<ProjectClass> projectClassList, String businessUnitName, List<ProjectStatus> projectStatusList, LocalDate projectStartDate);
 
-     Project testSaveProject(Project project);
 }

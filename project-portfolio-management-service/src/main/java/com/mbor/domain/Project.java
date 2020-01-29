@@ -5,7 +5,6 @@ import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.model.IProjectDTO;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
@@ -29,11 +28,11 @@ public class Project implements IProjectDTO {
 
     private ProjectClass projectClass;
 
-    @ManyToOne
+    @ManyToOne( cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "resource_manager_id")
     private ResourceManager resourceManager;
 
-    @ManyToOne
+    @ManyToOne( cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "project_manager_id")
     private ProjectManager projectManager;
 
@@ -46,11 +45,10 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "business_unit_leader_id")
     private BusinessLeader businessLeader;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST} )
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<SolutionArchitect> solutionArchitect = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
@@ -63,12 +61,11 @@ public class Project implements IProjectDTO {
     @OneToMany
     private Set<RealEndDate> realEndDateSet = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE} )
     @JoinTable(name = "projects_business_units",
             joinColumns = {@JoinColumn(name = "project_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "business_unit_id", referencedColumnName = "id")})
     @Fetch(value = FetchMode.JOIN)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<BusinessUnit> businessUnits = new HashSet<>();
 
     public void addBusinessUnit(BusinessUnit businessUnit){

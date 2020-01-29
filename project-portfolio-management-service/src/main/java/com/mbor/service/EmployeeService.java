@@ -1,8 +1,8 @@
 package com.mbor.service;
 
-import com.mbor.dao.EmployeeDao;
 import com.mbor.dao.IDao;
-import com.mbor.dao.UserDao;
+import com.mbor.dao.IEmployeeDao;
+import com.mbor.dao.IUserDao;
 import com.mbor.domain.Employee;
 import com.mbor.domain.security.User;
 import com.mbor.mapper.*;
@@ -27,15 +27,15 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
 
     private ApplicationContext context;
 
-    private final EmployeeDao employeeDao;
+    private final IEmployeeDao employeeDao;
 
     private Map<EmployeeType, EmployeeMapper> mappers = new HashMap();
 
     private Random random = new Random();
 
-    private final  UserDao userDao;
+    private final IUserDao userDao;
 
-    public EmployeeService(EmployeeDao employeeDao, UserDao userDao) {
+    public EmployeeService(IEmployeeDao employeeDao, IUserDao userDao) {
         this.employeeDao = employeeDao;
         this.userDao = userDao;
     }

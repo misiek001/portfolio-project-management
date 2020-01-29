@@ -2,11 +2,13 @@ package com.mbor.service;
 
 import com.mbor.dao.IDao;
 import org.hibernate.HibernateException;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 public abstract class RawService<T> implements IService<T> {
 
     @Override

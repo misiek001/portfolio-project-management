@@ -1,10 +1,8 @@
-package integrationtest;
+package com.mbor.service;
 
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.Project;
-import com.mbor.service.IProjectService;
 import com.mbor.spring.ServiceConfiguration;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -30,9 +28,6 @@ public class ProjectServiceTest {
 
     @Autowired
     IProjectService projectService;
-
-    @Autowired
-    SessionFactory sessionFactory;
 
     @BeforeAll
     static void init(@Autowired IProjectDao projectDao) {

@@ -1,21 +1,19 @@
 package com.mbor.spring;
 
-import com.mbor.domain.*;
-import com.mbor.domain.employeeinproject.*;
-import com.mbor.domain.security.Privilege;
-import com.mbor.domain.security.Role;
-import com.mbor.domain.security.User;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -35,27 +33,34 @@ public class DevPersistenceConfiguration {
     }
 
     @Bean
-    public LocalSessionFactoryBean localSessionFactoryBean() {
-        LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
-        localSessionFactoryBean.setDataSource(dataSource());
-        localSessionFactoryBean.setHibernateProperties(hibernateProperties());
-        localSessionFactoryBean.setAnnotatedClasses(RealEndDate.class, Project.class, BusinessUnit.class, Employee.class, BusinessRelationManager.class, BusinessEmployee.class, Consultant.class, Director.class, Supervisor.class, ProjectRole.class, BusinessLeader.class, ProjectManager.class, ResourceManager.class, SolutionArchitect.class, User.class, Role.class, Privilege.class);
-        return localSessionFactoryBean;
+    public LocalContainerEntityManagerFactoryBean LocalContainerEntityManagerFactoryBean(){
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactoryBean.setDataSource(dataSource());
+        entityManagerFactoryBean.setJpaProperties(properties());
+        entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter());
+        entityManagerFactoryBean.setPackagesToScan("com.mbor.domain");
+        return entityManagerFactoryBean;
     }
 
-    private Properties hibernateProperties() {
+    private JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+        jpaVendorAdapter.setShowSql(true);
+        jpaVendorAdapter.setGenerateDdl(true);
+        jpaVendorAdapter.setDatabasePlatform(H2Dialect.class.getName());
+        return jpaVendorAdapter;
+    }
+
+    private Properties properties(){
         Properties properties = new Properties();
         properties.setProperty(AvailableSettings.DIALECT, H2Dialect.class.getName());
         properties.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(true));
         properties.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop");
         return properties;
+
     }
 
     @Bean
-    public PlatformTransactionManager platformTransactionManager() {
-        final HibernateTransactionManager platformTransactionManager = new HibernateTransactionManager();
-        platformTransactionManager.setSessionFactory(localSessionFactoryBean().getObject());
-        platformTransactionManager.setNestedTransactionAllowed(true);
-        return platformTransactionManager;
+    public PlatformTransactionManager platformTransactionManager(EntityManagerFactory entityManagerFactory){
+        return new JpaTransactionManager(entityManagerFactory);
     }
 }

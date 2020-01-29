@@ -1,11 +1,8 @@
 package com.mbor.dao;
 
-import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.Project;
 import com.mbor.domain.ProjectClass;
 import com.mbor.domain.ProjectStatus;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -20,15 +17,14 @@ import java.util.List;
 @Repository
 public class ProjectDao extends RawDao<Project> implements IProjectDao {
 
-    public ProjectDao(SessionFactory sessionFactory) {
-        super(sessionFactory);
+    public ProjectDao() {
         this.clazz = Project.class;
     }
 
     @Override
     public List<Project> findByMultipleCriteria(String projectName, List<ProjectClass> projectClassList, String businessUnitName, List<ProjectStatus> projectStatusList, LocalDate projectStartDateLaterThat){
-        try(Session session = sessionFactory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
             Root<Project> project = criteriaQuery.from(Project.class);
             List<Predicate> predicates = new ArrayList<>();
@@ -57,19 +53,10 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(project.get("startDate"), projectStartDateLaterThat));
             }
             criteriaQuery.where(predicates.toArray(new Predicate[0]));
-            TypedQuery<Project> allQuery = session.createQuery(criteriaQuery);
+            TypedQuery<Project> allQuery = entityManager.createQuery(criteriaQuery);
             return allQuery.getResultList();
         }
     }
 
-    @Override
-    public Project testSaveProject(Project project) {
-        try(Session session = sessionFactory.openSession()) {
-            BusinessUnit businessUnit = new BusinessUnit();
-            businessUnit.setName("asfasdfasd");
-            project.addBusinessUnit(businessUnit);
-            session.save(project);
-            return project;
-        }
-    }
-}
+
+

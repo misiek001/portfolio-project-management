@@ -2,7 +2,6 @@ package com.mbor.domain;
 
 import com.mbor.domain.employeeinproject.IEmployee;
 import com.mbor.domain.employeeinproject.ProjectRole;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
@@ -32,9 +31,8 @@ public abstract class Employee implements IEmployee {
    @JoinColumn(name = "business_unit_id")
    private BusinessUnit businessUnit;
 
-   @OneToMany( mappedBy = "employee")
+   @OneToMany( mappedBy = "employee", cascade = {CascadeType.MERGE, CascadeType.PERSIST} )
    @Fetch(FetchMode.JOIN)
-   @Cascade(org.hibernate.annotations.CascadeType.ALL)
    private Set<ProjectRole> projectRoleSet = new HashSet<>();
 
    public Long getId() {

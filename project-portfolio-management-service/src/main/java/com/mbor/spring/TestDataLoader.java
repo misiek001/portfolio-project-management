@@ -11,18 +11,14 @@ import com.mbor.service.IBusinessUnitService;
 import com.mbor.service.IEmployeeService;
 import com.mbor.service.IProjectRoleService;
 import com.mbor.service.IProjectService;
-import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 @Service
-//@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 @Profile("dev")
 public class TestDataLoader {
-
-    private final SessionFactory sessionFactory;
 
     private final IBusinessUnitDao businessUnitDao;
 
@@ -38,8 +34,7 @@ public class TestDataLoader {
 
     private final IProjectRoleService projectRoleService;
 
-    public TestDataLoader(SessionFactory sessionFactory, IBusinessUnitDao businessUnitDao, IEmployeeDao employeeDao, IProjectDao projectDao, IBusinessUnitService businessUnitService, IEmployeeService employeeService, IProjectService projectService, IProjectRoleService projectRoleService) {
-        this.sessionFactory = sessionFactory;
+    public TestDataLoader( IBusinessUnitDao businessUnitDao, IEmployeeDao employeeDao, IProjectDao projectDao, IBusinessUnitService businessUnitService, IEmployeeService employeeService, IProjectService projectService, IProjectRoleService projectRoleService) {
         this.businessUnitDao = businessUnitDao;
         this.employeeDao = employeeDao;
         this.projectDao = projectDao;
@@ -108,22 +103,19 @@ public class TestDataLoader {
         project.addBusinessUnit(operationBusinessUnit);
         ResourceManager resourceManager = new ResourceManager();
         resourceManager.setEmployee((Supervisor) employeeService.find(supervisorId));
-        projectRoleService.saveInternal(resourceManager);
         project.setResourceManager(resourceManager);
         ProjectManager projectManager = new ProjectManager();
         projectManager.setEmployee((IProjectManager) employeeService.find(consultantID));
-        projectRoleService.saveInternal(projectManager);
         project.setProjectManager(projectManager);
         project.setProjectClass(ProjectClass.I);
-        projectService.saveInternal(project);
-
+        Project persistedProject = (Project) projectService.saveInternal(project);
 
         project = new Project();
         project.setProjectName("Second Project Name");
         project.setProjectClass(ProjectClass.II);
-        projectService.saveTest(project);
 
-        Project persistedProject = (Project) projectService.find(2l);
+
+        Project foundProject = (Project) projectService.find(persistedProject.getId());
         System.out.println(businessUnitService.findAll());
 
         ITBusinessUnit = (BusinessUnit) businessUnitService.find(ITBusinessUnitId);

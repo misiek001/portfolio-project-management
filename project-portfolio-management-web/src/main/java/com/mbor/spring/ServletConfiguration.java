@@ -16,4 +16,6 @@ public class ServletConfiguration extends AbstractAnnotationConfigDispatcherServ
         return new String[]{"/"};
     }
 
+
+
 }

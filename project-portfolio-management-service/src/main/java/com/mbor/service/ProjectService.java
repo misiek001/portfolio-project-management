@@ -12,6 +12,7 @@ import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-//@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+@Transactional
 public class ProjectService extends RawService<Project>  implements IProjectService<Project> {
 
     private final IProjectDao projectDao;
@@ -101,11 +102,6 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
 
     private Function<ProjectStatusDTO, ProjectStatus> mapProjectStatusDTOToProjectStatus(){
         return projectStatusDTO  -> Enum.valueOf(ProjectStatus.class, projectStatusDTO.name());
-    }
-
-    @Override
-    public Project saveTest(Project project) {
-        return  getDao().testSaveProject(project);
     }
 
     @Override

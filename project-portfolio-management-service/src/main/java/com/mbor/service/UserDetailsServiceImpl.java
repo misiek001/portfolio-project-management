@@ -1,7 +1,6 @@
 package com.mbor.service;
 
 import com.mbor.dao.IUserDao;
-import com.mbor.dao.UserDao;
 import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final IUserDao userDao;
 
     @Autowired
-    public UserDetailsServiceImpl(UserDao userDao) {
+    public UserDetailsServiceImpl(IUserDao userDao) {
         this.userDao = userDao;
     }
 

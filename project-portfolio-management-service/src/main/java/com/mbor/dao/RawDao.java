@@ -1,10 +1,7 @@
 package com.mbor.dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,56 +13,34 @@ public abstract class RawDao<T> implements IDao<T> {
 
     protected Class<T> clazz;
 
-    protected SessionFactory sessionFactory;
-
-    @Autowired
-    public RawDao(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     @Override
     public Optional<T> save(T t) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.getTransaction();
-            try {
-                transaction.begin();
-                session.save(t);
-                transaction.commit();
-                return Optional.ofNullable(t);
-            } catch (RuntimeException e){
-                e.printStackTrace();
-                transaction.rollback();
-            }
-        }
-        return Optional.empty();
+        entityManager.persist(t);
+        return Optional.ofNullable(t);
     }
 
     @Override
     public Optional<T> find(Long id) {
-        try (Session session = sessionFactory.openSession()) {
-            return Optional.ofNullable(session.get(clazz, id));
-        }
+        return Optional.ofNullable(entityManager.find(clazz, id));
     }
 
     @Override
     public void delete(Long id) {
-        try (Session session = sessionFactory.openSession()) {
-            Optional<T> projectToDelete = find(id);
-            session.delete(projectToDelete.get());
-        }
+        entityManager.remove(entityManager.getReference(clazz, id));
     }
 
     @Override
     public List<T> findAll() {
-        try(Session session = sessionFactory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(clazz);
             Root<T> root = criteriaQuery.from(clazz);
             criteriaQuery.select(root);
-            TypedQuery<T> allQuery = session.createQuery(criteriaQuery);
+            TypedQuery<T> allQuery = entityManager.createQuery(criteriaQuery);
             return allQuery.getResultList();
         }
-    }
 
     public Class<T> getClazz() {
         return clazz;
