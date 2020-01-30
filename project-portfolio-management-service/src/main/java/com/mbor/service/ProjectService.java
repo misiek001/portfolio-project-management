@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,23 +47,18 @@ public class ProjectService extends RawService<Project>  implements IProjectServ
     public ProjectCreatedDTO save(ProjectCreationDTO projectCreationDTO) {
         Project project = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
         BusinessLeader businessLeader;
-        if(project.getBusinessLeader().getId() == null){
+        if(projectCreationDTO.getBusinessLeader().getId() == null){
             businessLeader = new BusinessLeader();
-            BusinessEmployee businessEmployee = (BusinessEmployee) employeeService.find(project.getBusinessLeader().getEmployee().getId());
+            BusinessEmployee businessEmployee = (BusinessEmployee) employeeService.find(projectCreationDTO.getBusinessLeader().getEmployee().getId());
             businessLeader.setEmployee(businessEmployee);
-            projectRoleService.saveInternal(businessLeader);
         } else {
-            businessLeader = (BusinessLeader) projectRoleService.find(project.getBusinessLeader().getId());
+            businessLeader = (BusinessLeader) projectRoleService.find(projectCreationDTO.getBusinessLeader().getId());
         }
         project.setBusinessLeader(businessLeader);
-        project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(project.getBusinessRelationManager().getId()));
-        project.getBusinessRelationManager().getProjects().forEach(project1 -> System.out.println(project1.getProjectName()));
+        project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(projectCreationDTO.getBusinessRelationManager().getId()));
 
-        Set<Long> businessUnitIdSet = new HashSet<>();
-        project.getBusinessUnits().forEach(businessUnit -> businessUnitIdSet.add(businessUnit.getId()));
-        businessUnitIdSet.forEach(businessUnitId -> project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnitId)));
-        project.getBusinessUnits().clear();
-        businessUnitIdSet.forEach(id -> {project.addBusinessUnit((BusinessUnit) businessUnitService.find(id));});
+        projectCreationDTO.getBusinessUnits().forEach(businessUnit ->
+                project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnit.getId())));
         Project savedProject =  super.saveInternal(project);
         return projectMapper.convertEntityToCreatedDto(savedProject);
     }

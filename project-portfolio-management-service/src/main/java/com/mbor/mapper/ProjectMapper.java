@@ -1,10 +1,10 @@
 package com.mbor.mapper;
 
-import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.Project;
 import com.mbor.domain.ProjectStatus;
 import com.mbor.model.BusinessUnitDTO;
 import com.mbor.model.ProjectDTO;
+import com.mbor.model.ProjectStatusDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import org.modelmapper.ModelMapper;
@@ -39,6 +39,7 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
     @Override
     public ProjectCreatedDTO convertEntityToCreatedDto(Project project) {
         ProjectCreatedDTO projectCreatedDTO = modelMapper.map(project, ProjectCreatedDTO.class);
+        projectCreatedDTO.setProjectStatus(Enum.valueOf(ProjectStatusDTO.class, project.getStatus().name()));
         projectCreatedDTO.setBusinessLeader(businessLeaderMapper.convertToDto(project.getBusinessLeader()));
         Set<BusinessUnitDTO> businessUnitDTOSet = project.getBusinessUnits().stream()
                 .map(businessUnit -> {
@@ -56,17 +57,6 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
         Project project = new Project();
         project.setProjectName(projectCreationDTO.getProjectName());
         project.setStatus(ProjectStatus.valueOf(projectCreationDTO.getProjectStatus().name()));
-        project.setBusinessRelationManager(businessRelationManagerMapper.convertToEntity(projectCreationDTO.getBusinessRelationManager()));
-        project.setBusinessLeader(businessLeaderMapper.convertToEntity(projectCreationDTO.getBusinessLeader()));
-        project.getBusinessLeader().getEmployee().addProjectRole(project.getBusinessLeader());
-        Set<BusinessUnit> businessUnits = projectCreationDTO.getBusinessUnits().stream()
-                .map(businessUnitDTO -> {
-                    BusinessUnit businessUnit = new BusinessUnit();
-                    businessUnit.setId(businessUnitDTO.getId());
-                    businessUnit.setName(businessUnitDTO.getName());
-                    return businessUnit;
-                }).collect(Collectors.toSet());
-        project.setBusinessUnits(businessUnits);
         return project;
     }
 
