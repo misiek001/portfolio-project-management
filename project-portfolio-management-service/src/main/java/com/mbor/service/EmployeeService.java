@@ -3,7 +3,10 @@ package com.mbor.service;
 import com.mbor.dao.IDao;
 import com.mbor.dao.IEmployeeDao;
 import com.mbor.dao.IUserDao;
+import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.Employee;
+import com.mbor.domain.security.Privilege;
+import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
 import com.mbor.mapper.*;
 import com.mbor.model.creation.EmployeeCreatedDTO;
@@ -69,8 +72,16 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
     //Todo Extend Functionality
     private void createUser(Employee employee){
         User user = new User();
-        user.setEmployee(employee);
-        userDao.save(user);
+        if (employee instanceof BusinessRelationManager){
+            Role brmRole = new Role();
+            brmRole.setName("BRM");
+            Privilege createProjectPrivilege = new Privilege();
+            createProjectPrivilege.setName("create_project");
+            brmRole.addPrivilege(createProjectPrivilege);
+            user.getRoles().add(brmRole);
+        }
+        user.setPassword("pass");
+        employee.setUser(user);
     }
 
     @Autowired

@@ -3,8 +3,9 @@ package com.mbor.domain.security;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Privilege {
@@ -17,13 +18,7 @@ public class Privilege {
     private String name;
 
     @ManyToMany(mappedBy = "privileges")
-    private Collection<Role> roles;
-
-    public Privilege(final String name) {
-        super();
-        this.name = name;
-    }
-
+    private Set<Role> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -41,11 +36,11 @@ public class Privilege {
         this.name = name;
     }
 
-    public Collection<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(final Collection<Role> roles) {
+    public void setRoles(final Set<Role> roles) {
         this.roles = roles;
     }
 

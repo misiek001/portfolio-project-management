@@ -4,6 +4,8 @@ import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Role {
@@ -12,9 +14,9 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-    private Collection<Privilege> privileges;
+    private Set<Privilege> privileges = new HashSet<>();
 
     @NaturalId
     private String name;
@@ -48,7 +50,12 @@ public class Role {
         return privileges;
     }
 
-    public void setPrivileges(final Collection<Privilege> privileges) {
+    public void addPrivilege(Privilege privilege){
+        privileges.add(privilege);
+        privilege.getRoles().add(this);
+    }
+
+    public void setPrivileges(final Set<Privilege> privileges) {
         this.privileges = privileges;
     }
 

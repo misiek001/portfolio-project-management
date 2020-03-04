@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/test/")
+@RequestMapping("/test")
 @Profile("!prod")
 public class TestController {
 

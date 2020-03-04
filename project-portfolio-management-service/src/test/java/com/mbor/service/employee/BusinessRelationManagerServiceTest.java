@@ -1,6 +1,7 @@
 package com.mbor.service.employee;
 
 import com.mbor.domain.BusinessRelationManager;
+import com.mbor.domain.security.User;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
 import com.mbor.model.creation.EmployeeType;
@@ -58,8 +59,19 @@ class BusinessRelationManagerServiceTest {
     void saveFromDtoThenSuccess() {
         EmployeeCreationDTO businessRelationManagerCreationDTO = prepareBusinessRelationManagerCreationDto();
         EmployeeCreatedDTO businessRelationManagerCreatedDTO = employeeService.save(businessRelationManagerCreationDTO);
-        assertNotNull(businessRelationManagerCreatedDTO);
         assertNotNull(employeeService.find(businessRelationManagerCreatedDTO.getId()));
+        assertNotNull(businessRelationManagerCreatedDTO);
+    }
+
+    @Test
+    void saveFromDtoWithRoleAndPrivilege(){
+        EmployeeCreationDTO businessRelationManagerCreationDTO = prepareBusinessRelationManagerCreationDto();
+        EmployeeCreatedDTO businessRelationManagerCreatedDTO = employeeService.save(businessRelationManagerCreationDTO);
+        BusinessRelationManager savedBRM = (BusinessRelationManager) employeeService.find(businessRelationManagerCreatedDTO.getId());
+        assertNotNull(savedBRM);
+        User savedUser = savedBRM.getUser();
+        assertNotNull(savedBRM);
+        assertNotNull(savedUser.getRoles());;
     }
 
     @Test

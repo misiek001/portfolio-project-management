@@ -2,6 +2,7 @@ package com.mbor.domain;
 
 import com.mbor.domain.employeeinproject.IEmployee;
 import com.mbor.domain.employeeinproject.ProjectRole;
+import com.mbor.domain.security.User;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
@@ -34,6 +35,9 @@ public abstract class Employee implements IEmployee {
    @OneToMany( mappedBy = "employee", cascade = {CascadeType.MERGE, CascadeType.PERSIST} )
    @Fetch(FetchMode.JOIN)
    private Set<ProjectRole> projectRoleSet = new HashSet<>();
+
+   @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+   private User user;
 
    public Long getId() {
       return id;
@@ -93,6 +97,15 @@ public abstract class Employee implements IEmployee {
       this.userName = userName;
    }
 
+   public User getUser() {
+      return user;
+   }
+
+   public void setUser(User user) {
+      this.user = user;
+      user.setEmployee(this);
+   }
+
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -105,4 +118,5 @@ public abstract class Employee implements IEmployee {
    public int hashCode() {
       return Objects.hash(userName);
    }
+
 }

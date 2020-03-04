@@ -28,7 +28,7 @@ public class Project implements IProjectDTO {
 
     private ProjectClass projectClass;
 
-    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "resource_manager_id")
     private ResourceManager resourceManager;
 
@@ -41,7 +41,7 @@ public class Project implements IProjectDTO {
     @Fetch(value = FetchMode.JOIN)
     private BusinessRelationManager businessRelationManager;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "business_unit_leader_id")
     private BusinessLeader businessLeader;
 
