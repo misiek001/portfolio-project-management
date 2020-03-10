@@ -68,6 +68,5 @@ class UserDaoTest {
         Long userId = userDao.save(user).get().getId();
         userDao.delete(userId);
         assertFalse(userDao.find(userId).isPresent());
-        assertFalse(employeeDao.find(employeeID).isPresent());
     }
 }

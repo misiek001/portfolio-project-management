@@ -29,6 +29,11 @@ public class TestController {
         this.employeeService = employeeService;
     }
 
+    @GetMapping
+    public String helloWorld(){
+        return "Hello, World!";
+    }
+
     @PostMapping("/saveProject")
     public ResponseEntity<ProjectCreatedDTO> saveTest(@RequestBody ProjectCreationDTO projectCreationDTO){
         ProjectCreatedDTO projectCreatedDTO =  projectService.save(projectCreationDTO);

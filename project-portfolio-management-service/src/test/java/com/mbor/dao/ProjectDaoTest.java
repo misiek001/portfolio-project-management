@@ -44,7 +44,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
     protected Project createNewEntity() {
         Project project = new Project();
         project.setProjectName("ProjectName" + ProjectDaoTest.random.nextLong());
-        return  project;
+        return project;
     }
 
     @Override

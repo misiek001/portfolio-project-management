@@ -17,7 +17,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class})
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = {ServiceConfiguration.class, TestSecurityConfiguration.class})
 @ActiveProfiles("test")
 @Transactional
 class BusinessEmployeeMapperTest {
@@ -36,10 +36,8 @@ class BusinessEmployeeMapperTest {
         businessEmployeeDTO = new BusinessEmployeeDTO();
         businessEmployeeDTO.setId(random.nextLong());
 
-
         businessEmployee = new BusinessEmployee();
         businessEmployee.setId(businessEmployeeDTO.getId());
-
     }
 
     @Test
