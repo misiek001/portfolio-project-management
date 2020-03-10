@@ -11,18 +11,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceUnit;
 
 @Service
-@Profile({"controller-integration"})
-public class TestDataLoader {
+@Profile("dev")
+public class DevDataLoader {
 
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
 
     private final PasswordEncoder passwordEncoder;
 
-    public TestDataLoader(PasswordEncoder passwordEncoder) {
+    public DevDataLoader(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 

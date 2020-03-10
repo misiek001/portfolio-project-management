@@ -19,11 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({SpringExtension.class})
 @ContextConfiguration(classes = ServiceConfiguration.class)
@@ -58,6 +59,16 @@ public class ResourceManagerDaoTest extends IDaoImplTest<ResourceManager> {
             entityManager.persist(resourceManager);
         }
         transaction.commit();
+    }
+
+    @Test
+    @Override
+    public void findAll_ThenSuccess() {
+        List<ResourceManager> lists = (List<ResourceManager>) getDao().findAll()
+                .stream()
+                .filter(o -> o instanceof ResourceManager).
+                        collect(Collectors.toList());
+        assertEquals(createdEntitiesNumber, lists.size());
     }
 
     @Test

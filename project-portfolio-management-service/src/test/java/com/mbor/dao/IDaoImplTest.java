@@ -1,6 +1,5 @@
 package com.mbor.dao;
 
-import com.mbor.domain.Project;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +24,8 @@ public abstract class IDaoImplTest<T> implements DaoTest {
 
     @Override
     @Test
-    public void findAllProjects_ThenSuccess() {
-        List<Project> lists = getDao().findAll();
+    public void findAll_ThenSuccess() {
+        List<T> lists = getDao().findAll();
         assertEquals(createdEntitiesNumber, lists.size());
     }
 

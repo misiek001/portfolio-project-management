@@ -30,7 +30,7 @@ public class ProjectController extends RawController {
     @PreAuthorize("hasAuthority('create_project')")
     public ResponseEntity<ProjectCreatedDTO> save(@RequestBody ProjectCreationDTO projectCreationDTO){
         ProjectCreatedDTO projectCreatedDTO =  getService().save(projectCreationDTO);
-        return new ResponseEntity<>(projectCreatedDTO, HttpStatus.OK);
+        return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
     }
 
     public  ResponseEntity<List<ProjectDTO>> findAll() {

@@ -1,9 +1,8 @@
 package com.mbor.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +18,13 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @EnableAuthorizationServer
 @Configuration
+@Profile(value = {"dev", "test"})
+@PropertySource("classpath:security-client.properties")
+@PropertySource("classpath:security-configuration.properties")
 public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
+
+    @Autowired
+    Environment env;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -32,10 +37,10 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(
-                tokenStore()).
-                authenticationManager(authenticationManager).
-                userDetailsService(userDetailsService)
+        endpoints
+                .tokenStore(tokenStore())
+                .authenticationManager(authenticationManager)
+                .userDetailsService(userDetailsService)
                 .accessTokenConverter(accessTokenConverter());
     }
 
@@ -44,15 +49,17 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
         security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()").passwordEncoder(passwordEncoder);
     }
 
+
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient("clientapp").secret(passwordEncoder.encode("123"))
-                .authorizedGrantTypes("password", "authorization_code", "refresh_token")
-                .authorities("READ", "WRITE")
-                .scopes("project-portfolio-management")
-                .autoApprove("project-portfolio-management")
+                .withClient(env.getProperty("client.name")).secret(passwordEncoder.encode(env.getProperty("client.secret")))
+                .authorizedGrantTypes(env.getProperty("client.authorizedGrantTypes").trim().split(","))
+                .authorities(env.getProperty("client.authorities"))
+                .scopes(env.getProperty("client.scopes"))
+                .autoApprove(env.getProperty("client.autoApprove"))
                 .accessTokenValiditySeconds(120)
                 .refreshTokenValiditySeconds(240000);
     }
@@ -65,7 +72,7 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey("123");
+        converter.setSigningKey(env.getProperty("signing-key"));
         return converter;
     }
 
