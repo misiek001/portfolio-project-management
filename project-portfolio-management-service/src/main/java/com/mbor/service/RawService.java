@@ -37,6 +37,17 @@ public abstract class RawService<T> implements IService<T> {
     }
 
     @Override
+    public T update(T t) {
+        try {
+            Optional<T> result = getDao().update(t);
+            return result.orElseThrow(RuntimeException::new);
+        } catch (HibernateException e){
+            throw new RuntimeException("Unexpected error during merging:  " + e.getMessage());
+        }
+
+    }
+
+    @Override
     public void delete(Long id) {
         getDao().delete(id);
     }

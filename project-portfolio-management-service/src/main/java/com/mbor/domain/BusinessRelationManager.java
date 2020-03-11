@@ -15,7 +15,7 @@ public class BusinessRelationManager extends Employee {
     private Set<Project> projects = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "director_id")
     @Fetch(value = FetchMode.JOIN)
     private Director director;
 

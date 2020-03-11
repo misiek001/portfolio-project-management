@@ -1,6 +1,7 @@
 package com.mbor.controller;
 
 import com.mbor.model.*;
+import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.*;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.service.IEmployeeService;
@@ -11,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/test")
@@ -91,7 +94,7 @@ public class TestController {
 
     }
 
-    @GetMapping(params = {"prepareDto=SearchProject"})
+    @GetMapping(params = {"prepareDto=searchProject"})
     public ResponseEntity<SearchProjectDTO> getSearchProjectDto(){
         SearchProjectDTO searchProjectDTO = new SearchProjectDTO();
         searchProjectDTO.setBusinessUnitName("Business");
@@ -99,6 +102,49 @@ public class TestController {
         searchProjectDTO.setProjectName("Project");
         searchProjectDTO.setProjectStatusDTOList(Arrays.asList(ProjectStatusDTO.ANALYSIS, ProjectStatusDTO.IN_PROGRESS));
         return new ResponseEntity<>(searchProjectDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(params = {"prepareDto=employeeAssign"})
+    public ResponseEntity<EmployeeAssignDTO> getEmployeeAssignDto(){
+        EmployeeAssignDTO employeeAssignDTO = new EmployeeAssignDTO();
+
+        ConsultantDTO consultantDTO = new ConsultantDTO();
+        consultantDTO.setId(4l);
+        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+        projectManagerDTO.setEmployee(consultantDTO);
+
+        employeeAssignDTO.setProjectManagerDTO(projectManagerDTO);
+
+        BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
+        businessRelationManagerDTO.setId(3l);
+        employeeAssignDTO.setBusinessRelationManagerDTO(businessRelationManagerDTO);
+
+        SupervisorDTO supervisorDTO = new SupervisorDTO();
+        supervisorDTO.setId(2l);
+        ResourceManagerDTO resourceManagerDTO = new ResourceManagerDTO();
+        resourceManagerDTO.setEmployee(supervisorDTO);
+        employeeAssignDTO.setResourceManagerDTO(resourceManagerDTO);
+
+        Set<SolutionArchitectDTO> solutionArchitectDTOS = new HashSet<>();
+
+        SolutionArchitectDTO firstSolutionArchitect = new SolutionArchitectDTO();
+        firstSolutionArchitect.setEmployee(consultantDTO);
+        solutionArchitectDTOS.add(firstSolutionArchitect);
+        SolutionArchitectDTO secondSolutionArchitect  = new SolutionArchitectDTO();
+        secondSolutionArchitect.setEmployee(supervisorDTO);
+        solutionArchitectDTOS.add(secondSolutionArchitect);
+        employeeAssignDTO.setSolutionArchitectDTOS(solutionArchitectDTOS);
+
+        BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
+        BusinessEmployeeDTO businessEmployeeDTO = new BusinessEmployeeDTO();
+        businessEmployeeDTO.setId(5l);
+
+        businessLeaderDTO.setEmployee(businessEmployeeDTO);
+        employeeAssignDTO.setBusinessLeaderDTO(businessLeaderDTO);
+
+        return new ResponseEntity<>(employeeAssignDTO, HttpStatus.OK);
+
+
     }
 
 }

@@ -1,8 +1,6 @@
 package com.mbor.dataloader;
 
 import com.mbor.domain.*;
-import com.mbor.domain.employeeinproject.ProjectManager;
-import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.security.Privilege;
 import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
@@ -92,14 +90,9 @@ public class DevDataLoader {
 
         Project project = new Project();
         project.setProjectName("First Project Name");
+        project.setStatus(ProjectStatus.ANALYSIS);
         project.setProjectClass(ProjectClass.I);
         project.addBusinessUnit(operationBusinessUnit);
-        ResourceManager resourceManager = new ResourceManager();
-        resourceManager.setEmployee(ITSupervisor);
-        project.setResourceManager(resourceManager);
-        ProjectManager projectManager = new ProjectManager();
-        projectManager.setEmployee( ITConsultant);
-        project.setProjectManager(projectManager);
         entityManager.persist(project);
 
         entityTransaction.commit();
@@ -113,7 +106,10 @@ public class DevDataLoader {
             brmRole.setName("BRM");
             Privilege createProjectPrivilege = new Privilege();
             createProjectPrivilege.setName("create_project");
+            Privilege assignEmployeePrivilege = new Privilege();
+            assignEmployeePrivilege.setName("assign_employee");
             brmRole.addPrivilege(createProjectPrivilege);
+            brmRole.addPrivilege(assignEmployeePrivilege);
             user.getRoles().add(brmRole);
         }
         user.setPassword(passwordEncoder.encode("pass"));
