@@ -1,8 +1,6 @@
 package com.mbor.dataloader;
 
 import com.mbor.domain.*;
-import com.mbor.domain.employeeinproject.ProjectManager;
-import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.security.Privilege;
 import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
@@ -11,11 +9,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceUnit;
 
 @Service
 @Profile({"controller-integration"})
-public class TestDataLoader {
+public class TestDataLoader  {
 
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
@@ -89,14 +90,9 @@ public class TestDataLoader {
 
         Project project = new Project();
         project.setProjectName("First Project Name");
+        project.setStatus(ProjectStatus.ANALYSIS);
         project.setProjectClass(ProjectClass.I);
         project.addBusinessUnit(operationBusinessUnit);
-        ResourceManager resourceManager = new ResourceManager();
-        resourceManager.setEmployee(ITSupervisor);
-        project.setResourceManager(resourceManager);
-        ProjectManager projectManager = new ProjectManager();
-        projectManager.setEmployee( ITConsultant);
-        project.setProjectManager(projectManager);
         entityManager.persist(project);
 
         entityTransaction.commit();

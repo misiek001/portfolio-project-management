@@ -55,7 +55,6 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
                 .map(businessUnit -> {
                     BusinessUnitDTO businessUnitDTO = new BusinessUnitDTO();
                     businessUnitDTO.setId(businessUnit.getId());
-                    businessUnitDTO.setName(businessUnit.getName());
                     return businessUnitDTO;
                 }).collect(Collectors.toSet());
         projectCreatedDTO.setBusinessUnits(businessUnitDTOSet);

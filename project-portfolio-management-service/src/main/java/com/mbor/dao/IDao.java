@@ -13,4 +13,6 @@ public interface IDao<T> {
 
     void delete(Long id);
 
+    Optional<T> update(T t);
+
 }

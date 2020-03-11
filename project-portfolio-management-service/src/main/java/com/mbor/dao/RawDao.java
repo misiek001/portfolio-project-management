@@ -42,6 +42,11 @@ public abstract class RawDao<T> implements IDao<T> {
             return allQuery.getResultList();
         }
 
+    @Override
+    public Optional<T> update(T t) {
+       return Optional.ofNullable(entityManager.merge(t));
+    }
+
     public Class<T> getClazz() {
         return clazz;
     }

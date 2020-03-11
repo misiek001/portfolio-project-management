@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mbor.configuration.WebApplicationSecurityConfig;
 import com.mbor.dataloader.TestDataLoader;
-import com.mbor.model.BusinessEmployeeDTO;
-import com.mbor.model.BusinessLeaderDTO;
-import com.mbor.model.BusinessRelationManagerDTO;
-import com.mbor.model.BusinessUnitDTO;
+import com.mbor.model.*;
+import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.spring.ServiceConfiguration;
 import com.mbor.spring.WebConfiguration;
@@ -31,10 +29,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Random;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,8 +65,21 @@ class ProjectControllerTest {
         Assertions.assertNotNull(obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password")));
     }
 
+
     @Test
-    void save() throws Exception {
+    public void assignEmployeeThenSuccess() throws Exception {
+        String accessToken = obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password"));
+        mockMvc.perform(put("/projects")
+                .header("Authorization", "Bearer " + accessToken)
+                .content(prepareEmployeeAssignDto())
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isOk());
+    }
+
+
+    @Test
+    void createProject() throws Exception {
         String accessToken = obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password"));
         mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
@@ -97,8 +110,49 @@ class ProjectControllerTest {
         return jsonParser.parseMap(resultString).get("access_token").toString();
     }
 
+    private String prepareEmployeeAssignDto() throws JsonProcessingException {
+        EmployeeAssignDTO employeeAssignDTO = new EmployeeAssignDTO();
+        employeeAssignDTO.setProjectId(1l);
+
+        ConsultantDTO consultantDTO = new ConsultantDTO();
+        consultantDTO.setId(4l);
+        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+        projectManagerDTO.setEmployee(consultantDTO);
+
+        employeeAssignDTO.setProjectManagerDTO(projectManagerDTO);
+
+        BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
+        businessRelationManagerDTO.setId(3l);
+        employeeAssignDTO.setBusinessRelationManagerDTO(businessRelationManagerDTO);
+
+        SupervisorDTO supervisorDTO = new SupervisorDTO();
+        supervisorDTO.setId(2l);
+        ResourceManagerDTO resourceManagerDTO = new ResourceManagerDTO();
+        resourceManagerDTO.setEmployee(supervisorDTO);
+        employeeAssignDTO.setResourceManagerDTO(resourceManagerDTO);
+
+        Set<SolutionArchitectDTO> solutionArchitectDTOS = new HashSet<>();
+
+        SolutionArchitectDTO firstSolutionArchitect = new SolutionArchitectDTO();
+        firstSolutionArchitect.setEmployee(consultantDTO);
+        solutionArchitectDTOS.add(firstSolutionArchitect);
+        SolutionArchitectDTO secondSolutionArchitect  = new SolutionArchitectDTO();
+        secondSolutionArchitect.setEmployee(supervisorDTO);
+        solutionArchitectDTOS.add(secondSolutionArchitect);
+        employeeAssignDTO.setSolutionArchitectDTOS(solutionArchitectDTOS);
+
+        BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
+        BusinessEmployeeDTO businessEmployeeDTO = new BusinessEmployeeDTO();
+        businessEmployeeDTO.setId(5l);
+
+        businessLeaderDTO.setEmployee(businessEmployeeDTO);
+        employeeAssignDTO.setBusinessLeaderDTO(businessLeaderDTO);
+
+        return mapper.writeValueAsString(employeeAssignDTO);
+    }
+
+
     private String prepareProjectCreationDto() throws JsonProcessingException {
-        Random random = new Random();
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName("Project Name");
 

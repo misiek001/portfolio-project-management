@@ -91,13 +91,11 @@ class ProjectMapperTest {
 
         businessUnitDTOFirst = new BusinessUnitDTO();
         businessUnitDTOFirst.setId(random.nextLong());
-        businessUnitDTOFirst.setName("First BU");
 
         projectCreationDTO.addBusinessUnit(businessUnitDTOFirst);
 
         businessUnitDTOSecond = new BusinessUnitDTO();
         businessUnitDTOSecond.setId(random.nextLong());
-        businessUnitDTOSecond.setName("Second BU");
 
         projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
@@ -121,11 +119,9 @@ class ProjectMapperTest {
 
         businessUnitFirst = new BusinessUnit();
         businessUnitFirst.setId(businessUnitDTOFirst.getId());
-        businessUnitFirst.setName(businessUnitDTOFirst.getName());
 
         businessUnitSecond = new BusinessUnit();
         businessUnitSecond.setId(businessUnitDTOSecond.getId());
-        businessUnitSecond.setName(businessUnitDTOSecond.getName());
 
         expectedProject.addBusinessUnit(businessUnitFirst);
         expectedProject.addBusinessUnit(businessUnitSecond);

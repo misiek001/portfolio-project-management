@@ -18,7 +18,7 @@ public class ProjectDTO implements IProjectDTO {
 
     private BusinessRelationManagerDTO businessRelationManager;
 
-    private BusinessLeaderDTO businessUnitLeader;
+    private BusinessLeaderDTO businessLeader;
 
     private Set<SolutionArchitectDTO> solutionArchitect;
 
@@ -80,12 +80,12 @@ public class ProjectDTO implements IProjectDTO {
         this.businessRelationManager = businessRelationManager;
     }
 
-    public BusinessLeaderDTO getBusinessUnitLeader() {
-        return businessUnitLeader;
+    public BusinessLeaderDTO getBusinessLeader() {
+        return businessLeader;
     }
 
-    public void setBusinessUnitLeader(BusinessLeaderDTO businessUnitLeader) {
-        this.businessUnitLeader = businessUnitLeader;
+    public void setBusinessLeader(BusinessLeaderDTO businessLeader) {
+        this.businessLeader = businessLeader;
     }
 
     public Set<SolutionArchitectDTO> getSolutionArchitect() {
