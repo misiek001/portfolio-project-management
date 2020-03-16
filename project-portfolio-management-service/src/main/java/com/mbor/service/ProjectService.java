@@ -4,7 +4,6 @@ import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
 import com.mbor.exception.ProjectRoleAlreadyExist;
-import com.mbor.exception.WrongEmployeeTypeException;
 import com.mbor.mapper.ProjectMapper;
 import com.mbor.model.ProjectClassDTO;
 import com.mbor.model.ProjectDTO;
@@ -13,7 +12,9 @@ import com.mbor.model.SolutionArchitectDTO;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
+import com.mbor.model.search.SupervisorSearchProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.mbor.service.ServiceUtils.tryCast;
 
 @Service
 @Transactional
@@ -76,11 +79,39 @@ public class ProjectService extends RawService<Project> implements IProjectServi
                     .collect(Collectors.toList());
         }
         LocalDate projectStartDate = searchProjectDTO.getProjectStartDateLaterThat();
-        System.out.println(businessUnitService.find(1l));
         List<Project> foundProject = getDao().findByMultipleCriteria(projectName, projectClass, businessUnitName, projectStatusList, projectStartDate);
         List<ProjectDTO> projectDTOList = new ArrayList<>();
         foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
         return projectDTOList;
+    }
+
+    @Override
+    public List<ProjectDTO> findResourceManagerProjects(Long resourceManagerId, ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO){
+        Long projectId = resourceManagerSearchProjectDTO.getProjectId();
+        String projectName = resourceManagerSearchProjectDTO.getProjectName();
+        List<ProjectClass> projectClass = null;
+        if (resourceManagerSearchProjectDTO.getProjectClassDTOList() != null) {
+            projectClass = resourceManagerSearchProjectDTO.getProjectClassDTOList()
+                    .stream()
+                    .map(mapProjectClassDTOToProjectClass())
+                    .collect(Collectors.toList());
+        }
+        List<ProjectStatus> projectStatusList = null;
+        if (resourceManagerSearchProjectDTO.getProjectStatusDTOList() != null) {
+            projectStatusList = resourceManagerSearchProjectDTO.getProjectStatusDTOList()
+                    .stream()
+                    .map(mapProjectStatusDTOToProjectStatus())
+                    .collect(Collectors.toList());
+        }
+        List<Project> foundProject = getDao().findResourceManagerProjects(resourceManagerId, projectId, projectName, projectClass, projectStatusList);
+        List<ProjectDTO> projectDTOList = new ArrayList<>();
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        return projectDTOList;
+    }
+
+    @Override
+    public List<ProjectDTO> findSupervisorProjects(Long supervisorId, SupervisorSearchProjectDTO supervisorSearchProjectDTO){
+        return null;
     }
 
     @Override
@@ -141,9 +172,9 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             }
             project.setBusinessLeader(businessLeader);
         }
-
         return projectMapper.convertToDto(update(project));
     }
+
 
     private Function<ProjectClassDTO, ProjectClass> mapProjectClassDTOToProjectClass() {
         return projectClassDTO -> Enum.valueOf(ProjectClass.class, projectClassDTO.name());
@@ -162,13 +193,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         });
     }
 
-    private <T, R> R tryCast(Class<T> t, Object r) {
-        if (t.isInstance(r)) {
-            return (R) r;
-        } else {
-            throw new WrongEmployeeTypeException(r + " is not employee type:" + t);
-        }
-    }
+
 
     @Override
     public IProjectDao getDao() {

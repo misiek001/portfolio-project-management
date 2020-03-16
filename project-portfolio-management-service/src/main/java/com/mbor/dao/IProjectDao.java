@@ -11,4 +11,5 @@ public interface IProjectDao extends IDao<Project> {
 
      List<Project> findByMultipleCriteria(String projectName, List<ProjectClass> projectClassList, String businessUnitName, List<ProjectStatus> projectStatusList, LocalDate projectStartDate);
 
+     List<Project> findResourceManagerProjects(Long resourceManagerId, Long projectId, String projectName, List<ProjectClass> projectClass, List<ProjectStatus> projectStatusList);
 }

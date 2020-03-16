@@ -2,13 +2,12 @@ package com.mbor.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mbor.configuration.WebApplicationSecurityConfig;
-import com.mbor.dataloader.TestDataLoader;
 import com.mbor.domain.employeeinproject.IProjectManager;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.service.IEmployeeService;
 import com.mbor.spring.ServiceConfiguration;
 import com.mbor.spring.WebConfiguration;
@@ -26,6 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -35,6 +35,7 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,15 +47,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {WebConfiguration.class, ServiceConfiguration.class, WebApplicationSecurityConfig.class})
+@ContextConfiguration(classes = {WebConfiguration.class, ServiceConfiguration.class})
 @TestPropertySource(locations = "classpath:security-client-test.properties")
 @ActiveProfiles(profiles = {"test", "controller-integration"})
 class ProjectControllerTest {
 
     ObjectMapper mapper = new ObjectMapper();
-
-    @Autowired
-    private TestDataLoader testDataLoader;
 
     @Autowired
     private IEmployeeService employeeService;
@@ -71,13 +69,24 @@ class ProjectControllerTest {
 
     @Test
     public void obtainAccessTokenThenSuccess() throws Exception {
-        Assertions.assertNotNull(obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password")));
+        Assertions.assertNotNull(obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password")));
+        Assertions.assertNotNull(obtainAccessToken(env.getProperty("user.supervisor.name"), env.getProperty("user.supervisor.password")));
     }
 
+    @Test
+    void createProject() throws Exception {
+        String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
+        mockMvc.perform(post("/projects")
+                .header("Authorization", "Bearer " + accessToken)
+                .content(prepareProjectCreationDto())
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isCreated());
+    }
 
     @Test
     public void assignEmployeeThenSuccess() throws Exception {
-        String accessToken = obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password"));
+        String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
         mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .content(mapper.writeValueAsString(prepareEmployeeAssignDto()))
@@ -87,30 +96,32 @@ class ProjectControllerTest {
     }
 
     @Test
-    public void createProjectWithAttemptToCreateNewRoleWhenRoleExist_ThenBadRequest(@Autowired EntityManagerFactory entityManagerFactory) throws Exception {
+    public void assignEmployeeWithAttemptToCreateNewRoleWhenRoleExistThenBadRequest(@Autowired EntityManagerFactory entityManagerFactory) throws Exception {
         loadProjectManager(entityManagerFactory);
 
-        String accessToken = obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password"));
+        String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
         mockMvc.perform(put("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .content(prepareEmployeeAssignDto())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
         ).andExpect(status().isBadRequest());
-
     }
-
-
-
     @Test
-    void createProject() throws Exception {
-        String accessToken = obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password"));
-        mockMvc.perform(post("/projects")
+    public void findResourceManagerProjectsThenSuccess() throws Exception {
+        String accessToken = obtainAccessToken(env.getProperty("user.supervisor.name"), env.getProperty("user.supervisor.password"));
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("searchingEmployee", "resource-manager");
+
+        MvcResult mvcResult = mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
-                .content(prepareProjectCreationDto())
+                .params(params)
+                .content(prepareResourceManagerSearchProjectDto())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
-        ).andExpect(status().isCreated());
+        ).andExpect(status().isOk()).andReturn();
+
     }
 
     private String obtainAccessToken(String username, String password) throws Exception {
@@ -202,6 +213,15 @@ class ProjectControllerTest {
         projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
         return  mapper.writeValueAsString(projectCreationDTO);
+    }
+
+    private String prepareResourceManagerSearchProjectDto() throws JsonProcessingException {
+        ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO = new ResourceManagerSearchProjectDTO();
+        resourceManagerSearchProjectDTO.setProjectId(1l);
+        resourceManagerSearchProjectDTO.setProjectClassDTOList(Collections.singletonList(ProjectClassDTO.I));
+        resourceManagerSearchProjectDTO.setProjectStatusDTOList(Collections.singletonList(ProjectStatusDTO.ANALYSIS));
+
+        return mapper.writeValueAsString(resourceManagerSearchProjectDTO);
     }
 
     private void loadProjectManager(EntityManagerFactory entityManagerFactory) {

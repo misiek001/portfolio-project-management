@@ -4,9 +4,7 @@ import com.mbor.domain.*;
 import com.mbor.domain.security.Privilege;
 import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -14,8 +12,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceUnit;
 
-@Service
-@Profile({"controller-integration"})
+
 public class TestDataLoader  {
 
     @PersistenceUnit
@@ -60,6 +57,7 @@ public class TestDataLoader  {
         ITSupervisor.setUserName("ITSupervisorUserName");
         ITSupervisor.setBusinessUnit(ITBusinessUnit);
         ITSupervisor.setDirector(ITDirector);
+        createUser(ITSupervisor);
 
         entityManager.persist(ITSupervisor);
         Long supervisorId = ITSupervisor.getId();
@@ -90,20 +88,19 @@ public class TestDataLoader  {
 
         Project project = new Project();
         project.setProjectName("First Project Name");
-        project.setStatus(ProjectStatus.ANALYSIS);
+        project.setProjectStatus(ProjectStatus.ANALYSIS);
         project.setProjectClass(ProjectClass.I);
         project.addBusinessUnit(operationBusinessUnit);
         entityManager.persist(project);
 
         entityTransaction.commit();
-        System.out.println();
     }
 
-    private void createUser(Employee employee){
+    private void createUser(Employee employee) {
         User user = new User();
-        if (employee instanceof BusinessRelationManager){
+        if (employee instanceof BusinessRelationManager) {
             Role brmRole = new Role();
-            brmRole.setName("BRM");
+            brmRole.setName("brm");
             Privilege createProjectPrivilege = new Privilege();
             createProjectPrivilege.setName("create_project");
             Privilege assignEmployeePrivilege = new Privilege();
@@ -111,8 +108,17 @@ public class TestDataLoader  {
             brmRole.addPrivilege(createProjectPrivilege);
             brmRole.addPrivilege(assignEmployeePrivilege);
             user.getRoles().add(brmRole);
+        } else if (employee instanceof Supervisor) {
+            Role supervisorRole = new Role();
+            supervisorRole.setName("supervisor");
+            Privilege findResourceManagerProjectsPrivilege = new Privilege();
+            findResourceManagerProjectsPrivilege.setName("search_resource_manager_projects");
+            supervisorRole.addPrivilege(findResourceManagerProjectsPrivilege);
+            user.getRoles().add(supervisorRole);
+        } else {
+
         }
-        user.setPassword(passwordEncoder.encode("pass"));
+        user.setPassword(passwordEncoder.encode("password"));
         employee.setUser(user);
     }
 

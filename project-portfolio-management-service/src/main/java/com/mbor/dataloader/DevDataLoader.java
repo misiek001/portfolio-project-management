@@ -1,6 +1,7 @@
 package com.mbor.dataloader;
 
 import com.mbor.domain.*;
+import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.security.Privilege;
 import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
@@ -15,13 +16,12 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceUnit;
 
 @Service
-@Profile("dev")
+@Profile({"dev", "controller-integration"})
 public class DevDataLoader {
 
+    private final PasswordEncoder passwordEncoder;
     @PersistenceUnit
     EntityManagerFactory entityManagerFactory;
-
-    private final PasswordEncoder passwordEncoder;
 
     public DevDataLoader(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -42,27 +42,24 @@ public class DevDataLoader {
 
         operationBusinessUnit.setName("Operation Business Unit");
         entityManager.persist(operationBusinessUnit);
-        Long operationBusinessUnitId = operationBusinessUnit.getId();
 
         BusinessUnit ITBusinessUnit = new BusinessUnit();
         ITBusinessUnit.setName("IT Business Unit");
         entityManager.persist(ITBusinessUnit);
-        Long ITBusinessUnitId = ITBusinessUnit.getId();
 
         Director ITDirector = new Director();
         ITDirector.setUserName("DirectorUserName");
         ITDirector.setBusinessUnit(ITBusinessUnit);
 
         entityManager.persist(ITDirector);
-        Long directorID = ITDirector.getId();
 
         Supervisor ITSupervisor = new Supervisor();
         ITSupervisor.setUserName("ITSupervisorUserName");
         ITSupervisor.setBusinessUnit(ITBusinessUnit);
         ITSupervisor.setDirector(ITDirector);
+        createUser(ITSupervisor);
 
         entityManager.persist(ITSupervisor);
-        Long supervisorId = ITSupervisor.getId();
 
         BusinessRelationManager businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setUserName("BRMUserName");
@@ -71,7 +68,6 @@ public class DevDataLoader {
         createUser(businessRelationManager);
 
         entityManager.persist(businessRelationManager);
-        Long brmId = businessRelationManager.getId();
 
         Consultant ITConsultant = new Consultant();
         ITConsultant.setUserName("ConsultantUserName");
@@ -79,31 +75,34 @@ public class DevDataLoader {
         ITConsultant.setBusinessUnit(ITBusinessUnit);
 
         entityManager.persist(ITConsultant);
-        Long consultantID = ITConsultant.getId();
 
         BusinessEmployee businessEmployee = new BusinessEmployee();
         businessEmployee.setUserName("BusinessEmployeeUserName");
         businessEmployee.setBusinessUnit(operationBusinessUnit);
 
         entityManager.persist(businessEmployee);
-        Long businessEmployeeId = businessEmployee.getId();
 
         Project project = new Project();
         project.setProjectName("First Project Name");
-        project.setStatus(ProjectStatus.ANALYSIS);
+        project.setProjectStatus(ProjectStatus.ANALYSIS);
         project.setProjectClass(ProjectClass.I);
         project.addBusinessUnit(operationBusinessUnit);
+
+        ResourceManager resourceManager = new ResourceManager();
+        resourceManager.setEmployee(ITSupervisor);
+        project.setResourceManager(resourceManager);
+
         entityManager.persist(project);
 
         entityTransaction.commit();
         System.out.println();
     }
 
-    private void createUser(Employee employee){
+    private void createUser(Employee employee) {
         User user = new User();
-        if (employee instanceof BusinessRelationManager){
+        if (employee instanceof BusinessRelationManager) {
             Role brmRole = new Role();
-            brmRole.setName("BRM");
+            brmRole.setName("brm");
             Privilege createProjectPrivilege = new Privilege();
             createProjectPrivilege.setName("create_project");
             Privilege assignEmployeePrivilege = new Privilege();
@@ -111,9 +110,17 @@ public class DevDataLoader {
             brmRole.addPrivilege(createProjectPrivilege);
             brmRole.addPrivilege(assignEmployeePrivilege);
             user.getRoles().add(brmRole);
+        } else if (employee instanceof Supervisor) {
+            Role supervisorRole = new Role();
+            supervisorRole.setName("supervisor");
+            Privilege findResourceManagerProjectsPrivilege = new Privilege();
+            findResourceManagerProjectsPrivilege.setName("search_resource_manager_projects");
+            supervisorRole.addPrivilege(findResourceManagerProjectsPrivilege);
+            user.getRoles().add(supervisorRole);
+        } else {
+
         }
-        user.setPassword(passwordEncoder.encode("pass"));
+        user.setPassword(passwordEncoder.encode("password"));
         employee.setUser(user);
     }
-
 }

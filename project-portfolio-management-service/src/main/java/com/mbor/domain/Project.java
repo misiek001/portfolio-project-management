@@ -45,14 +45,14 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "business_unit_leader_id")
     private BusinessLeader businessLeader;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST} )
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
     private Set<SolutionArchitect> solutionArchitect = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
-    private ProjectStatus status;
+    private ProjectStatus projectStatus;
 
     private LocalDateTime startDate;
 
@@ -144,12 +144,12 @@ public class Project implements IProjectDTO {
         this.solutionArchitect = solutionArchitect;
     }
 
-    public ProjectStatus getStatus() {
-        return status;
+    public ProjectStatus getProjectStatus() {
+        return projectStatus;
     }
 
-    public void setStatus(ProjectStatus status) {
-        this.status = status;
+    public void setProjectStatus(ProjectStatus status) {
+        this.projectStatus = status;
     }
 
     public LocalDateTime getStartDate() {

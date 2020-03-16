@@ -23,7 +23,6 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
 
     @Override
     public List<Project> findByMultipleCriteria(String projectName, List<ProjectClass> projectClassList, String businessUnitName, List<ProjectStatus> projectStatusList, LocalDate projectStartDateLaterThat){
-
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
             Root<Project> project = criteriaQuery.from(Project.class);
@@ -38,10 +37,10 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
                 }
                 predicates.add(projectClassClause);
             }
-            //Todo Getting project from businessUnit in ManyToMany
-//            if(businessUnitName != null){
-//                predicates.add(criteriaBuilder.like(project.join("businessUnits").get("name"), "%" + businessUnitName + "%"));
-//            }
+
+            if(businessUnitName != null){
+                predicates.add(criteriaBuilder.like(project.join("businessUnits").get("name"), "%" + businessUnitName + "%"));
+            }
             if(projectStatusList != null){
                 CriteriaBuilder.In<ProjectStatus> projectStatusClause = criteriaBuilder.in(project.get("projectStatus"));
                 for(ProjectStatus projectStatus : projectStatusList){
@@ -56,7 +55,42 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
             TypedQuery<Project> allQuery = entityManager.createQuery(criteriaQuery);
             return allQuery.getResultList();
         }
+
+    @Override
+    public List<Project> findResourceManagerProjects(Long resourceManagerId, Long projectId, String projectName, List<ProjectClass> projectClassList, List<ProjectStatus> projectStatusList) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
+        Root<Project> project = criteriaQuery.from(Project.class);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.equal(project.get("resourceManager").get("id"), resourceManagerId));
+        if(projectId != null){
+            predicates.add(criteriaBuilder.like(project.get("id").as(String.class), projectId + "%"));
+        }
+        if(projectName != null){
+            predicates.add(criteriaBuilder.like(project.get("projectName"), "%" + projectName + "%"));
+        }
+        if(projectClassList != null){
+            CriteriaBuilder.In<ProjectClass> projectClassClause = criteriaBuilder.in(project.get("projectClass"));
+            for(ProjectClass projectStatus : projectClassList){
+                projectClassClause.value(projectStatus);
+            }
+            predicates.add(projectClassClause);
+        }
+        if(projectStatusList != null){
+            CriteriaBuilder.In<ProjectStatus> projectStatusClause = criteriaBuilder.in(project.get("projectStatus"));
+            for(ProjectStatus projectStatus : projectStatusList){
+                projectStatusClause.value(projectStatus);
+            }
+            predicates.add(projectStatusClause);
+        }
+        criteriaQuery.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Project> allQuery = entityManager.createQuery(criteriaQuery);
+        return allQuery.getResultList();
     }
+}
+
+
+
 
 
 

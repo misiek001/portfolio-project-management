@@ -1,14 +1,18 @@
 package com.mbor.controller;
 
+import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.model.ProjectDTO;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
+import com.mbor.service.IEmployeeService;
 import com.mbor.service.IProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +23,11 @@ public class ProjectController extends RawController {
 
     private final IProjectService projectService;
 
+    private final IEmployeeService employeeService;
 
-    public ProjectController(IProjectService projectService) {
+    public ProjectController(IProjectService projectService, IEmployeeService employeeService) {
         this.projectService = projectService;
+        this.employeeService = employeeService;
     }
 
     @PostMapping
@@ -38,21 +44,19 @@ public class ProjectController extends RawController {
         return new ResponseEntity<>(assignedProject, HttpStatus.OK);
     }
 
-    public  ResponseEntity<List<ProjectDTO>> findAll() {
-        return super.findAll();
-    }
-
-    public ResponseEntity<ProjectDTO> find(Long id) {
-        return super.find(id);
-    }
-
     @PostMapping(params = "search=true")
     public ResponseEntity<List<ProjectDTO>> findByCriteria(@RequestBody SearchProjectDTO searchProjectDTO){
         List<ProjectDTO> projects = getService().findByMultipleCriteria(searchProjectDTO);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
-    public ResponseEntity<Void> delete(Long id) {
-        return super.delete(id);
+
+    @PostMapping(params = "searchingEmployee=resource-manager")
+    @PreAuthorize("hasAuthority('search_resource_manager_projects')")
+    public ResponseEntity<List<ProjectDTO>> findResourceManagerProjects(@RequestBody ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO, final Authentication authentication){
+        String principal = (String) authentication.getPrincipal();
+        Long resourceManagerId = employeeService.getDemandedProjectRoleId(ResourceManager.class, principal);
+        List<ProjectDTO> projects = getService().findResourceManagerProjects(resourceManagerId, resourceManagerSearchProjectDTO);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @Override

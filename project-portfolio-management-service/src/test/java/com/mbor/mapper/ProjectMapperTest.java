@@ -103,7 +103,7 @@ class ProjectMapperTest {
 
         expectedProject = new Project();
         expectedProject.setProjectName("Project Name");
-        expectedProject.setStatus(ProjectStatus.ANALYSIS);
+        expectedProject.setProjectStatus(ProjectStatus.ANALYSIS);
 
         businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setId(businessRelationManagerDTO.getId());
@@ -155,7 +155,7 @@ class ProjectMapperTest {
         assertEquals(mappedProject.getBusinessLeader().getEmployee().getId(), expectedProject.getBusinessLeader().getEmployee().getId());
         assertEquals(mappedProject.getBusinessLeader().getEmployee().getFirstName(), expectedProject.getBusinessLeader().getEmployee().getFirstName());
         assertEquals(mappedProject.getBusinessLeader().getEmployee().getLastName(), expectedProject.getBusinessLeader().getEmployee().getLastName());
-        assertEquals(mappedProject.getStatus().name(), expectedProject.getStatus().name());
+        assertEquals(mappedProject.getProjectStatus().name(), expectedProject.getProjectStatus().name());
     }
 
     @Test

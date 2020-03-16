@@ -8,6 +8,7 @@ import com.mbor.domain.Employee;
 import com.mbor.domain.security.Privilege;
 import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
+import com.mbor.exception.WrongEmployeeTypeException;
 import com.mbor.mapper.*;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
@@ -30,14 +31,17 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
 
     private final IEmployeeDao employeeDao;
 
+    private final CustomUserDetailsService customUserDetailsService;
+
     private Map<EmployeeType, EmployeeMapper> mappers = new HashMap();
 
     private Random random = new Random();
 
     private final IUserDao userDao;
 
-    public EmployeeService(IEmployeeDao employeeDao, IUserDao userDao) {
+    public EmployeeService(IEmployeeDao employeeDao, CustomUserDetailsService customUserDetailsService, IUserDao userDao) {
         this.employeeDao = employeeDao;
+        this.customUserDetailsService = customUserDetailsService;
         this.userDao = userDao;
     }
 
@@ -54,6 +58,16 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
         Employee returnedEmployee = super.saveInternal(employee);
         createUser(employee);
         return prepareEmployeeCreatedDto(returnedEmployee, employeeType);
+    }
+
+    @Override
+    public <T> Long getDemandedProjectRoleId(Class<T> t, String username){
+        User user = customUserDetailsService.loadUserByUserName(username);
+        Employee employee = user.getEmployee();
+        return  employee.getProjectRoleSet().stream()
+                .filter(t::isInstance)
+                .findFirst().orElseThrow(WrongEmployeeTypeException::new).getId();
+
     }
 
     private Employee prepareEmployee(EmployeeCreationDTO employeeCreationDTO, EmployeeType employeeType){

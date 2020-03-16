@@ -8,4 +8,5 @@ public interface IEmployeeService<T extends Employee> extends IService<T> {
 
    EmployeeCreatedDTO save(EmployeeCreationDTO employeeCreationDTO);
 
+    <T2> Long getDemandedProjectRoleId(Class<T2> t, String username);
 }

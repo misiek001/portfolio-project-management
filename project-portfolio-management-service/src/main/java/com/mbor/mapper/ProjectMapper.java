@@ -49,7 +49,7 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
     @Override
     public ProjectCreatedDTO convertEntityToCreatedDto(Project project) {
         ProjectCreatedDTO projectCreatedDTO = modelMapper.map(project, ProjectCreatedDTO.class);
-        projectCreatedDTO.setProjectStatus(Enum.valueOf(ProjectStatusDTO.class, project.getStatus().name()));
+        projectCreatedDTO.setProjectStatus(Enum.valueOf(ProjectStatusDTO.class, project.getProjectStatus().name()));
         projectCreatedDTO.setBusinessLeader(businessLeaderMapper.convertToDto(project.getBusinessLeader()));
         Set<BusinessUnitDTO> businessUnitDTOSet = project.getBusinessUnits().stream()
                 .map(businessUnit -> {
@@ -65,7 +65,7 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
     public Project convertCreationDtoToEntity(ProjectCreationDTO projectCreationDTO) {
         Project project = new Project();
         project.setProjectName(projectCreationDTO.getProjectName());
-        project.setStatus(ProjectStatus.valueOf(projectCreationDTO.getProjectStatus().name()));
+        project.setProjectStatus(ProjectStatus.valueOf(projectCreationDTO.getProjectStatus().name()));
         project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(projectCreationDTO.getBusinessRelationManager().getId()));
         BusinessLeader businessLeader;
         if(projectCreationDTO.getBusinessLeader().getId() == null){

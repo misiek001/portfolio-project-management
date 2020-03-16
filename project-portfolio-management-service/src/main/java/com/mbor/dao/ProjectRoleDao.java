@@ -25,4 +25,5 @@ public class ProjectRoleDao extends RawDao<ProjectRole> implements IProjectRoleD
         TypedQuery<ProjectRole> allQuery = entityManager.createQuery(criteriaQuery);
         return allQuery.getResultList();
     }
+
 }
