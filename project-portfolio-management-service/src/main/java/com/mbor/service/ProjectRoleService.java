@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 public class ProjectRoleService extends RawService<ProjectRole> implements IProjectRoleService<ProjectRole> {
@@ -23,6 +25,11 @@ public class ProjectRoleService extends RawService<ProjectRole> implements IProj
     @Override
     public IDao getDao() {
         return projectRoleDao;
+    }
+
+    @Override
+    public List<ProjectRole> findAllRoleOfEmployee(Long id){
+        return projectRoleDao.findAllRoleOfEmployee(id);
     }
 
 }

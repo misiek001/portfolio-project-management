@@ -1,5 +1,6 @@
 package com.mbor.exceptionhandler;
 
+import com.mbor.exception.ProjectRoleAlreadyExist;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,16 @@ import javax.persistence.NoResultException;
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoResultException.class)
-    protected ResponseEntity<Object> handleNeResultException(RuntimeException exception, WebRequest webRequest){
-        String bodyOfResponse = "message:" + exception.getMessage();
-        return handleExceptionInternal(exception, bodyOfResponse,
+    protected ResponseEntity<Object> handleNoResultException(RuntimeException exception, WebRequest webRequest){
+        String responseBody = "message:" + exception.getMessage();
+        return handleExceptionInternal(exception, responseBody,
                 new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
     }
 
+    @ExceptionHandler(ProjectRoleAlreadyExist.class)
+    protected ResponseEntity<Object> handleProjectRoleAlreadyExistException(RuntimeException exception, WebRequest webRequest){
+        String responseBody = "message:" + exception.getMessage();
+        return handleExceptionInternal(exception, responseBody,
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+    }
 }

@@ -3,6 +3,7 @@ package com.mbor.service;
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
+import com.mbor.exception.ProjectRoleAlreadyExist;
 import com.mbor.exception.WrongEmployeeTypeException;
 import com.mbor.mapper.ProjectMapper;
 import com.mbor.model.ProjectClassDTO;
@@ -90,8 +91,10 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             if (employeeAssignDTO.getProjectManagerDTO().getId() != null) {
                 projectManager = tryCast(ProjectManager.class, projectRoleService.find(employeeAssignDTO.getProjectManagerDTO().getId()));
             } else {
+                Long employeeId = employeeAssignDTO.getProjectManagerDTO().getEmployee().getId();
+                checkIfRoleAlreadyExist(ProjectManager.class,employeeId );
                 projectManager = new ProjectManager();
-                projectManager.setEmployee(tryCast(IProjectManager.class, employeeService.find(employeeAssignDTO.getProjectManagerDTO().getEmployee().getId())));
+                projectManager.setEmployee(tryCast(IProjectManager.class, employeeService.find(employeeId)));
             }
             project.setProjectManager(projectManager);
         }
@@ -103,8 +106,10 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             if (employeeAssignDTO.getResourceManagerDTO().getId() != null) {
                 resourceManager = tryCast(ResourceManager.class, projectRoleService.find(employeeAssignDTO.getResourceManagerDTO().getId()));
             } else {
+                Long employeeId = employeeAssignDTO.getResourceManagerDTO().getEmployee().getId();
+                checkIfRoleAlreadyExist(ResourceManager.class,employeeId );
                 resourceManager = new ResourceManager();
-                resourceManager.setEmployee(tryCast(Supervisor.class, employeeService.find(employeeAssignDTO.getResourceManagerDTO().getEmployee().getId())));
+                resourceManager.setEmployee(tryCast(Supervisor.class, employeeService.find(employeeId)));
             }
             project.setResourceManager(resourceManager);
         }
@@ -115,8 +120,10 @@ public class ProjectService extends RawService<Project> implements IProjectServi
                 if (solutionArchitectDTO.getId() != null) {
                     solutionArchitects.add(tryCast(SolutionArchitect.class, projectRoleService.find(solutionArchitectDTO.getId())));
                 } else {
+                    Long employeeId = solutionArchitectDTO.getEmployee().getId();
+                    checkIfRoleAlreadyExist(SolutionArchitect.class,employeeId );
                     SolutionArchitect solutionArchitect = new SolutionArchitect();
-                    solutionArchitect.setEmployee(tryCast(Employee.class, employeeService.find(solutionArchitectDTO.getEmployee().getId())));
+                    solutionArchitect.setEmployee(tryCast(Employee.class, employeeService.find(employeeId)));
                     solutionArchitects.add(solutionArchitect);
                 }
             });
@@ -127,8 +134,10 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             if (employeeAssignDTO.getBusinessLeaderDTO().getId() != null) {
                 businessLeader = tryCast(BusinessLeader.class, projectRoleService.find(employeeAssignDTO.getBusinessLeaderDTO().getId()));
             } else {
+                Long employeeId = employeeAssignDTO.getBusinessLeaderDTO().getEmployee().getId();
+                checkIfRoleAlreadyExist(BusinessLeader.class,employeeId );
                 businessLeader = new BusinessLeader();
-                businessLeader.setEmployee(tryCast(BusinessEmployee.class, employeeService.find(employeeAssignDTO.getBusinessLeaderDTO().getEmployee().getId())));
+                businessLeader.setEmployee(tryCast(BusinessEmployee.class, employeeService.find(employeeId)));
             }
             project.setBusinessLeader(businessLeader);
         }
@@ -142,6 +151,15 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     private Function<ProjectStatusDTO, ProjectStatus> mapProjectStatusDTOToProjectStatus() {
         return projectStatusDTO -> Enum.valueOf(ProjectStatus.class, projectStatusDTO.name());
+    }
+
+    private  <T extends ProjectRole> void  checkIfRoleAlreadyExist(Class<T> clazz, Long employeeId){
+        List<ProjectRole> roles = projectRoleService.findAllRoleOfEmployee(employeeId);
+        roles.forEach( role -> {
+            if (clazz.isInstance(role)) {
+                throw new ProjectRoleAlreadyExist("Employee with id:" + employeeId + "already have role:" + clazz.getName());
+            }
+        });
     }
 
     private <T, R> R tryCast(Class<T> t, Object r) {
