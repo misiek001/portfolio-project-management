@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mbor.configuration.WebApplicationSecurityConfig;
 import com.mbor.dataloader.TestDataLoader;
+import com.mbor.domain.employeeinproject.IProjectManager;
+import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.service.IEmployeeService;
 import com.mbor.spring.ServiceConfiguration;
 import com.mbor.spring.WebConfiguration;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +32,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +57,9 @@ class ProjectControllerTest {
     private TestDataLoader testDataLoader;
 
     @Autowired
+    private IEmployeeService employeeService;
+
+    @Autowired
     private  Environment env;
 
     private static MockMvc mockMvc;
@@ -69,13 +78,28 @@ class ProjectControllerTest {
     @Test
     public void assignEmployeeThenSuccess() throws Exception {
         String accessToken = obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password"));
+        mockMvc.perform(post("/projects")
+                .header("Authorization", "Bearer " + accessToken)
+                .content(mapper.writeValueAsString(prepareEmployeeAssignDto()))
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    public void createProjectWithAttemptToCreateNewRoleWhenRoleExist_ThenBadRequest(@Autowired EntityManagerFactory entityManagerFactory) throws Exception {
+        loadProjectManager(entityManagerFactory);
+
+        String accessToken = obtainAccessToken(env.getProperty("user.name"), env.getProperty("user.password"));
         mockMvc.perform(put("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .content(prepareEmployeeAssignDto())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
-        ).andExpect(status().isOk());
+        ).andExpect(status().isBadRequest());
+
     }
+
 
 
     @Test
@@ -151,7 +175,6 @@ class ProjectControllerTest {
         return mapper.writeValueAsString(employeeAssignDTO);
     }
 
-
     private String prepareProjectCreationDto() throws JsonProcessingException {
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName("Project Name");
@@ -179,6 +202,16 @@ class ProjectControllerTest {
         projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
         return  mapper.writeValueAsString(projectCreationDTO);
+    }
+
+    private void loadProjectManager(EntityManagerFactory entityManagerFactory) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        ProjectManager projectManager = new ProjectManager();
+        projectManager.setEmployee((IProjectManager) employeeService.find(4l));
+        entityManager.persist(projectManager);
+        transaction.commit();
     }
 
 }

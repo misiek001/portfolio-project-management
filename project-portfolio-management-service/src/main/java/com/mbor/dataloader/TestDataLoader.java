@@ -106,7 +106,10 @@ public class TestDataLoader  {
             brmRole.setName("BRM");
             Privilege createProjectPrivilege = new Privilege();
             createProjectPrivilege.setName("create_project");
+            Privilege assignEmployeePrivilege = new Privilege();
+            assignEmployeePrivilege.setName("assign_employee");
             brmRole.addPrivilege(createProjectPrivilege);
+            brmRole.addPrivilege(assignEmployeePrivilege);
             user.getRoles().add(brmRole);
         }
         user.setPassword(passwordEncoder.encode("pass"));
