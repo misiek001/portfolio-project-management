@@ -45,14 +45,14 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "business_unit_leader_id")
     private BusinessLeader businessLeader;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST} )
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
-    private Set<SolutionArchitect> solutionArchitect = new HashSet<>();
+    private Set<SolutionArchitect> solutionArchitects = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
-    private ProjectStatus status;
+    private ProjectStatus projectStatus;
 
     private LocalDateTime startDate;
 
@@ -136,20 +136,25 @@ public class Project implements IProjectDTO {
         projectManager.getProjects().add(this);
     }
 
-    public Set<SolutionArchitect> getSolutionArchitect() {
-        return solutionArchitect;
+    public Set<SolutionArchitect> getSolutionArchitects() {
+        return solutionArchitects;
     }
 
-    public void setSolutionArchitect(Set<SolutionArchitect> solutionArchitect) {
-        this.solutionArchitect = solutionArchitect;
+    public void setSolutionArchitects(Set<SolutionArchitect> solutionArchitect) {
+        this.solutionArchitects = solutionArchitect;
     }
 
-    public ProjectStatus getStatus() {
-        return status;
+    public void addSolutionArchitect(SolutionArchitect solutionArchitect){
+        this.solutionArchitects.add(solutionArchitect);
+        solutionArchitect.getProjects().add(this);
     }
 
-    public void setStatus(ProjectStatus status) {
-        this.status = status;
+    public ProjectStatus getProjectStatus() {
+        return projectStatus;
+    }
+
+    public void setProjectStatus(ProjectStatus status) {
+        this.projectStatus = status;
     }
 
     public LocalDateTime getStartDate() {
