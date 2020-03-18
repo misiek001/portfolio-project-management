@@ -115,7 +115,10 @@ public class DevDataLoader {
             supervisorRole.setName("supervisor");
             Privilege findResourceManagerProjectsPrivilege = new Privilege();
             findResourceManagerProjectsPrivilege.setName("search_resource_manager_projects");
+            Privilege findSupervisorProjectsPrivilege = new Privilege();
+            findSupervisorProjectsPrivilege.setName("search_supervisor_projects");
             supervisorRole.addPrivilege(findResourceManagerProjectsPrivilege);
+            supervisorRole.addPrivilege(findSupervisorProjectsPrivilege);
             user.getRoles().add(supervisorRole);
         } else {
 

@@ -5,10 +5,7 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
 import com.mbor.exception.ProjectRoleAlreadyExist;
 import com.mbor.mapper.ProjectMapper;
-import com.mbor.model.ProjectClassDTO;
-import com.mbor.model.ProjectDTO;
-import com.mbor.model.ProjectStatusDTO;
-import com.mbor.model.SolutionArchitectDTO;
+import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -111,7 +108,40 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     @Override
     public List<ProjectDTO> findSupervisorProjects(Long supervisorId, SupervisorSearchProjectDTO supervisorSearchProjectDTO){
-        return null;
+        Long projectId = supervisorSearchProjectDTO.getProjectId();
+        String projectName = supervisorSearchProjectDTO.getProjectName();
+        List<ProjectClass> projectClass = null;
+        if (supervisorSearchProjectDTO.getProjectClassDTOList() != null) {
+            projectClass = supervisorSearchProjectDTO.getProjectClassDTOList()
+                    .stream()
+                    .map(mapProjectClassDTOToProjectClass())
+                    .collect(Collectors.toList());
+        }
+        List<ProjectStatus> projectStatusList = null;
+        if (supervisorSearchProjectDTO.getProjectStatusDTOList() != null) {
+            projectStatusList = supervisorSearchProjectDTO.getProjectStatusDTOList()
+                    .stream()
+                    .map(mapProjectStatusDTOToProjectStatus())
+                    .collect(Collectors.toList());
+        }
+        List<Long> projectManagerIdList = null;
+        if (supervisorSearchProjectDTO.getProjectManagerDTOList() != null) {
+            projectManagerIdList = supervisorSearchProjectDTO.getProjectManagerDTOList()
+                    .stream()
+                    .map(IdDTO::getId)
+                    .collect(Collectors.toList());
+        }
+        List<Long> solutionArchitectsIdList = null;
+        if (supervisorSearchProjectDTO.getSolutionArchitectDTOList() != null) {
+            solutionArchitectsIdList = supervisorSearchProjectDTO.getSolutionArchitectDTOList()
+                    .stream()
+                    .map(IdDTO::getId)
+                    .collect(Collectors.toList());
+        }
+        List<Project> foundProject = getDao().findSupervisorProjects(supervisorId, projectId, projectName, projectClass, projectStatusList, projectManagerIdList, solutionArchitectsIdList);
+        List<ProjectDTO> projectDTOList = new ArrayList<>();
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        return projectDTOList;
     }
 
     @Override
@@ -158,7 +188,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
                     solutionArchitects.add(solutionArchitect);
                 }
             });
-            project.getSolutionArchitect().addAll(solutionArchitects);
+            project.getSolutionArchitects().addAll(solutionArchitects);
         }
         if (employeeAssignDTO.getBusinessLeaderDTO() != null) {
             BusinessLeader businessLeader;
@@ -188,11 +218,10 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         List<ProjectRole> roles = projectRoleService.findAllRoleOfEmployee(employeeId);
         roles.forEach( role -> {
             if (clazz.isInstance(role)) {
-                throw new ProjectRoleAlreadyExist("Employee with id:" + employeeId + "already have role:" + clazz.getName());
+                throw new ProjectRoleAlreadyExist("Employee with id:" + employeeId + "already has a role:" + clazz.getName());
             }
         });
     }
-
 
 
     @Override

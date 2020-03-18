@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SupervisorSearchProjectDTO {
 
-    private Long id;
+    private Long projectId;
 
     private String projectName;
 
@@ -17,16 +17,16 @@ public class SupervisorSearchProjectDTO {
 
     private List<ProjectStatusDTO> projectStatusDTOList;
 
-    private ProjectManagerDTO projectManagerDTO;
+    private List<ProjectManagerDTO> projectManagerDTOList;
 
-    private SolutionArchitectDTO solutionArchitectDTO;
+    private List<SolutionArchitectDTO> solutionArchitectDTOList;
 
-    public Long getId() {
-        return id;
+    public Long getProjectId() {
+        return projectId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
     public String getProjectName() {
@@ -53,19 +53,19 @@ public class SupervisorSearchProjectDTO {
         this.projectStatusDTOList = projectStatusDTOList;
     }
 
-    public ProjectManagerDTO getProjectManagerDTO() {
-        return projectManagerDTO;
+    public List<ProjectManagerDTO> getProjectManagerDTOList() {
+        return projectManagerDTOList;
     }
 
-    public void setProjectManagerDTO(ProjectManagerDTO projectManagerDTO) {
-        this.projectManagerDTO = projectManagerDTO;
+    public void setProjectManagerDTOList(List<ProjectManagerDTO> projectManagerDTOList) {
+        this.projectManagerDTOList = projectManagerDTOList;
     }
 
-    public SolutionArchitectDTO getSolutionArchitectDTO() {
-        return solutionArchitectDTO;
+    public List<SolutionArchitectDTO> getSolutionArchitectDTOList() {
+        return solutionArchitectDTOList;
     }
 
-    public void setSolutionArchitectDTO(SolutionArchitectDTO solutionArchitectDTO) {
-        this.solutionArchitectDTO = solutionArchitectDTO;
+    public void setSolutionArchitectDTOList(List<SolutionArchitectDTO> solutionArchitectDTOList) {
+        this.solutionArchitectDTOList = solutionArchitectDTOList;
     }
 }

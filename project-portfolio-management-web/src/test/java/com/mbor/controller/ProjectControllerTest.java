@@ -124,6 +124,23 @@ class ProjectControllerTest {
 
     }
 
+    @Test
+    public void findSupervisorProjectsThenSuccess() throws Exception {
+        String accessToken = obtainAccessToken(env.getProperty("user.supervisor.name"), env.getProperty("user.supervisor.password"));
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("searchingEmployee", "supervisor");
+
+        MvcResult mvcResult = mockMvc.perform(post("/projects")
+                .header("Authorization", "Bearer " + accessToken)
+                .params(params)
+                .content(prepareResourceManagerSearchProjectDto())
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isOk()).andReturn();
+
+    }
+
     private String obtainAccessToken(String username, String password) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");

@@ -49,7 +49,7 @@ public class Project implements IProjectDTO {
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
-    private Set<SolutionArchitect> solutionArchitect = new HashSet<>();
+    private Set<SolutionArchitect> solutionArchitects = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus projectStatus;
@@ -136,12 +136,17 @@ public class Project implements IProjectDTO {
         projectManager.getProjects().add(this);
     }
 
-    public Set<SolutionArchitect> getSolutionArchitect() {
-        return solutionArchitect;
+    public Set<SolutionArchitect> getSolutionArchitects() {
+        return solutionArchitects;
     }
 
-    public void setSolutionArchitect(Set<SolutionArchitect> solutionArchitect) {
-        this.solutionArchitect = solutionArchitect;
+    public void setSolutionArchitects(Set<SolutionArchitect> solutionArchitect) {
+        this.solutionArchitects = solutionArchitect;
+    }
+
+    public void addSolutionArchitect(SolutionArchitect solutionArchitect){
+        this.solutionArchitects.add(solutionArchitect);
+        solutionArchitect.getProjects().add(this);
     }
 
     public ProjectStatus getProjectStatus() {

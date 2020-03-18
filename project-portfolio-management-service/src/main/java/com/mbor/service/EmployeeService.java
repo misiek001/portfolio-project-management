@@ -67,7 +67,12 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
         return  employee.getProjectRoleSet().stream()
                 .filter(t::isInstance)
                 .findFirst().orElseThrow(WrongEmployeeTypeException::new).getId();
+    }
 
+    @Override
+    public <T> Long getDemandedEmployeeId(Class<T> t, String username){
+        User user = customUserDetailsService.loadUserByUserName(username);
+        return user.getEmployee().getId();
     }
 
     private Employee prepareEmployee(EmployeeCreationDTO employeeCreationDTO, EmployeeType employeeType){

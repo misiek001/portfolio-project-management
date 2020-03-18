@@ -1,5 +1,6 @@
 package com.mbor.controller;
 
+import com.mbor.domain.Supervisor;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.model.ProjectDTO;
 import com.mbor.model.assignment.EmployeeAssignDTO;
@@ -7,6 +8,7 @@ import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
+import com.mbor.model.search.SupervisorSearchProjectDTO;
 import com.mbor.service.IEmployeeService;
 import com.mbor.service.IProjectService;
 import org.springframework.http.HttpStatus;
@@ -58,6 +60,15 @@ public class ProjectController extends RawController {
         List<ProjectDTO> projects = getService().findResourceManagerProjects(resourceManagerId, resourceManagerSearchProjectDTO);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
+    @PostMapping(params = "searchingEmployee=supervisor")
+    @PreAuthorize("hasAuthority('search_supervisor_projects')")
+    public ResponseEntity<List<ProjectDTO>> findSupervisorProjects(@RequestBody SupervisorSearchProjectDTO supervisorSearchProjectDTO, final Authentication authentication){
+        String principal = (String) authentication.getPrincipal();
+        Long supervisorId = employeeService.getDemandedEmployeeId(Supervisor.class, principal);
+        List<ProjectDTO> projects = getService().findSupervisorProjects(supervisorId, supervisorSearchProjectDTO);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
 
     @Override
     public IProjectService getService() {
