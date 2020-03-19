@@ -33,24 +33,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Autowired
-    public IProjectDao projectDao;
+    public  IProjectDao projectDao;
 
+    private static Long firstConsultantId;
+    private static Long secondConsultantId;
+    private static Long thirdConsultantId;
+
+    private static Long superVisorId;
     private Long resourceManagerId;
 
-    private Long superVisorId;
 
-    private Long firstProjectManagerId;
+    private static Long firstProjectManagerId;
+    private static Long secondProjectManagerId;
 
-    private Long secondProjectManagerId;
+    private static Long firstSolutionArchitectId;
+    private static Long secondSolutionArchitectId;
+    private static Long thirdSolutionArchitectId;
 
-    private Long thirdSolutionArchitectId;
-
-    private Long firstSolutionArchitectId;
-
-    private Long secondSolutionArchitectId;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired IProjectDao projectDao) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
@@ -60,11 +62,12 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
             entityManager.persist(project);
         }
         transaction.commit();
+        loadTestDataForFindSupervisorProjects(entityManagerFactory, projectDao);
     }
 
     @Test
     public void findResourceManagerProjectsIndependentCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory){
-        loadTestDataForFindResourceManagerProjects(entityManagerFactory);
+  //      loadTestDataForFindResourceManagerProjects(entityManagerFactory);
 
         assertEquals( 3, projectDao.findResourceManagerProjects(resourceManagerId, null, null, null, null).size());
         assertEquals(1,  projectDao.findResourceManagerProjects(resourceManagerId, 1l, null, null, null).size());
@@ -83,7 +86,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
     }
     @Test
     public void findResourceManagerProjectsCombinedCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory){
-        loadTestDataForFindResourceManagerProjects(entityManagerFactory);
+     //   loadTestDataForFindResourceManagerProjects(entityManagerFactory);
 
         List<ProjectClass> projectClasses = new ArrayList<>();
         projectClasses.add(ProjectClass.I);
@@ -96,13 +99,13 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Test
     public void findSupervisorProjectsIndependentCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory){
-        loadTestDataForFindSupervisorProjects(entityManagerFactory);
+    //    loadTestDataForFindSupervisorProjects(entityManagerFactory);
 
         assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, null).size());
 
         assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId)).size());
 
-        assertEquals(0, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, Collections.singletonList(thirdSolutionArchitectId)).size());
+        assertEquals(1, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, Collections.singletonList(thirdSolutionArchitectId)).size());
 
         assertEquals(1, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Collections.singletonList(firstProjectManagerId), null).size());
 
@@ -110,10 +113,21 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
     }
 
     @Test
-    public void findSupervisorProjectsCombinedCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory){
-        loadTestDataForFindSupervisorProjects(entityManagerFactory);
-
+    public void findSupervisorProjectsCombinedCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory) {
+   //     loadTestDataForFindSupervisorProjects(entityManagerFactory);
         assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Collections.singletonList(firstProjectManagerId), Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId)).size());
+    }
+
+    @Test
+    public void findConsultantProjectThenSuccess(@Autowired EntityManagerFactory entityManagerFactory) throws InterruptedException {
+    //    loadTestDataForFindSupervisorProjects(entityManagerFactory);
+
+        assertEquals(1, projectDao.findConsultantProject(firstConsultantId).size());
+
+        assertEquals(2, projectDao.findConsultantProject(secondConsultantId).size());
+
+        assertEquals(2, projectDao.findConsultantProject(thirdConsultantId).size());
+
     }
 
 
@@ -156,7 +170,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         resourceManagerId = projectDao.find(1L).get().getResourceManager().getId();
     }
 
-    private void loadTestDataForFindSupervisorProjects(EntityManagerFactory entityManagerFactory) {
+    private static void loadTestDataForFindSupervisorProjects(EntityManagerFactory entityManagerFactory, IProjectDao projectDao) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
@@ -183,15 +197,18 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         firstConsultant.setUserName("FirstConsultant");
         firstConsultant.setSupervisor(supervisor);
         entityManager.persist(firstConsultant);
+        firstConsultantId = firstConsultant.getId();
 
         Consultant secondConsultant = new Consultant();
         secondConsultant.setUserName("SecondConsultant");
         secondConsultant.setSupervisor(supervisor);
         entityManager.persist(secondConsultant);
+        secondConsultantId = secondConsultant.getId();
 
         Consultant thirdConsultant = new Consultant();
         thirdConsultant.setUserName("ThirdConsultant");
         entityManager.persist(thirdConsultant);
+        thirdConsultantId = thirdConsultant.getId();
 
         ProjectManager firstProjectManager = new ProjectManager();
         firstProjectManager.setEmployee(firstConsultant);
@@ -209,29 +226,27 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         firstProject.setProjectManager(firstProjectManager);
         firstProject.addSolutionArchitect(firstSolutionArchitect);
         firstProject.addSolutionArchitect(secondSolutionArchitect);
-        List<SolutionArchitect> solutionArchitects = new ArrayList<>(entityManager.merge(firstProject).getSolutionArchitects());
-        secondSolutionArchitect = solutionArchitects.get(0);
 
         secondProject.setProjectManager(secondProjectManager);
         secondProject.addSolutionArchitect(secondSolutionArchitect);
         secondProject.addSolutionArchitect(thirdSolutionArchitect);
 
-
         thirdProject.addSolutionArchitect(thirdSolutionArchitect);
-        entityManager.merge(thirdProject);
 
         transaction.commit();
+        entityManager.merge(firstProjectManager);
+        firstProjectManagerId = firstProjectManager.getId();
+        entityManager.merge(secondProjectManager);
+        secondProjectManagerId = secondProjectManager.getId();
 
-        firstProjectManagerId = projectDao.find(1l).get().getProjectManager().getId();
-        secondProjectManagerId = projectDao.find(2l).get().getProjectManager().getId();
+        entityManager.merge(firstSolutionArchitect);
+        firstSolutionArchitectId = firstSolutionArchitect.getId();
+        entityManager.merge(secondSolutionArchitect);
+        secondSolutionArchitectId = secondSolutionArchitect.getId();
+        entityManager.merge(thirdSolutionArchitect);
 
-        List<SolutionArchitect> solutionArchitects2 = new ArrayList<>(projectDao.find(1l).get().getSolutionArchitects());
-        firstSolutionArchitectId = solutionArchitects.get(1).getId();
-        secondSolutionArchitectId = solutionArchitects.get(0).getId();
+        thirdSolutionArchitectId = thirdSolutionArchitect.getId();
 
-        thirdSolutionArchitectId = projectDao.find(3l).get().getSolutionArchitects().stream().findAny().get().getId();
-        List<Project> projects = projectDao.findAll();
-        System.out.println();
     }
 
     @Override

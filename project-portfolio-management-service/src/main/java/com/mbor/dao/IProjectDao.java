@@ -14,4 +14,6 @@ public interface IProjectDao extends IDao<Project> {
      List<Project> findResourceManagerProjects(Long resourceManagerId, Long projectId, String projectName, List<ProjectClass> projectClass, List<ProjectStatus> projectStatusList);
 
      List<Project> findSupervisorProjects(Long supervisorId, Long projectId, String projectName, List<ProjectClass> projectClass, List<ProjectStatus> projectStatusList, List<Long> projectManagerIdList, List<Long> solutionArchitectsIdList);
+
+    List<Project> findConsultantProject(Long consultantId);
 }

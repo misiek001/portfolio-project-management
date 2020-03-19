@@ -25,7 +25,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -41,6 +40,7 @@ import java.util.Set;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -114,13 +114,13 @@ class ProjectControllerTest {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("searchingEmployee", "resource-manager");
 
-        MvcResult mvcResult = mockMvc.perform(post("/projects")
+      mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
                 .content(prepareResourceManagerSearchProjectDto())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
-        ).andExpect(status().isOk()).andReturn();
+        ).andExpect(status().isOk());
 
     }
 
@@ -131,15 +131,33 @@ class ProjectControllerTest {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("searchingEmployee", "supervisor");
 
-        MvcResult mvcResult = mockMvc.perform(post("/projects")
+         mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
                 .content(prepareResourceManagerSearchProjectDto())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
-        ).andExpect(status().isOk()).andReturn();
+        ).andExpect(status().isOk());
 
     }
+
+    @Test
+    public void findConsultantProjectsThenSuccess() throws Exception {
+        String accessToken = obtainAccessToken(env.getProperty("user.consultant.name"), env.getProperty("user.consultant.password"));
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("searchingEmployee", "consultant");
+
+         mockMvc.perform(get("/projects")
+                .header("Authorization", "Bearer " + accessToken)
+                .params(params)
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isOk());
+
+    }
+
+
 
     private String obtainAccessToken(String username, String password) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
