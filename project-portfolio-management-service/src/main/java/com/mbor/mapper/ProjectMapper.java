@@ -21,16 +21,18 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
 
     private final BusinessLeaderMapper businessLeaderMapper;
     private final BusinessRelationManagerMapper businessRelationManagerMapper;
+    private final ProjectAspectLineMapper projectAspectMapper;
 
     private final IEmployeeService employeeService;
     private final IBusinessUnitService businessUnitService;
     private final IProjectRoleService projectRoleService;
 
 
-    public ProjectMapper(ModelMapper modelMapper, BusinessLeaderMapper businessLeaderMapper, BusinessRelationManagerMapper businessRelationManagerMapper, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService) {
+    public ProjectMapper(ModelMapper modelMapper, BusinessLeaderMapper businessLeaderMapper, BusinessRelationManagerMapper businessRelationManagerMapper, ProjectAspectLineMapper projectAspectMapper, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService) {
         super(modelMapper);
         this.businessLeaderMapper = businessLeaderMapper;
         this.businessRelationManagerMapper = businessRelationManagerMapper;
+        this.projectAspectMapper = projectAspectMapper;
         this.employeeService = employeeService;
         this.businessUnitService = businessUnitService;
         this.projectRoleService = projectRoleService;

@@ -3,12 +3,15 @@ package com.mbor.service;
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
+import com.mbor.domain.projectaspect.ProjectAspectLine;
 import com.mbor.exception.ProjectRoleAlreadyExist;
+import com.mbor.mapper.ProjectAspectLineMapper;
 import com.mbor.mapper.ProjectMapper;
 import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.model.projectaspect.ProjectAspectLineDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
@@ -40,13 +43,16 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     private final ProjectMapper projectMapper;
 
+    private final ProjectAspectLineMapper projectAspectMapper;
+
     @Autowired
-    public ProjectService(IProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService, ProjectMapper projectMapper) {
+    public ProjectService(IProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper) {
         this.projectDao = projectDao;
         this.employeeService = employeeService;
         this.businessUnitService = businessUnitService;
         this.projectRoleService = projectRoleService;
         this.projectMapper = projectMapper;
+        this.projectAspectMapper = projectAspectMapper;
     }
 
     @Override
@@ -55,6 +61,16 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
         Project savedProject = saveInternal(project);
         return projectMapper.convertEntityToCreatedDto(savedProject);
+    }
+
+    @Override
+    public ProjectDTO updateProjectAspects(Long projectId, ProjectAspectLineDTO projectAspectLineDTO) {
+
+        ProjectAspectLine projectAspectLine = projectAspectMapper.convertToEntity(projectAspectLineDTO);
+
+        Project project  = find(projectId);
+        project.addProjectAspectLine(projectAspectLine);
+        return projectMapper.convertToDto(update(project));
     }
 
     @Override
@@ -230,7 +246,6 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             }
         });
     }
-
 
     @Override
     public IProjectDao getDao() {

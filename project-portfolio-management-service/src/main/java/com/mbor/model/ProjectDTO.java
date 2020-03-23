@@ -1,5 +1,7 @@
 package com.mbor.model;
 
+import com.mbor.domain.projectaspect.ProjectAspectLine;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +33,8 @@ public class ProjectDTO implements IProjectDTO {
     private Set<RealEndDateDTO> realEndDateSet = new HashSet<>();
 
     private Set<BusinessUnitDTO> businessUnits;
+
+    private Set<ProjectAspectLine> projectAspectLineSet;
 
     public Long getId() {
         return Id;
@@ -134,5 +138,13 @@ public class ProjectDTO implements IProjectDTO {
 
     public void setBusinessUnits(Set<BusinessUnitDTO> businessUnits) {
         this.businessUnits = businessUnits;
+    }
+
+    public Set<ProjectAspectLine> getProjectAspectLineSet() {
+        return projectAspectLineSet;
+    }
+
+    public void setProjectAspectLineSet(Set<ProjectAspectLine> projectAspectLineSet) {
+        this.projectAspectLineSet = projectAspectLineSet;
     }
 }

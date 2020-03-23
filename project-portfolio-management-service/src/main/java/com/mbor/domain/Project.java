@@ -4,6 +4,7 @@ import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
+import com.mbor.domain.projectaspect.ProjectAspectLine;
 import com.mbor.model.IProjectDTO;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -68,6 +69,10 @@ public class Project implements IProjectDTO {
             inverseJoinColumns = {@JoinColumn(name = "business_unit_id", referencedColumnName = "id")})
     @Fetch(value = FetchMode.JOIN)
     private Set<BusinessUnit> businessUnits = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.JOIN)
+    private Set<ProjectAspectLine> projectAspectLineSet = new HashSet<>();
 
     public void addBusinessUnit(BusinessUnit businessUnit){
         this.businessUnits.add(businessUnit);
@@ -202,6 +207,19 @@ public class Project implements IProjectDTO {
 
     public void setBusinessUnits(Set<BusinessUnit> businessUnits) {
         this.businessUnits = businessUnits;
+    }
+
+    public Set<ProjectAspectLine> getProjectAspectLineSet() {
+        return projectAspectLineSet;
+    }
+
+    public void setProjectAspectLineSet(Set<ProjectAspectLine> projectAspectLineSet) {
+        this.projectAspectLineSet = projectAspectLineSet;
+    }
+
+    public void addProjectAspectLine(ProjectAspectLine projectAspectLine){
+        this.projectAspectLineSet.add(projectAspectLine);
+        projectAspectLine.setProject(this);
     }
 
     public void merge(Project project){

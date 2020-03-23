@@ -34,7 +34,7 @@ class UserDaoTest {
     private IUserDao userDao;
 
     @BeforeAll
-    static void setup(@Autowired EntityManagerFactory entityManagerFactory) {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         Random random = new Random();
