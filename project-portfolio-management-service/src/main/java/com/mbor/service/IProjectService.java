@@ -20,5 +20,7 @@ public interface IProjectService<T> extends IService<T> {
 
      List<ProjectDTO> findSupervisorProjects(Long supervisorId, SupervisorSearchProjectDTO supervisorSearchProjectDTO);
 
+     List<ProjectDTO> findConsultantProjects(Long consultantId);
+
      ProjectDTO assignEmployee(EmployeeAssignDTO employeeAssignDTO);
 }

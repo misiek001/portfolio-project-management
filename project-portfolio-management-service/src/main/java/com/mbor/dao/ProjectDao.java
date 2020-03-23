@@ -1,7 +1,9 @@
 package com.mbor.dao;
 
 import com.mbor.domain.*;
+import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ProjectRole;
+import com.mbor.domain.employeeinproject.SolutionArchitect;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -9,6 +11,7 @@ import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class ProjectDao extends RawDao<Project> implements IProjectDao {
@@ -129,6 +132,35 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Project> allQuery = entityManager.createQuery(criteriaQuery);
         return allQuery.getResultList();
+    }
+
+    @Override
+    public List<Project> findConsultantProject(Long consultantId){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
+
+        Root<ProjectManager> projectManagerRoot = criteriaQuery.from(ProjectManager.class);
+
+        SetJoin<ProjectManager, Project> projectManagerProjectSetJoin = projectManagerRoot.joinSet("projects");
+
+        criteriaQuery.select(projectManagerProjectSetJoin).where(criteriaBuilder.equal(projectManagerRoot.get("employee").get("id"), consultantId));
+        List<Project> projectManagerProjects = entityManager.createQuery(criteriaQuery).getResultList();
+        projectManagerProjects.forEach(project -> System.out.println("PM " + project.getId()));
+        criteriaQuery = criteriaBuilder.createQuery(Project.class);
+        Root<SolutionArchitect> solutionArchitectRoot = criteriaQuery.from(SolutionArchitect.class);
+        SetJoin<SolutionArchitect, Project> solutionArchitectProjectSetJoin = solutionArchitectRoot.joinSet("projects");
+        criteriaQuery.select(solutionArchitectProjectSetJoin).where(criteriaBuilder.equal(solutionArchitectRoot.get("employee").get("id"), consultantId));
+
+        List<Project> solutionArchitectProjects = entityManager.createQuery(criteriaQuery).getResultList();
+        List<Project> finalList = new ArrayList<>();
+        solutionArchitectProjects.forEach(project -> System.out.println("SA " + project.getId()));
+
+        finalList.addAll(projectManagerProjects);
+        finalList.addAll(solutionArchitectProjects);
+
+        finalList = finalList.stream().distinct().collect(Collectors.toList());
+        finalList.forEach(project -> System.out.println(project.getId()));
+        return finalList;
     }
 
     private Predicate prepareSupervisorOfConsultantPredicate(Root<Project> projectRoot, CriteriaBuilder criteriaBuilder, String projectRoleName, Long supervisorId){

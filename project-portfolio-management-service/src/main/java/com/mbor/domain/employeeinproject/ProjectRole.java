@@ -16,6 +16,7 @@ public abstract class ProjectRole<IEmployee> {
     @ManyToOne(targetEntity = Employee.class)
     IEmployee employee;
 
+
     public Long getId() {
         return id;
     }

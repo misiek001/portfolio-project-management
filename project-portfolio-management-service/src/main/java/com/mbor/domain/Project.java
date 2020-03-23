@@ -49,6 +49,7 @@ public class Project implements IProjectDTO {
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
+    @Fetch(value = FetchMode.JOIN)
     private Set<SolutionArchitect> solutionArchitects = new HashSet<>();
 
     @Enumerated(EnumType.STRING)

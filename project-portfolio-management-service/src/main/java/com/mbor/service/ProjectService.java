@@ -145,6 +145,14 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     }
 
     @Override
+    public List<ProjectDTO> findConsultantProjects(Long consultantId){
+        List<Project> foundProject = getDao().findConsultantProject(consultantId);
+        List<ProjectDTO> projectDTOList = new ArrayList<>();
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        return projectDTOList;
+    }
+
+    @Override
     public ProjectDTO assignEmployee(EmployeeAssignDTO employeeAssignDTO) {
         Project project = find(employeeAssignDTO.getProjectId());
         if (employeeAssignDTO.getProjectManagerDTO() != null) {

@@ -1,5 +1,6 @@
 package com.mbor.controller;
 
+import com.mbor.domain.Consultant;
 import com.mbor.domain.Supervisor;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.model.ProjectDTO;
@@ -66,6 +67,15 @@ public class ProjectController extends RawController {
         String principal = (String) authentication.getPrincipal();
         Long supervisorId = employeeService.getDemandedEmployeeId(Supervisor.class, principal);
         List<ProjectDTO> projects = getService().findSupervisorProjects(supervisorId, supervisorSearchProjectDTO);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
+    @GetMapping(params = "searchingEmployee=consultant")
+    @PreAuthorize("hasAuthority('search_consultant_projects')")
+    public ResponseEntity<List<ProjectDTO>> findConsultantProjects(final Authentication authentication){
+        String principal = (String) authentication.getPrincipal();
+        Long consultantId = employeeService.getDemandedEmployeeId(Consultant.class, principal);
+        List<ProjectDTO> projects = getService().findConsultantProjects(consultantId);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 

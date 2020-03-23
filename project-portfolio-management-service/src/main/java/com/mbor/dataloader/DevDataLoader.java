@@ -73,7 +73,7 @@ public class DevDataLoader {
         ITConsultant.setUserName("ConsultantUserName");
         ITConsultant.setSupervisor(ITSupervisor);
         ITConsultant.setBusinessUnit(ITBusinessUnit);
-
+        createUser(ITConsultant);
         entityManager.persist(ITConsultant);
 
         BusinessEmployee businessEmployee = new BusinessEmployee();
@@ -113,16 +113,25 @@ public class DevDataLoader {
         } else if (employee instanceof Supervisor) {
             Role supervisorRole = new Role();
             supervisorRole.setName("supervisor");
-            Privilege findResourceManagerProjectsPrivilege = new Privilege();
-            findResourceManagerProjectsPrivilege.setName("search_resource_manager_projects");
+            Privilege searchResourceManagerProjectsPrivilege = new Privilege();
+            searchResourceManagerProjectsPrivilege.setName("search_resource_manager_projects");
             Privilege findSupervisorProjectsPrivilege = new Privilege();
             findSupervisorProjectsPrivilege.setName("search_supervisor_projects");
-            supervisorRole.addPrivilege(findResourceManagerProjectsPrivilege);
+            supervisorRole.addPrivilege(searchResourceManagerProjectsPrivilege);
             supervisorRole.addPrivilege(findSupervisorProjectsPrivilege);
             user.getRoles().add(supervisorRole);
+        } else if (employee instanceof Consultant) {
+            Role consultantRole = new Role();
+            consultantRole.setName("consultant");
+            Privilege searchConsultantProjectsPrivilege = new Privilege();
+            searchConsultantProjectsPrivilege.setName("search_consultant_projects");
+            consultantRole.addPrivilege(searchConsultantProjectsPrivilege);
+            user.getRoles().add(consultantRole);
         } else {
 
         }
+
+
         user.setPassword(passwordEncoder.encode("password"));
         employee.setUser(user);
     }
