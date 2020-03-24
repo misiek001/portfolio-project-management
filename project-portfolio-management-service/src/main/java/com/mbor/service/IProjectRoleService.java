@@ -4,7 +4,7 @@ import com.mbor.domain.employeeinproject.ProjectRole;
 
 import java.util.List;
 
-public interface IProjectRoleService<T> extends IService<T> {
+public interface IProjectRoleService<T> extends IInternalProjectRoleService, IAPIService {
 
     List<ProjectRole> findAllRoleOfEmployee(Long id);
 }

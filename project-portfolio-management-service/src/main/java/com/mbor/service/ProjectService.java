@@ -3,12 +3,17 @@ package com.mbor.service;
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
+import com.mbor.domain.projectaspect.ProjectAspectLine;
+import com.mbor.exception.NoSetProjectManagerException;
 import com.mbor.exception.ProjectRoleAlreadyExist;
+import com.mbor.exception.WrongProjectManagerException;
+import com.mbor.mapper.ProjectAspectLineMapper;
 import com.mbor.mapper.ProjectMapper;
 import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.model.projectaspect.ProjectAspectLineDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
@@ -28,7 +33,7 @@ import static com.mbor.service.ServiceUtils.tryCast;
 
 @Service
 @Transactional
-public class ProjectService extends RawService<Project> implements IProjectService<Project> {
+public class ProjectService extends RawService<Project> implements IProjectService {
 
     private final IProjectDao projectDao;
 
@@ -40,13 +45,29 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     private final ProjectMapper projectMapper;
 
+    private final ProjectAspectLineMapper projectAspectMapper;
+
     @Autowired
-    public ProjectService(IProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService, ProjectMapper projectMapper) {
+    public ProjectService(IProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper) {
         this.projectDao = projectDao;
         this.employeeService = employeeService;
         this.businessUnitService = businessUnitService;
         this.projectRoleService = projectRoleService;
         this.projectMapper = projectMapper;
+        this.projectAspectMapper = projectAspectMapper;
+    }
+
+    @Override
+    public List<ProjectDTO> findAll() {
+        List<Project> projects =  super.findAllInternal();
+        return projects.stream()
+                .map(projectMapper::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProjectDTO find(Long id) {
+        return projectMapper.convertToDto(findInternal(id));
     }
 
     @Override
@@ -55,6 +76,39 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
         Project savedProject = saveInternal(project);
         return projectMapper.convertEntityToCreatedDto(savedProject);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Project project = findInternal(id);
+        if (project.getProjectManager() != null) {
+            project.getProjectManager().getProjects().remove(project);
+        }
+        if(project.getResourceManager() != null){
+            project.getResourceManager().getProjects().remove(project);
+        }
+        if(project.getBusinessRelationManager() != null){
+            project.getBusinessRelationManager().getProjects().remove(project);
+        }
+        project.getSolutionArchitects().forEach(solutionArchitect -> solutionArchitect
+                .getProjects()
+                .remove(project));
+        updateInternal(project);
+        deleteInternal(id);
+    }
+
+    @Override
+    public ProjectDTO updateProjectAspects(Long projectId, ProjectAspectLineDTO projectAspectLineDTO, Long projectManagerId) {
+        Project project  = findInternal(projectId);
+        if(project.getProjectManager() == null){
+            throw new NoSetProjectManagerException("No Project Manager assigned to project with id:" + project.getId());
+        }
+        if(!project.getProjectManager().getId().equals(projectManagerId)){
+            throw new WrongProjectManagerException("Project with id:" + project.getId() + " has projectManagerWith id: " + project.getProjectManager().getId() + " ,not:"  + projectManagerId);
+        }
+        ProjectAspectLine projectAspectLine = projectAspectMapper.convertToEntity(projectAspectLineDTO);
+        project.addProjectAspectLine(projectAspectLine);
+        return projectMapper.convertToDto(updateInternal(project));
     }
 
     @Override
@@ -154,11 +208,11 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     @Override
     public ProjectDTO assignEmployee(EmployeeAssignDTO employeeAssignDTO) {
-        Project project = find(employeeAssignDTO.getProjectId());
+        Project project = findInternal(employeeAssignDTO.getProjectId());
         if (employeeAssignDTO.getProjectManagerDTO() != null) {
             ProjectManager projectManager;
             if (employeeAssignDTO.getProjectManagerDTO().getId() != null) {
-                projectManager = tryCast(ProjectManager.class, projectRoleService.find(employeeAssignDTO.getProjectManagerDTO().getId()));
+                projectManager = tryCast(ProjectManager.class, projectRoleService.findInternal(employeeAssignDTO.getProjectManagerDTO().getId()));
             } else {
                 Long employeeId = employeeAssignDTO.getProjectManagerDTO().getEmployee().getId();
                 checkIfRoleAlreadyExist(ProjectManager.class,employeeId );
@@ -173,7 +227,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         if (employeeAssignDTO.getResourceManagerDTO() != null) {
             ResourceManager resourceManager;
             if (employeeAssignDTO.getResourceManagerDTO().getId() != null) {
-                resourceManager = tryCast(ResourceManager.class, projectRoleService.find(employeeAssignDTO.getResourceManagerDTO().getId()));
+                resourceManager = tryCast(ResourceManager.class, projectRoleService.findInternal(employeeAssignDTO.getResourceManagerDTO().getId()));
             } else {
                 Long employeeId = employeeAssignDTO.getResourceManagerDTO().getEmployee().getId();
                 checkIfRoleAlreadyExist(ResourceManager.class,employeeId );
@@ -187,7 +241,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             Set<SolutionArchitect> solutionArchitects = new HashSet<>();
             solutionArchitectDTOS.forEach(solutionArchitectDTO -> {
                 if (solutionArchitectDTO.getId() != null) {
-                    solutionArchitects.add(tryCast(SolutionArchitect.class, projectRoleService.find(solutionArchitectDTO.getId())));
+                    solutionArchitects.add(tryCast(SolutionArchitect.class, projectRoleService.findInternal(solutionArchitectDTO.getId())));
                 } else {
                     Long employeeId = solutionArchitectDTO.getEmployee().getId();
                     checkIfRoleAlreadyExist(SolutionArchitect.class,employeeId );
@@ -201,7 +255,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         if (employeeAssignDTO.getBusinessLeaderDTO() != null) {
             BusinessLeader businessLeader;
             if (employeeAssignDTO.getBusinessLeaderDTO().getId() != null) {
-                businessLeader = tryCast(BusinessLeader.class, projectRoleService.find(employeeAssignDTO.getBusinessLeaderDTO().getId()));
+                businessLeader = tryCast(BusinessLeader.class, projectRoleService.findInternal(employeeAssignDTO.getBusinessLeaderDTO().getId()));
             } else {
                 Long employeeId = employeeAssignDTO.getBusinessLeaderDTO().getEmployee().getId();
                 checkIfRoleAlreadyExist(BusinessLeader.class,employeeId );
@@ -210,7 +264,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             }
             project.setBusinessLeader(businessLeader);
         }
-        return projectMapper.convertToDto(update(project));
+        return projectMapper.convertToDto(updateInternal(project));
     }
 
 
@@ -230,7 +284,6 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             }
         });
     }
-
 
     @Override
     public IProjectDao getDao() {

@@ -10,6 +10,7 @@ import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
 import com.mbor.exception.WrongEmployeeTypeException;
 import com.mbor.mapper.*;
+import com.mbor.model.EmployeeDTO;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
 import com.mbor.model.creation.EmployeeType;
@@ -20,12 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 @Service
 @Transactional
-public class EmployeeService extends RawService<Employee> implements IEmployeeService<Employee> {
+public class EmployeeService extends RawService<Employee> implements IEmployeeService {
 
     private ApplicationContext context;
 
@@ -50,6 +52,18 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
         return employeeDao;
     }
 
+    //TODO implement mapping for differentType of Employee
+    @Override
+    public List<EmployeeDTO> findAll() {
+        return null;
+    }
+
+    //TODO implement mapping for differentType of Employee
+    @Override
+    public EmployeeDTO find(Long id) {
+        return null;
+    }
+
     @Override
     public EmployeeCreatedDTO save(EmployeeCreationDTO employeeCreationDTO) {
         EmployeeType employeeType = employeeCreationDTO.getEmployeeType();
@@ -58,6 +72,11 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
         Employee returnedEmployee = super.saveInternal(employee);
         createUser(employee);
         return prepareEmployeeCreatedDto(returnedEmployee, employeeType);
+    }
+
+    @Override
+    public void delete(Long id) {
+        deleteInternal(id);
     }
 
     @Override

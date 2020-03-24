@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface IController{
+public interface IController {
 
     <U, T> U save(T t);
 

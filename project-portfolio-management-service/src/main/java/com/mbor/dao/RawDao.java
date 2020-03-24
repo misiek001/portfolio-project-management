@@ -29,7 +29,7 @@ public abstract class RawDao<T> implements IDao<T> {
 
     @Override
     public void delete(Long id) {
-        entityManager.remove(entityManager.getReference(clazz, id));
+        entityManager.remove(entityManager.find(clazz, id));
     }
 
     @Override

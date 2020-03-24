@@ -56,31 +56,31 @@ class BusinessUnitServiceTest {
         BusinessUnitCreationDTO businessUnitCreationDTO = prepareBusinessUnitCreationDto();
         BusinessUnitCreatedDTO businessUnitCreatedDTO = businessUnitService.save(businessUnitCreationDTO);
         assertNotNull(businessUnitCreatedDTO);
-        assertNotNull(businessUnitService.find(businessUnitCreatedDTO.getId()));
+        assertNotNull(businessUnitService.findInternal(businessUnitCreatedDTO.getId()));
     }
 
     @Test
     void find_ThenSuccess() {
-        BusinessUnit result = (BusinessUnit) businessUnitService.find(1l);
+        BusinessUnit result = (BusinessUnit) businessUnitService.findInternal(1l);
         assertNotNull(result);
     }
 
     @Test
     void findAll_ThenSuccess() {
-        List<BusinessUnit> lists = businessUnitService.findAll();
+        List<BusinessUnit> lists = businessUnitService.findAllInternal();
         assertEquals(createdEntitiesNumber, lists.size());
     }
 
     @Test
     void delete_ThenSuccess() {
-        businessUnitService.delete(3L);
-        assertEquals(createdEntitiesNumber - 1, businessUnitService.findAll().size());
+        businessUnitService.deleteInternal(3L);
+        assertEquals(createdEntitiesNumber - 1, businessUnitService.findAllInternal().size());
     }
 
     @Test
     void save_ThenSuccess() {
         assertNotNull(businessUnitService.saveInternal(createNewEntity()));
-        assertEquals(createdEntitiesNumber + 1, businessUnitService.findAll().size());
+        assertEquals(createdEntitiesNumber + 1, businessUnitService.findAllInternal().size());
     }
 
     private BusinessUnit createNewEntity() {

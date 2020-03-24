@@ -2,8 +2,8 @@ package com.mbor.controller;
 
 import com.mbor.model.creation.BusinessUnitCreatedDTO;
 import com.mbor.model.creation.BusinessUnitCreationDTO;
+import com.mbor.service.IAPIService;
 import com.mbor.service.IBusinessUnitService;
-import com.mbor.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class BusinessUnitController extends RawController {
     }
 
     @Override
-    public IService getService() {
+    public IAPIService getService() {
         return businessUnitService;
     }
 

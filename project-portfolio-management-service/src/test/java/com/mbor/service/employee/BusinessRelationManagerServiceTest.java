@@ -59,7 +59,7 @@ class BusinessRelationManagerServiceTest {
     void saveFromDtoThenSuccess() {
         EmployeeCreationDTO businessRelationManagerCreationDTO = prepareBusinessRelationManagerCreationDto();
         EmployeeCreatedDTO businessRelationManagerCreatedDTO = employeeService.save(businessRelationManagerCreationDTO);
-        assertNotNull(employeeService.find(businessRelationManagerCreatedDTO.getId()));
+        assertNotNull(employeeService.findInternal(businessRelationManagerCreatedDTO.getId()));
         assertNotNull(businessRelationManagerCreatedDTO);
     }
 
@@ -67,7 +67,7 @@ class BusinessRelationManagerServiceTest {
     void saveFromDtoWithRoleAndPrivilege(){
         EmployeeCreationDTO businessRelationManagerCreationDTO = prepareBusinessRelationManagerCreationDto();
         EmployeeCreatedDTO businessRelationManagerCreatedDTO = employeeService.save(businessRelationManagerCreationDTO);
-        BusinessRelationManager savedBRM = (BusinessRelationManager) employeeService.find(businessRelationManagerCreatedDTO.getId());
+        BusinessRelationManager savedBRM = (BusinessRelationManager) employeeService.findInternal(businessRelationManagerCreatedDTO.getId());
         assertNotNull(savedBRM);
         User savedUser = savedBRM.getUser();
         assertNotNull(savedBRM);
@@ -76,21 +76,21 @@ class BusinessRelationManagerServiceTest {
 
     @Test
     void find_ThenSuccess() {
-        BusinessRelationManager result = (BusinessRelationManager) employeeService.find(1l);
+        BusinessRelationManager result = (BusinessRelationManager) employeeService.findInternal(1l);
         assertNotNull(result);
     }
 
 
     @Test
     void delete_ThenSuccess() {
-        employeeService.delete(3L);
-        assertEquals(createdEntitiesNumber - 1, employeeService.findAll().size());
+        employeeService.deleteInternal(3L);
+        assertEquals(createdEntitiesNumber - 1, employeeService.findAllInternal().size());
     }
 
     @Test
     void save_ThenSuccess() {
         assertNotNull(employeeService.saveInternal(createNewEntity()));
-        assertEquals(createdEntitiesNumber + 1, employeeService.findAll().size());
+        assertEquals(createdEntitiesNumber + 1, employeeService.findAllInternal().size());
     }
 
     private BusinessRelationManager createNewEntity() {

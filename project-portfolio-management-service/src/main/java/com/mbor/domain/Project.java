@@ -1,9 +1,11 @@
 package com.mbor.domain;
 
+import com.mbor.dataloader.RemoveLogger;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
+import com.mbor.domain.projectaspect.ProjectAspectLine;
 import com.mbor.model.IProjectDTO;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -16,6 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@EntityListeners(RemoveLogger.class)
 public class Project implements IProjectDTO {
 
     @Id
@@ -32,7 +35,7 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "resource_manager_id")
     private ResourceManager resourceManager;
 
-    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "project_manager_id")
     private ProjectManager projectManager;
 
@@ -45,7 +48,7 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "business_unit_leader_id")
     private BusinessLeader businessLeader;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE} )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
@@ -68,6 +71,10 @@ public class Project implements IProjectDTO {
             inverseJoinColumns = {@JoinColumn(name = "business_unit_id", referencedColumnName = "id")})
     @Fetch(value = FetchMode.JOIN)
     private Set<BusinessUnit> businessUnits = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.JOIN)
+    private Set<ProjectAspectLine> projectAspectLineSet = new HashSet<>();
 
     public void addBusinessUnit(BusinessUnit businessUnit){
         this.businessUnits.add(businessUnit);
@@ -204,6 +211,19 @@ public class Project implements IProjectDTO {
         this.businessUnits = businessUnits;
     }
 
+    public Set<ProjectAspectLine> getProjectAspectLineSet() {
+        return projectAspectLineSet;
+    }
+
+    public void setProjectAspectLineSet(Set<ProjectAspectLine> projectAspectLineSet) {
+        this.projectAspectLineSet = projectAspectLineSet;
+    }
+
+    public void addProjectAspectLine(ProjectAspectLine projectAspectLine){
+        this.projectAspectLineSet.add(projectAspectLine);
+        projectAspectLine.setProject(this);
+    }
+
     public void merge(Project project){
         if (project.getProjectName() != null){
             this.projectName = project.getProjectName();
@@ -230,4 +250,12 @@ public class Project implements IProjectDTO {
     public int hashCode() {
         return Objects.hash(projectName);
     }
+
+    @PostRemove
+    private void removeAssociations(){
+        if (projectManager != null) {
+            projectManager.getProjects();
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ import com.mbor.domain.Supervisor;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.PreUpdate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,4 +22,10 @@ public class ResourceManager extends ProjectRole<Supervisor> {
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
     }
+
+    @PreUpdate
+    private void postUpdate() {
+        System.out.println();
+    }
+
 }
