@@ -49,7 +49,7 @@ public class ProjectController extends RawController {
         return new ResponseEntity<>(assignedProject, HttpStatus.OK);
     }
 
-    @PutMapping("/{projectId}")
+    @PutMapping(value = "/{projectId}", params = "action=add-project-aspect-line")
     @PreAuthorize("hasAuthority('add_project_aspects_line')")
     public ResponseEntity<ProjectDTO> addProjectAspectsLine(@PathVariable Long projectId, @RequestBody ProjectAspectLineDTO projectAspectLineDTO, final Authentication authentication) {
         String principal = (String) authentication.getPrincipal();

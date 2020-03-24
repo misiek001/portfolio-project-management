@@ -15,7 +15,6 @@ import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.*;
 import com.mbor.spring.ServiceConfiguration;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import java.util.*;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -98,9 +98,10 @@ public class ProjectServiceTest {
     @Test
     void updateProjectAspectThenSuccess(){
         ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
-    }
+        projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
+        assertEquals(1, projectService.find(firstProjectId).getProjectAspectLineSet().size());
 
- 
+    }
 
     @Test
     void saveFromDtoThenSuccess(){
@@ -112,7 +113,7 @@ public class ProjectServiceTest {
 
     @Test
     void find_ThenSuccess() {
-        Project result = (Project) projectService.findInternal(firstProjectId);
+        Project result =  projectService.findInternal(firstProjectId);
         assertNotNull(result);
     }
 
@@ -122,11 +123,9 @@ public class ProjectServiceTest {
         assertEquals(createdEntitiesNumber, lists.size());
     }
 
-    //TODO FIX ME - PROBLEM WITH REMOVING DELETED PROJECT FROM PROJECT MANAGER PROJECTS
     @Test
-    @Ignore
     void delete_ThenSuccess() {
-        projectService.deleteInternal(thirdProjectId);
+        projectService.delete(thirdProjectId);
         assertEquals(createdEntitiesNumber - 1, projectService.findAll().size());
     }
 

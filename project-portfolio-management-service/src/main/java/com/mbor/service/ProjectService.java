@@ -104,7 +104,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             throw new NoSetProjectManagerException("No Project Manager assigned to project with id:" + project.getId());
         }
         if(!project.getProjectManager().getId().equals(projectManagerId)){
-            throw new WrongProjectManagerException("Project with id:" + project.getId() + "has projectManagerWith id: " + project.getProjectManager().getId());
+            throw new WrongProjectManagerException("Project with id:" + project.getId() + " has projectManagerWith id: " + project.getProjectManager().getId() + " ,not:"  + projectManagerId);
         }
         ProjectAspectLine projectAspectLine = projectAspectMapper.convertToEntity(projectAspectLineDTO);
         project.addProjectAspectLine(projectAspectLine);
