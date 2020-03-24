@@ -1,5 +1,6 @@
 package com.mbor.domain;
 
+import com.mbor.dataloader.RemoveLogger;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@EntityListeners(RemoveLogger.class)
 public class Project implements IProjectDTO {
 
     @Id
@@ -33,7 +35,7 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "resource_manager_id")
     private ResourceManager resourceManager;
 
-    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "project_manager_id")
     private ProjectManager projectManager;
 
@@ -46,7 +48,7 @@ public class Project implements IProjectDTO {
     @JoinColumn(name = "business_unit_leader_id")
     private BusinessLeader businessLeader;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE} )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinTable(name = "solution_architects_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "solution_architect_id"))
@@ -248,4 +250,12 @@ public class Project implements IProjectDTO {
     public int hashCode() {
         return Objects.hash(projectName);
     }
+
+    @PostRemove
+    private void removeAssociations(){
+        if (projectManager != null) {
+            projectManager.getProjects();
+        }
+    }
+
 }

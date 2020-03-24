@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public abstract class RawService<T> implements IService<T> {
+public abstract class RawService<T> {
 
-    @Override
     public T saveInternal(T t) {
         try {
             Optional<T> result = getDao().save(t);
@@ -21,13 +20,11 @@ public abstract class RawService<T> implements IService<T> {
         }
     }
 
-    @Override
-    public List<T> findAll() {
+    public List<T> findAllInternal() {
         return getDao().findAll();
     }
 
-    @Override
-    public T find(Long id) {
+    public T findInternal(Long id) {
           Optional<T> result =  getDao().find(id);
           if(result.isPresent()){
               return result.get();
@@ -36,8 +33,7 @@ public abstract class RawService<T> implements IService<T> {
           }
     }
 
-    @Override
-    public T update(T t) {
+    public T updateInternal(T t) {
         try {
             Optional<T> result = getDao().update(t);
             return result.orElseThrow(RuntimeException::new);
@@ -47,8 +43,8 @@ public abstract class RawService<T> implements IService<T> {
 
     }
 
-    @Override
-    public void delete(Long id) {
+
+    public void deleteInternal(Long id) {
         getDao().delete(id);
     }
 

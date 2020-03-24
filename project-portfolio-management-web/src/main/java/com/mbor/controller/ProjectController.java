@@ -2,11 +2,13 @@ package com.mbor.controller;
 
 import com.mbor.domain.Consultant;
 import com.mbor.domain.Supervisor;
+import com.mbor.domain.employeeinproject.ProjectRole;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.model.ProjectDTO;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.model.projectaspect.ProjectAspectLineDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
@@ -45,6 +47,15 @@ public class ProjectController extends RawController {
     public ResponseEntity<ProjectDTO> assignEmployeeToProject(@RequestBody EmployeeAssignDTO employeeAssignDTO){
         ProjectDTO assignedProject = projectService.assignEmployee(employeeAssignDTO);
         return new ResponseEntity<>(assignedProject, HttpStatus.OK);
+    }
+
+    @PutMapping("/{projectId}")
+    @PreAuthorize("hasAuthority('add_project_aspects_line')")
+    public ResponseEntity<ProjectDTO> addProjectAspectsLine(@PathVariable Long projectId, @RequestBody ProjectAspectLineDTO projectAspectLineDTO, final Authentication authentication) {
+        String principal = (String) authentication.getPrincipal();
+        Long projectManagerId = employeeService.getDemandedProjectRoleId(ProjectRole.class, principal);
+        ProjectDTO projectDTO = projectService.updateProjectAspects(projectId, projectAspectLineDTO, projectManagerId);
+        return new ResponseEntity<>(projectDTO, HttpStatus.OK);
     }
 
     @PostMapping(params = "search=true")

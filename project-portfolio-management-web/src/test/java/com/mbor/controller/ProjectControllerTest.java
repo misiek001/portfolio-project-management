@@ -264,7 +264,7 @@ class ProjectControllerTest {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         ProjectManager projectManager = new ProjectManager();
-        projectManager.setEmployee((IProjectManager) employeeService.find(4l));
+        projectManager.setEmployee((IProjectManager) employeeService.findInternal(4l));
         entityManager.persist(projectManager);
         transaction.commit();
     }

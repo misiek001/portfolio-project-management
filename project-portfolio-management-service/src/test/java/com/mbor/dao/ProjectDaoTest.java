@@ -63,7 +63,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
             entityManager.persist(project);
         }
         transaction.commit();
-        loadTestDataForFindSupervisorProjects(entityManagerFactory, projectDao);
+        prepareTestData(entityManagerFactory, projectDao);
     }
 
     @Test
@@ -156,7 +156,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         return projectAspectLine;
     }
 
-    private static void loadTestDataForFindSupervisorProjects(EntityManagerFactory entityManagerFactory, IProjectDao projectDao) {
+    private static void prepareTestData(EntityManagerFactory entityManagerFactory, IProjectDao projectDao) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
@@ -239,8 +239,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
         thirdSolutionArchitectId = thirdSolutionArchitect.getId();
 
-       resourceManagerId =  entityManager.merge(resourceManager).getId();
-
+        resourceManagerId =  entityManager.merge(resourceManager).getId();
     }
 
     @Override

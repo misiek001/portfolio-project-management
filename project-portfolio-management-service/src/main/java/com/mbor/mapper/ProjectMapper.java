@@ -1,6 +1,9 @@
 package com.mbor.mapper;
 
-import com.mbor.domain.*;
+import com.mbor.domain.BusinessEmployee;
+import com.mbor.domain.BusinessRelationManager;
+import com.mbor.domain.Project;
+import com.mbor.domain.ProjectStatus;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.model.BusinessUnitDTO;
 import com.mbor.model.ProjectDTO;
@@ -8,7 +11,7 @@ import com.mbor.model.ProjectStatusDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.service.IBusinessUnitService;
-import com.mbor.service.IEmployeeService;
+import com.mbor.service.IInternalEmployeeService;
 import com.mbor.service.IProjectRoleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -23,12 +26,12 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
     private final BusinessRelationManagerMapper businessRelationManagerMapper;
     private final ProjectAspectLineMapper projectAspectMapper;
 
-    private final IEmployeeService employeeService;
+    private final IInternalEmployeeService employeeService;
     private final IBusinessUnitService businessUnitService;
     private final IProjectRoleService projectRoleService;
 
 
-    public ProjectMapper(ModelMapper modelMapper, BusinessLeaderMapper businessLeaderMapper, BusinessRelationManagerMapper businessRelationManagerMapper, ProjectAspectLineMapper projectAspectMapper, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService) {
+    public ProjectMapper(ModelMapper modelMapper, BusinessLeaderMapper businessLeaderMapper, BusinessRelationManagerMapper businessRelationManagerMapper, ProjectAspectLineMapper projectAspectMapper, IInternalEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService) {
         super(modelMapper);
         this.businessLeaderMapper = businessLeaderMapper;
         this.businessRelationManagerMapper = businessRelationManagerMapper;
@@ -68,20 +71,20 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
         Project project = new Project();
         project.setProjectName(projectCreationDTO.getProjectName());
         project.setProjectStatus(ProjectStatus.valueOf(projectCreationDTO.getProjectStatus().name()));
-        project.setBusinessRelationManager((BusinessRelationManager) employeeService.find(projectCreationDTO.getBusinessRelationManager().getId()));
+        project.setBusinessRelationManager((BusinessRelationManager) employeeService.findInternal(projectCreationDTO.getBusinessRelationManager().getId()));
         BusinessLeader businessLeader;
         if(projectCreationDTO.getBusinessLeader().getId() == null){
             businessLeader = new BusinessLeader();
-            BusinessEmployee businessEmployee = (BusinessEmployee) employeeService.find(projectCreationDTO.getBusinessLeader().getEmployee().getId());
+            BusinessEmployee businessEmployee = (BusinessEmployee) employeeService.findInternal(projectCreationDTO.getBusinessLeader().getEmployee().getId());
             businessLeader.setEmployee(businessEmployee);
         } else {
-            businessLeader = (BusinessLeader) projectRoleService.find(projectCreationDTO.getBusinessLeader().getId());
+            businessLeader = (BusinessLeader) projectRoleService.findInternal(projectCreationDTO.getBusinessLeader().getId());
         }
         project.setBusinessLeader(businessLeader);
 
 
         projectCreationDTO.getBusinessUnits().forEach(businessUnit ->
-                project.addBusinessUnit((BusinessUnit) businessUnitService.find(businessUnit.getId())));
+                project.addBusinessUnit((businessUnitService.findInternal(businessUnit.getId()))));
         return project;
     }
 

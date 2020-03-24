@@ -1,9 +1,10 @@
 package com.mbor.controller;
 
+import com.mbor.model.EmployeeDTO;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
+import com.mbor.service.IAPIService;
 import com.mbor.service.IEmployeeService;
-import com.mbor.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class EmployeeController extends RawController {
     }
 
     @Override
-    public IService getService() {
+    public IAPIService<EmployeeCreatedDTO, EmployeeCreationDTO, EmployeeDTO> getService() {
         return employeeService;
     }
 

@@ -16,7 +16,6 @@ public abstract class ProjectRole<IEmployee> {
     @ManyToOne(targetEntity = Employee.class)
     IEmployee employee;
 
-
     public Long getId() {
         return id;
     }
@@ -32,4 +31,6 @@ public abstract class ProjectRole<IEmployee> {
     public void setEmployee(IEmployee employee) {
         this.employee = employee;
     }
+
+
 }

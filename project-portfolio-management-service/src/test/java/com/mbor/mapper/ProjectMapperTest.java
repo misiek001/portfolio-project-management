@@ -119,9 +119,11 @@ class ProjectMapperTest {
 
         businessUnitFirst = new BusinessUnit();
         businessUnitFirst.setId(businessUnitDTOFirst.getId());
+        businessUnitFirst.setName("First Business Unit");
 
         businessUnitSecond = new BusinessUnit();
         businessUnitSecond.setId(businessUnitDTOSecond.getId());
+        businessUnitSecond.setName("Second Business Unit");
 
         expectedProject.addBusinessUnit(businessUnitFirst);
         expectedProject.addBusinessUnit(businessUnitSecond);
@@ -139,11 +141,11 @@ class ProjectMapperTest {
 
     @Test
     void mapProjectCreationDTOtoProject() {
-        doReturn(businessRelationManager, businessEmployee).when(employeeService).find(anyLong());
+        doReturn(businessRelationManager, businessEmployee).when(employeeService).findInternal(anyLong());
         if (projectCreationDTO.getBusinessLeader().getId() != null) {
-            doReturn(businessLeader).when(projectRoleService).find(anyLong());
+            doReturn(businessLeader).when(projectRoleService).findInternal(anyLong());
         }
-        doReturn(businessUnitFirst, businessUnitSecond).when(businessUnitService).find(anyLong());
+        doReturn(businessUnitFirst, businessUnitSecond).when(businessUnitService).findInternal(anyLong());
 
         Project mappedProject = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
 
@@ -172,6 +174,7 @@ class ProjectMapperTest {
 
     @Test
     void convertToDto() {
+        ProjectDTO projectDTO = projectMapper.convertToDto(expectedProject);
     }
 
     @Test

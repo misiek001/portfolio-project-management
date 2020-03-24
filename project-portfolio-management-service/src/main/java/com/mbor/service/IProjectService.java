@@ -11,19 +11,18 @@ import com.mbor.model.search.SupervisorSearchProjectDTO;
 
 import java.util.List;
 
-public interface IProjectService<T> extends IService<T> {
+public interface IProjectService extends IInternalProjectService, IAPIService<ProjectCreatedDTO, ProjectCreationDTO, ProjectDTO>  {
 
-     ProjectCreatedDTO save(ProjectCreationDTO projectCreationDTO);
-
-    ProjectDTO updateProjectAspects(Long projectId, ProjectAspectLineDTO projectAspectLineDTO);
+    ProjectDTO updateProjectAspects(Long projectId, ProjectAspectLineDTO projectAspectLineDTO, Long consultantId);
 
     List<ProjectDTO> findByMultipleCriteria(SearchProjectDTO searchProjectDTO);
 
-     List<ProjectDTO> findResourceManagerProjects(Long resourceManagerId, ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO);
+    List<ProjectDTO> findResourceManagerProjects(Long resourceManagerId, ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO);
 
-     List<ProjectDTO> findSupervisorProjects(Long supervisorId, SupervisorSearchProjectDTO supervisorSearchProjectDTO);
+    List<ProjectDTO> findSupervisorProjects(Long supervisorId, SupervisorSearchProjectDTO supervisorSearchProjectDTO);
 
-     List<ProjectDTO> findConsultantProjects(Long consultantId);
+    List<ProjectDTO> findConsultantProjects(Long consultantId);
 
-     ProjectDTO assignEmployee(EmployeeAssignDTO employeeAssignDTO);
+    ProjectDTO assignEmployee(EmployeeAssignDTO employeeAssignDTO);
+
 }

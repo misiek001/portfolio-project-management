@@ -39,6 +39,7 @@ public abstract class Employee implements IEmployee {
    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
    private User user;
 
+   @Override
    public Long getId() {
       return id;
    }
@@ -47,6 +48,7 @@ public abstract class Employee implements IEmployee {
       this.id = id;
    }
 
+   @Override
    public String getFirstName() {
       return firstName;
    }
@@ -55,6 +57,7 @@ public abstract class Employee implements IEmployee {
       this.firstName = firstName;
    }
 
+   @Override
    public String getLastName() {
       return lastName;
    }
@@ -63,6 +66,7 @@ public abstract class Employee implements IEmployee {
       this.lastName = lastName;
    }
 
+   @Override
    public BusinessUnit getBusinessUnit() {
       return businessUnit;
    }
@@ -71,6 +75,7 @@ public abstract class Employee implements IEmployee {
       this.businessUnit = businessUnit;
    }
 
+   @Override
    public Set<ProjectRole> getProjectRoleSet() {
       return projectRoleSet;
    }

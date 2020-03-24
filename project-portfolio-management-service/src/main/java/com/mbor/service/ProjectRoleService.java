@@ -32,4 +32,23 @@ public class ProjectRoleService extends RawService<ProjectRole> implements IProj
         return projectRoleDao.findAllRoleOfEmployee(id);
     }
 
+    @Override
+    public List findAll() {
+        return null;
+    }
+
+    @Override
+    public Object find(Long id) {
+        return null;
+    }
+
+    @Override
+    public Object save(Object o) {
+        return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+
+    }
 }

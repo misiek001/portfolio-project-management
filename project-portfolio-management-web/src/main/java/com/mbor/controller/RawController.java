@@ -1,6 +1,6 @@
 package com.mbor.controller;
 
-import com.mbor.service.IService;
+import com.mbor.service.IAPIService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +13,7 @@ public abstract class RawController implements IController {
 
     @Override
     public <U, T> U save(T t) {
-        return (U) getService().saveInternal(t);
+        return (U) getService().save(t);
     }
 
     @GetMapping
@@ -37,6 +37,6 @@ public abstract class RawController implements IController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    public abstract IService getService();
+    public abstract IAPIService getService();
 
 }
