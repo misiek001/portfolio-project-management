@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
-public abstract class IDaoImplTest<T> implements DaoTest {
+public abstract class IDaoImplTest<T> implements IDaoTest {
 
     protected static int createdEntitiesNumber = 3;
 

@@ -16,30 +16,26 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import java.util.List;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @Transactional
 @ActiveProfiles("test")
-class BusinessUnitServiceTest {
+class BusinessUnitServiceTest extends IServiceTestImpl {
 
     private static final int createdEntitiesNumber = 3;
 
     private static Random random = new Random();
+    private static Long firstBusinessUnitId;
 
     @Autowired
     private IBusinessUnitService businessUnitService;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
@@ -47,7 +43,10 @@ class BusinessUnitServiceTest {
             BusinessUnit businessUnit = new BusinessUnit();
             businessUnit.setName("BusinessUnitName" + random.nextLong());
             entityManager.persist(businessUnit);
+            entityIdList.add(businessUnit.getId());
         }
+        firstBusinessUnitId = entityIdList.get(0);
+        firstEntityId = firstBusinessUnitId;
         transaction.commit();
     }
 
@@ -59,39 +58,21 @@ class BusinessUnitServiceTest {
         assertNotNull(businessUnitService.findInternal(businessUnitCreatedDTO.getId()));
     }
 
-    @Test
-    void find_ThenSuccess() {
-        BusinessUnit result = (BusinessUnit) businessUnitService.findInternal(1l);
-        assertNotNull(result);
+    private BusinessUnitCreationDTO prepareBusinessUnitCreationDto() {
+        BusinessUnitCreationDTO businessUnitCreationDTO = new BusinessUnitCreationDTO();
+        businessUnitCreationDTO.setName("BusinessUnitName" + random.nextLong());
+        return businessUnitCreationDTO;
     }
 
-    @Test
-    void findAll_ThenSuccess() {
-        List<BusinessUnit> lists = businessUnitService.findAllInternal();
-        assertEquals(createdEntitiesNumber, lists.size());
-    }
-
-    @Test
-    void delete_ThenSuccess() {
-        businessUnitService.deleteInternal(3L);
-        assertEquals(createdEntitiesNumber - 1, businessUnitService.findAllInternal().size());
-    }
-
-    @Test
-    void save_ThenSuccess() {
-        assertNotNull(businessUnitService.saveInternal(createNewEntity()));
-        assertEquals(createdEntitiesNumber + 1, businessUnitService.findAllInternal().size());
-    }
-
-    private BusinessUnit createNewEntity() {
+    @Override
+    public BusinessUnit createNewEntity() {
         BusinessUnit businessUnit = new BusinessUnit();
         businessUnit.setName("BusinessUnitName" + random.nextLong());
         return businessUnit;
     }
 
-    private BusinessUnitCreationDTO prepareBusinessUnitCreationDto() {
-        BusinessUnitCreationDTO businessUnitCreationDTO = new BusinessUnitCreationDTO();
-        businessUnitCreationDTO.setName("BusinessUnitName" + random.nextLong());
-        return businessUnitCreationDTO;
+    @Override
+    protected IBusinessUnitService getService() {
+        return businessUnitService;
     }
 }

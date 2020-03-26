@@ -6,6 +6,7 @@ import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
 import com.mbor.model.creation.EmployeeType;
 import com.mbor.service.IEmployeeService;
+import com.mbor.service.IServiceTestImpl;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,20 +26,19 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @Transactional
 @ActiveProfiles("test")
-
-class BusinessRelationManagerServiceTest {
+class BusinessRelationManagerServiceTest extends IServiceTestImpl<BusinessRelationManager> {
 
     private static final int createdEntitiesNumber = 3;
 
     private static Random random = new Random();
-    
+    private static Long firstBusinessRelationManagerId;
+
     @Autowired
     IEmployeeService employeeService;
 
@@ -51,7 +51,10 @@ class BusinessRelationManagerServiceTest {
             BusinessRelationManager businessRelationManager = new BusinessRelationManager();
             businessRelationManager.setUserName("BusinessRelationManager" + random.nextLong());
             entityManager.persist(businessRelationManager);
+            entityIdList.add(businessRelationManager.getId());
         }
+        firstBusinessRelationManagerId = entityIdList.get(0);
+        firstEntityId = firstBusinessRelationManagerId;
         transaction.commit();
     }
 
@@ -74,26 +77,16 @@ class BusinessRelationManagerServiceTest {
         assertNotNull(savedUser.getRoles());;
     }
 
-    @Test
-    void find_ThenSuccess() {
-        BusinessRelationManager result = (BusinessRelationManager) employeeService.findInternal(1l);
-        assertNotNull(result);
+    private EmployeeCreationDTO prepareBusinessRelationManagerCreationDto() {
+        EmployeeCreationDTO businessRelationManagerCreationDTO = new EmployeeCreationDTO();
+        businessRelationManagerCreationDTO.setFirstName("BusinessRelationManagerFirstName");
+        businessRelationManagerCreationDTO.setLastName("BusinessRelationManagerLastName");
+        businessRelationManagerCreationDTO.setEmployeeType(EmployeeType.BusinessRelationManager);
+        return businessRelationManagerCreationDTO;
     }
 
-
-    @Test
-    void delete_ThenSuccess() {
-        employeeService.deleteInternal(3L);
-        assertEquals(createdEntitiesNumber - 1, employeeService.findAllInternal().size());
-    }
-
-    @Test
-    void save_ThenSuccess() {
-        assertNotNull(employeeService.saveInternal(createNewEntity()));
-        assertEquals(createdEntitiesNumber + 1, employeeService.findAllInternal().size());
-    }
-
-    private BusinessRelationManager createNewEntity() {
+    @Override
+    protected BusinessRelationManager createNewEntity() {
         BusinessRelationManager businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setFirstName("BusinessRelationManagerFirstName");
         businessRelationManager.setLastName("BusinessRelationManagerLastName");
@@ -101,11 +94,8 @@ class BusinessRelationManagerServiceTest {
         return businessRelationManager;
     }
 
-    private EmployeeCreationDTO prepareBusinessRelationManagerCreationDto() {
-        EmployeeCreationDTO businessRelationManagerCreationDTO = new EmployeeCreationDTO();
-        businessRelationManagerCreationDTO.setFirstName("BusinessRelationManagerFirstName");
-        businessRelationManagerCreationDTO.setLastName("BusinessRelationManagerLastName");
-        businessRelationManagerCreationDTO.setEmployeeType(EmployeeType.BusinessRelationManager);
-        return businessRelationManagerCreationDTO;
+    @Override
+    protected IEmployeeService getService() {
+        return employeeService;
     }
 }

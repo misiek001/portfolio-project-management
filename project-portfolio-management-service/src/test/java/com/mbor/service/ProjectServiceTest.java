@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @Transactional
 @ActiveProfiles("test")
-public class ProjectServiceTest {
+public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
     private static final int createdEntitiesNumber = 3;
 
@@ -58,6 +58,7 @@ public class ProjectServiceTest {
     private static Long firstConsultantId;
     private static Long secondConsultantId;
     private static Long thirdConsultantId;
+
     private static Long firstProjectManagerId;
     private static Long secondProjectManagerId;
     private static Long firstSolutionArchitectId;
@@ -78,18 +79,16 @@ public class ProjectServiceTest {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        List<Long> projectIdList = new LinkedList<>();
-
         for (int i = 0; i < createdEntitiesNumber; i++) {
             Project project = new Project();
             project.setProjectName("ProjectName" + random.nextLong());
             entityManager.persist(project);
-            projectIdList.add(project.getId());
+            entityIdList.add(project.getId());
         }
-
-        firstProjectId = projectIdList.get(createdEntitiesNumber - 3);
-        secondProjectId = projectIdList.get(createdEntitiesNumber - 2);
-        thirdProjectId = projectIdList.get(createdEntitiesNumber - 1);
+        firstProjectId = entityIdList.get(createdEntitiesNumber - 3);
+        firstEntityId = firstProjectId;
+        secondProjectId = entityIdList.get(createdEntitiesNumber - 2);
+        thirdProjectId = entityIdList.get(createdEntitiesNumber - 1);
 
         transaction.commit();
         prepareTestData(entityManagerFactory, projectDao);
@@ -100,7 +99,6 @@ public class ProjectServiceTest {
         ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
         projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
         assertEquals(1, projectService.find(firstProjectId).getProjectAspectLineSet().size());
-
     }
 
     @Test
@@ -112,34 +110,21 @@ public class ProjectServiceTest {
     }
 
     @Test
-    void find_ThenSuccess() {
-        Project result =  projectService.findInternal(firstProjectId);
-        assertNotNull(result);
-    }
-
-    @Test
     void findAll_ThenSuccess() {
         List<Project> lists = projectService.findAllInternal();
         assertEquals(createdEntitiesNumber, lists.size());
     }
 
     @Test
-    void delete_ThenSuccess() {
-        projectService.delete(thirdProjectId);
-        assertEquals(createdEntitiesNumber - 1, projectService.findAll().size());
+    @Override
+    public void deleteThenSuccess() {
+        Project createdProject = createNewEntity();
+        createdProject = projectService.saveInternal(createdProject);
+        projectService.deleteInternal(createdProject.getId());
+        assertEquals(createdEntitiesNumber, projectService.findAll().size());
     }
 
-    @Test
-    void save_ThenSuccess() {
-        assertNotNull(projectService.saveInternal(createNewEntity()));
-        assertEquals(createdEntitiesNumber + 1, projectService.findAll().size());
-    }
 
-    protected Project createNewEntity() {
-        Project project = new Project();
-        project.setProjectName("ProjectName" + random.nextLong());
-        return project;
-    }
 
     private ProjectCreationDTO prepareProjectCreationDto(){
         BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
@@ -326,6 +311,17 @@ public class ProjectServiceTest {
         thirdSolutionArchitectId = thirdSolutionArchitect.getId();
 
         resourceManagerId =  entityManager.merge(resourceManager).getId();
+    }
 
+    @Override
+    protected Project createNewEntity() {
+        Project project = new Project();
+        project.setProjectName("ProjectName" + random.nextLong());
+        return project;
+    }
+
+    @Override
+    protected IProjectService getService() {
+        return projectService;
     }
 }

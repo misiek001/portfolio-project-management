@@ -1,6 +1,6 @@
 package com.mbor.dao;
 
-public interface DaoTest {
+public interface IDaoTest {
 
     void find_ThenSuccess();
 
