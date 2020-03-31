@@ -1,6 +1,5 @@
 package com.mbor.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -20,7 +19,6 @@ public  class EmployeeDTO extends IdDTO {
 
     private BusinessUnitDTO businessUnit;
 
-    @JsonBackReference
     private Set<ProjectRoleDTO> projectRoleSet = new HashSet<>();
 
     public String getFirstName() {

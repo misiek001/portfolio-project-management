@@ -1,6 +1,7 @@
 package com.mbor.service;
 
 import com.mbor.model.ProjectDTO;
+import com.mbor.model.RealEndDateDTO;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -15,6 +16,8 @@ public interface IProjectService extends IInternalProjectService, IAPIService<Pr
 
     ProjectDTO updateProjectAspects(Long projectId, ProjectAspectLineDTO projectAspectLineDTO, Long consultantId);
 
+    ProjectDTO addProjectEndDate(Long projectId, RealEndDateDTO realEndDateDTO, Long projectManagerId);
+
     List<ProjectDTO> findByMultipleCriteria(SearchProjectDTO searchProjectDTO);
 
     List<ProjectDTO> findResourceManagerProjects(Long resourceManagerId, ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO);
@@ -23,6 +26,5 @@ public interface IProjectService extends IInternalProjectService, IAPIService<Pr
 
     List<ProjectDTO> findConsultantProjects(Long consultantId);
 
-    ProjectDTO assignEmployee(EmployeeAssignDTO employeeAssignDTO);
-
+    ProjectDTO assignEmployee(Long projectId, EmployeeAssignDTO employeeAssignDTO);
 }

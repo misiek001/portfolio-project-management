@@ -1,70 +1,57 @@
 package com.mbor.model.assignment;
 
-import com.mbor.model.*;
-
-import javax.validation.constraints.Positive;
+import java.util.HashSet;
 import java.util.Set;
 
 public class EmployeeAssignDTO {
 
-    @Positive
-    private Long projectId;
+    private Long projectManagerId;
 
-    private ProjectManagerDTO projectManagerDTO;
+    private Long businessRelationManagerId;
 
-    private BusinessRelationManagerDTO businessRelationManagerDTO;
+    private Long resourceManagerId;
 
-    private ResourceManagerDTO resourceManagerDTO;
+    private Set<Long> solutionArchitectIdSet = new HashSet<>();
 
-    private Set<SolutionArchitectDTO> solutionArchitectDTOS;
+    private Long businessLeaderId;
 
-    private BusinessLeaderDTO businessLeaderDTO;
-
-    public Long getProjectId() {
-        return projectId;
+    public Long getProjectManagerId() {
+        return projectManagerId;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setProjectManagerId(Long projectManagerId) {
+        this.projectManagerId = projectManagerId;
     }
 
-    public ProjectManagerDTO getProjectManagerDTO() {
-        return projectManagerDTO;
+    public Long getBusinessRelationManagerId() {
+        return businessRelationManagerId;
     }
 
-    public void setProjectManagerDTO(ProjectManagerDTO projectManagerDTO) {
-        this.projectManagerDTO = projectManagerDTO;
+    public void setBusinessRelationManagerId(Long businessRelationManagerId) {
+        this.businessRelationManagerId = businessRelationManagerId;
     }
 
-    public BusinessRelationManagerDTO getBusinessRelationManagerDTO() {
-        return businessRelationManagerDTO;
+    public Long getResourceManagerId() {
+        return resourceManagerId;
     }
 
-    public void setBusinessRelationManagerDTO(BusinessRelationManagerDTO businessRelationManagerDTO) {
-        this.businessRelationManagerDTO = businessRelationManagerDTO;
+    public void setResourceManagerId(Long resourceManagerId) {
+        this.resourceManagerId = resourceManagerId;
     }
 
-    public ResourceManagerDTO getResourceManagerDTO() {
-        return resourceManagerDTO;
+    public Set<Long> getSolutionArchitectIdSet() {
+        return solutionArchitectIdSet;
     }
 
-    public void setResourceManagerDTO(ResourceManagerDTO resourceManagerDTO) {
-        this.resourceManagerDTO = resourceManagerDTO;
+    public void setSolutionArchitectIdSet(Set<Long> solutionArchitectIdSet) {
+        this.solutionArchitectIdSet = solutionArchitectIdSet;
     }
 
-    public Set<SolutionArchitectDTO> getSolutionArchitectDTOS() {
-        return solutionArchitectDTOS;
+    public Long getBusinessLeaderId() {
+        return businessLeaderId;
     }
 
-    public void setSolutionArchitectDTOS(Set<SolutionArchitectDTO> solutionArchitectDTOS) {
-        this.solutionArchitectDTOS = solutionArchitectDTOS;
-    }
-
-    public BusinessLeaderDTO getBusinessLeaderDTO() {
-        return businessLeaderDTO;
-    }
-
-    public void setBusinessLeaderDTO(BusinessLeaderDTO businessLeaderDTO) {
-        this.businessLeaderDTO = businessLeaderDTO;
+    public void setBusinessLeaderId(Long businessLeaderId) {
+        this.businessLeaderId = businessLeaderId;
     }
 }

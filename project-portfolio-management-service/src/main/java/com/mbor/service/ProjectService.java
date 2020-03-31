@@ -9,6 +9,7 @@ import com.mbor.exception.ProjectRoleAlreadyExist;
 import com.mbor.exception.WrongProjectManagerException;
 import com.mbor.mapper.ProjectAspectLineMapper;
 import com.mbor.mapper.ProjectMapper;
+import com.mbor.mapper.RealEndDateMapper;
 import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
@@ -23,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,23 +37,22 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     private final IProjectDao projectDao;
 
     private final IEmployeeService employeeService;
-
     private final IBusinessUnitService businessUnitService;
-
     private final IProjectRoleService projectRoleService;
 
     private final ProjectMapper projectMapper;
-
     private final ProjectAspectLineMapper projectAspectMapper;
+    private final RealEndDateMapper realEndDateMapper;
 
     @Autowired
-    public ProjectService(IProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper) {
+    public ProjectService(IProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper, RealEndDateMapper realEndDateMapper) {
         this.projectDao = projectDao;
         this.employeeService = employeeService;
         this.businessUnitService = businessUnitService;
         this.projectRoleService = projectRoleService;
         this.projectMapper = projectMapper;
         this.projectAspectMapper = projectAspectMapper;
+        this.realEndDateMapper = realEndDateMapper;
     }
 
     @Override
@@ -99,16 +97,30 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     @Override
     public ProjectDTO updateProjectAspects(Long projectId, ProjectAspectLineDTO projectAspectLineDTO, Long projectManagerId) {
-        Project project  = findInternal(projectId);
-        if(project.getProjectManager() == null){
-            throw new NoSetProjectManagerException("No Project Manager assigned to project with id:" + project.getId());
-        }
-        if(!project.getProjectManager().getId().equals(projectManagerId)){
-            throw new WrongProjectManagerException("Project with id:" + project.getId() + " has projectManagerWith id: " + project.getProjectManager().getId() + " ,not:"  + projectManagerId);
-        }
+        Project project = getProjectDedicatedToProjectManager(projectId, projectManagerId);
         ProjectAspectLine projectAspectLine = projectAspectMapper.convertToEntity(projectAspectLineDTO);
         project.addProjectAspectLine(projectAspectLine);
         return projectMapper.convertToDto(updateInternal(project));
+    }
+
+    @Override
+    public ProjectDTO addProjectEndDate(Long projectId, RealEndDateDTO realEndDateDTO, Long projectManagerId){
+        Project project = getProjectDedicatedToProjectManager(projectId, projectManagerId);
+        RealEndDate realEndDate = realEndDateMapper.convertToEntity(realEndDateDTO);
+        project.addRealEndDate(realEndDate);
+
+    return projectMapper.convertToDto(updateInternal(project));
+    }
+
+    private Project getProjectDedicatedToProjectManager(Long projectId, Long projectManagerId) {
+        Project project = findInternal(projectId);
+        if (project.getProjectManager() == null) {
+            throw new NoSetProjectManagerException("No Project Manager assigned to project with id:" + project.getId());
+        }
+        if (!project.getProjectManager().getId().equals(projectManagerId)) {
+            throw new WrongProjectManagerException("Project with id:" + project.getId() + " has projectManagerWith id: " + project.getProjectManager().getId() + " ,not:" + projectManagerId);
+        }
+        return project;
     }
 
     @Override
@@ -207,66 +219,30 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     }
 
     @Override
-    public ProjectDTO assignEmployee(EmployeeAssignDTO employeeAssignDTO) {
-        Project project = findInternal(employeeAssignDTO.getProjectId());
-        if (employeeAssignDTO.getProjectManagerDTO() != null) {
-            ProjectManager projectManager;
-            if (employeeAssignDTO.getProjectManagerDTO().getId() != null) {
-                projectManager = tryCast(ProjectManager.class, projectRoleService.findInternal(employeeAssignDTO.getProjectManagerDTO().getId()));
-            } else {
-                Long employeeId = employeeAssignDTO.getProjectManagerDTO().getEmployee().getId();
-                checkIfRoleAlreadyExist(ProjectManager.class,employeeId );
-                projectManager = new ProjectManager();
-                projectManager.setEmployee(tryCast(IProjectManager.class, employeeService.find(employeeId)));
-            }
+    public ProjectDTO assignEmployee(Long projectId, EmployeeAssignDTO employeeAssignDTO) {
+        Project project = findInternal(projectId);
+        if (employeeAssignDTO.getProjectManagerId() != null) {
+            ProjectManager  projectManager = tryCast(ProjectManager.class, projectRoleService.findInternal(employeeAssignDTO.getProjectManagerId()));
             project.setProjectManager(projectManager);
-        }
-        if (employeeAssignDTO.getBusinessRelationManagerDTO() != null) {
-            project.setBusinessRelationManager(tryCast(BusinessRelationManager.class, employeeService.find(employeeAssignDTO.getBusinessRelationManagerDTO().getId())));
-        }
-        if (employeeAssignDTO.getResourceManagerDTO() != null) {
-            ResourceManager resourceManager;
-            if (employeeAssignDTO.getResourceManagerDTO().getId() != null) {
-                resourceManager = tryCast(ResourceManager.class, projectRoleService.findInternal(employeeAssignDTO.getResourceManagerDTO().getId()));
-            } else {
-                Long employeeId = employeeAssignDTO.getResourceManagerDTO().getEmployee().getId();
-                checkIfRoleAlreadyExist(ResourceManager.class,employeeId );
-                resourceManager = new ResourceManager();
-                resourceManager.setEmployee(tryCast(Supervisor.class, employeeService.find(employeeId)));
             }
+        if (employeeAssignDTO.getBusinessRelationManagerId() != null) {
+            project.setBusinessRelationManager(tryCast(BusinessRelationManager.class, employeeService.find(employeeAssignDTO.getBusinessRelationManagerId())));
+        }
+        if (employeeAssignDTO.getResourceManagerId() != null) {
+            ResourceManager resourceManager = tryCast(ResourceManager.class, projectRoleService.findInternal(employeeAssignDTO.getResourceManagerId()));
             project.setResourceManager(resourceManager);
         }
-        if (!employeeAssignDTO.getSolutionArchitectDTOS().isEmpty()) {
-            Set<SolutionArchitectDTO> solutionArchitectDTOS = employeeAssignDTO.getSolutionArchitectDTOS();
-            Set<SolutionArchitect> solutionArchitects = new HashSet<>();
-            solutionArchitectDTOS.forEach(solutionArchitectDTO -> {
-                if (solutionArchitectDTO.getId() != null) {
-                    solutionArchitects.add(tryCast(SolutionArchitect.class, projectRoleService.findInternal(solutionArchitectDTO.getId())));
-                } else {
-                    Long employeeId = solutionArchitectDTO.getEmployee().getId();
-                    checkIfRoleAlreadyExist(SolutionArchitect.class,employeeId );
-                    SolutionArchitect solutionArchitect = new SolutionArchitect();
-                    solutionArchitect.setEmployee(tryCast(Employee.class, employeeService.find(employeeId)));
-                    solutionArchitects.add(solutionArchitect);
-                }
+        if (!employeeAssignDTO.getSolutionArchitectIdSet().isEmpty()) {
+            employeeAssignDTO.getSolutionArchitectIdSet().forEach(solutionArchitectId -> {
+                project.addSolutionArchitect(tryCast(SolutionArchitect.class, projectRoleService.find(solutionArchitectId)));
             });
-            project.getSolutionArchitects().addAll(solutionArchitects);
         }
-        if (employeeAssignDTO.getBusinessLeaderDTO() != null) {
-            BusinessLeader businessLeader;
-            if (employeeAssignDTO.getBusinessLeaderDTO().getId() != null) {
-                businessLeader = tryCast(BusinessLeader.class, projectRoleService.findInternal(employeeAssignDTO.getBusinessLeaderDTO().getId()));
-            } else {
-                Long employeeId = employeeAssignDTO.getBusinessLeaderDTO().getEmployee().getId();
-                checkIfRoleAlreadyExist(BusinessLeader.class,employeeId );
-                businessLeader = new BusinessLeader();
-                businessLeader.setEmployee(tryCast(BusinessEmployee.class, employeeService.find(employeeId)));
-            }
+        if (employeeAssignDTO.getBusinessLeaderId() != null) {
+            BusinessLeader   businessLeader = tryCast(BusinessLeader.class, projectRoleService.findInternal(employeeAssignDTO.getBusinessLeaderId()));
             project.setBusinessLeader(businessLeader);
         }
         return projectMapper.convertToDto(updateInternal(project));
     }
-
 
     private Function<ProjectClassDTO, ProjectClass> mapProjectClassDTOToProjectClass() {
         return projectClassDTO -> Enum.valueOf(ProjectClass.class, projectClassDTO.name());

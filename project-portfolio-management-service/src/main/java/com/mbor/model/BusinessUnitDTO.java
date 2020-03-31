@@ -1,6 +1,5 @@
 package com.mbor.model;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -10,7 +9,6 @@ import java.util.Set;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "name")
-@JsonFilter("BusinessUnitOnlyData")
 public class BusinessUnitDTO extends IdDTO {
 
     private Long id;

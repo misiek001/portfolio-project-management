@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/test")
@@ -110,43 +108,13 @@ public class TestController {
     public ResponseEntity<EmployeeAssignDTO> getEmployeeAssignDto(){
         EmployeeAssignDTO employeeAssignDTO = new EmployeeAssignDTO();
 
-        ConsultantDTO consultantDTO = new ConsultantDTO();
-        consultantDTO.setId(4l);
-        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-        projectManagerDTO.setEmployee(consultantDTO);
+        employeeAssignDTO.setProjectManagerId(4l);
 
-        employeeAssignDTO.setProjectManagerDTO(projectManagerDTO);
+        employeeAssignDTO.setBusinessRelationManagerId(3l);
 
-        BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
-        businessRelationManagerDTO.setId(3l);
-        employeeAssignDTO.setBusinessRelationManagerDTO(businessRelationManagerDTO);
-
-        SupervisorDTO supervisorDTO = new SupervisorDTO();
-        supervisorDTO.setId(2l);
-        ResourceManagerDTO resourceManagerDTO = new ResourceManagerDTO();
-        resourceManagerDTO.setEmployee(supervisorDTO);
-        employeeAssignDTO.setResourceManagerDTO(resourceManagerDTO);
-
-        Set<SolutionArchitectDTO> solutionArchitectDTOS = new HashSet<>();
-
-        SolutionArchitectDTO firstSolutionArchitect = new SolutionArchitectDTO();
-        firstSolutionArchitect.setEmployee(consultantDTO);
-        solutionArchitectDTOS.add(firstSolutionArchitect);
-        SolutionArchitectDTO secondSolutionArchitect  = new SolutionArchitectDTO();
-        secondSolutionArchitect.setEmployee(supervisorDTO);
-        solutionArchitectDTOS.add(secondSolutionArchitect);
-        employeeAssignDTO.setSolutionArchitectDTOS(solutionArchitectDTOS);
-
-        BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
-        BusinessEmployeeDTO businessEmployeeDTO = new BusinessEmployeeDTO();
-        businessEmployeeDTO.setId(5l);
-
-        businessLeaderDTO.setEmployee(businessEmployeeDTO);
-        employeeAssignDTO.setBusinessLeaderDTO(businessLeaderDTO);
+        employeeAssignDTO.setResourceManagerId(2l);
 
         return new ResponseEntity<>(employeeAssignDTO, HttpStatus.OK);
-
-
     }
 
 }

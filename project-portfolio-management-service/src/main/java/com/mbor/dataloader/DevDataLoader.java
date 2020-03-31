@@ -1,6 +1,7 @@
 package com.mbor.dataloader;
 
 import com.mbor.domain.*;
+import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.security.Privilege;
 import com.mbor.domain.security.Role;
@@ -92,6 +93,11 @@ public class DevDataLoader {
         resourceManager.setEmployee(ITSupervisor);
         project.setResourceManager(resourceManager);
 
+        ProjectManager projectManager = new ProjectManager();
+        projectManager.setEmployee(ITConsultant);
+
+        project.setProjectManager(projectManager);
+
         entityManager.persist(project);
 
         entityTransaction.commit();
@@ -99,6 +105,22 @@ public class DevDataLoader {
     }
 
     private void createUser(Employee employee) {
+
+        Role resourceManagerRole = new Role();
+        resourceManagerRole.setName("resource-manager");
+        Privilege searchResourceManagerProjectsPrivilege = new Privilege();
+        searchResourceManagerProjectsPrivilege.setName("search_resource_manager_projects");
+        resourceManagerRole.addPrivilege(searchResourceManagerProjectsPrivilege);
+
+        Role projectManagerRole = new Role();
+        projectManagerRole.setName("project-manager");
+        Privilege addProjectAspectLinePrivilege = new Privilege();
+        addProjectAspectLinePrivilege.setName("add_project_aspects_line");
+        projectManagerRole.addPrivilege(addProjectAspectLinePrivilege);
+        Privilege addRealEndDatePrivilege = new Privilege();
+        addRealEndDatePrivilege.setName("add_real_end_date");
+        projectManagerRole.addPrivilege(addRealEndDatePrivilege);
+
         User user = new User();
         if (employee instanceof BusinessRelationManager) {
             Role brmRole = new Role();
@@ -113,13 +135,14 @@ public class DevDataLoader {
         } else if (employee instanceof Supervisor) {
             Role supervisorRole = new Role();
             supervisorRole.setName("supervisor");
-            Privilege searchResourceManagerProjectsPrivilege = new Privilege();
-            searchResourceManagerProjectsPrivilege.setName("search_resource_manager_projects");
+
             Privilege findSupervisorProjectsPrivilege = new Privilege();
             findSupervisorProjectsPrivilege.setName("search_supervisor_projects");
-            supervisorRole.addPrivilege(searchResourceManagerProjectsPrivilege);
             supervisorRole.addPrivilege(findSupervisorProjectsPrivilege);
+
             user.getRoles().add(supervisorRole);
+            user.getRoles().add(resourceManagerRole);
+
         } else if (employee instanceof Consultant) {
             Role consultantRole = new Role();
             consultantRole.setName("consultant");
@@ -127,6 +150,7 @@ public class DevDataLoader {
             searchConsultantProjectsPrivilege.setName("search_consultant_projects");
             consultantRole.addPrivilege(searchConsultantProjectsPrivilege);
             user.getRoles().add(consultantRole);
+            user.getRoles().add(projectManagerRole);
         } else {
 
         }

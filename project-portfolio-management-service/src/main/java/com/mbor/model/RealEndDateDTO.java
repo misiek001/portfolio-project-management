@@ -1,24 +1,19 @@
 package com.mbor.model;
 
-import com.mbor.domain.Project;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mbor.model.customserializer.LocalDateTimeDeserializer;
+import com.mbor.model.customserializer.LocalDateTimeSerializer;
 
 import java.time.LocalDateTime;
 
 public class RealEndDateDTO {
 
-    private Project project;
-
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime endDate;
 
     private String reason;
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
 
     public LocalDateTime getEndDate() {
         return endDate;

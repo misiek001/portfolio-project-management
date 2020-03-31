@@ -35,9 +35,8 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -51,18 +50,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles(profiles = {"test", "controller-integration"})
 class ProjectControllerTest {
 
+    private static MockMvc mockMvc;
     ObjectMapper mapper = new ObjectMapper();
-
     @Autowired
     private IEmployeeService employeeService;
-
     @Autowired
-    private  Environment env;
-
-    private static MockMvc mockMvc;
+    private Environment env;
 
     @BeforeAll
-    static void init(@Autowired WebApplicationContext webApplicationContext,   @Autowired FilterChainProxy springSecurityFilterChain ){
+    static void init(@Autowired WebApplicationContext webApplicationContext, @Autowired FilterChainProxy springSecurityFilterChain) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).addFilter(springSecurityFilterChain).build();
     }
 
@@ -75,6 +71,7 @@ class ProjectControllerTest {
     @Test
     void createProject() throws Exception {
         String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
+
         mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .content(prepareProjectCreationDto())
@@ -83,33 +80,7 @@ class ProjectControllerTest {
         ).andExpect(status().isCreated());
     }
 
-    @Test
-    public void assignEmployeeThenSuccess() throws Exception {
-        String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
-        mockMvc.perform(post("/projects")
-                .header("Authorization", "Bearer " + accessToken)
-                .content(mapper.writeValueAsString(prepareEmployeeAssignDto()))
-                .contentType("application/json;charset=UTF-8")
-                .accept("application/json;charset=UTF-8")
-        ).andExpect(status().isOk());
-    }
 
-    @Test
-    public void assignEmployeeWithAttemptToCreateNewRoleWhenRoleExistThenBadRequest(@Autowired EntityManagerFactory entityManagerFactory) throws Exception {
-        loadProjectManager(entityManagerFactory);
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("action", "assign-employee");
-
-        String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
-        mockMvc.perform(put("/projects")
-                .params(params)
-                .header("Authorization", "Bearer " + accessToken)
-                .content(prepareEmployeeAssignDto())
-                .contentType("application/json;charset=UTF-8")
-                .accept("application/json;charset=UTF-8")
-        ).andExpect(status().isBadRequest());
-    }
     @Test
     public void findResourceManagerProjectsThenSuccess() throws Exception {
         String accessToken = obtainAccessToken(env.getProperty("user.supervisor.name"), env.getProperty("user.supervisor.password"));
@@ -117,14 +88,13 @@ class ProjectControllerTest {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("searchingEmployee", "resource-manager");
 
-      mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
                 .content(prepareResourceManagerSearchProjectDto())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
         ).andExpect(status().isOk());
-
     }
 
     @Test
@@ -132,16 +102,48 @@ class ProjectControllerTest {
         String accessToken = obtainAccessToken(env.getProperty("user.supervisor.name"), env.getProperty("user.supervisor.password"));
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("action", "add-project-aspect-line");
+        params.add("searchingEmployee", "supervisor");
 
-         mockMvc.perform(post("/projects")
+        mockMvc.perform(post("/projects")
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
                 .content(prepareResourceManagerSearchProjectDto())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
         ).andExpect(status().isOk());
+    }
 
+    @Test
+    public void assignEmployeeThenSuccess() throws Exception {
+
+        String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("action", "assign-employee");
+
+        mockMvc.perform(patch("/projects/1")
+                .header("Authorization", "Bearer " + accessToken)
+                .params(params)
+                .content(prepareEmployeeAssignDto())
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    public void addProjectRealEndDateThenSuccess() throws Exception {
+        String accessToken = obtainAccessToken(env.getProperty("user.consultant.name"), env.getProperty("user.consultant.password"));
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("action", "add-real-end-date");
+
+        mockMvc.perform(patch("/projects/1")
+                .header("Authorization", "Bearer " + accessToken)
+                .params(params)
+                .content(prepareRealEndDateDTO(10, "Some Reason"))
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isOk());
     }
 
     @Test
@@ -149,16 +151,15 @@ class ProjectControllerTest {
         String accessToken = obtainAccessToken(env.getProperty("user.consultant.name"), env.getProperty("user.consultant.password"));
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("searchingEmployee", "consultant");
+        params.add("action", "add-project-aspect-line");
 
-         mockMvc.perform(get("/projects")
+        mockMvc.perform(patch("/projects/1")
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
-                 .content(prepareProjectAspectLineDTO())
+                .content(prepareProjectAspectLineDTO())
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
         ).andExpect(status().isOk());
-
     }
 
     @Test
@@ -174,7 +175,6 @@ class ProjectControllerTest {
                 .contentType("application/json;charset=UTF-8")
                 .accept("application/json;charset=UTF-8")
         ).andExpect(status().isOk());
-
     }
 
     private String obtainAccessToken(String username, String password) throws Exception {
@@ -200,41 +200,12 @@ class ProjectControllerTest {
 
     private String prepareEmployeeAssignDto() throws JsonProcessingException {
         EmployeeAssignDTO employeeAssignDTO = new EmployeeAssignDTO();
-        employeeAssignDTO.setProjectId(1l);
 
-        ConsultantDTO consultantDTO = new ConsultantDTO();
-        consultantDTO.setId(4l);
-        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-        projectManagerDTO.setEmployee(consultantDTO);
-
-        employeeAssignDTO.setProjectManagerDTO(projectManagerDTO);
-
-        BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
-        businessRelationManagerDTO.setId(3l);
-        employeeAssignDTO.setBusinessRelationManagerDTO(businessRelationManagerDTO);
-
-        SupervisorDTO supervisorDTO = new SupervisorDTO();
-        supervisorDTO.setId(2l);
-        ResourceManagerDTO resourceManagerDTO = new ResourceManagerDTO();
-        resourceManagerDTO.setEmployee(supervisorDTO);
-        employeeAssignDTO.setResourceManagerDTO(resourceManagerDTO);
-
-        Set<SolutionArchitectDTO> solutionArchitectDTOS = new HashSet<>();
-
-        SolutionArchitectDTO firstSolutionArchitect = new SolutionArchitectDTO();
-        firstSolutionArchitect.setEmployee(consultantDTO);
-        solutionArchitectDTOS.add(firstSolutionArchitect);
-        SolutionArchitectDTO secondSolutionArchitect  = new SolutionArchitectDTO();
-        secondSolutionArchitect.setEmployee(supervisorDTO);
-        solutionArchitectDTOS.add(secondSolutionArchitect);
-        employeeAssignDTO.setSolutionArchitectDTOS(solutionArchitectDTOS);
-
-        BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
-        BusinessEmployeeDTO businessEmployeeDTO = new BusinessEmployeeDTO();
-        businessEmployeeDTO.setId(5l);
-
-        businessLeaderDTO.setEmployee(businessEmployeeDTO);
-        employeeAssignDTO.setBusinessLeaderDTO(businessLeaderDTO);
+//        employeeAssignDTO.setProjectManagerId(4l);
+//
+//        employeeAssignDTO.setBusinessRelationManagerId(3l);
+//
+//        employeeAssignDTO.setResourceManagerId(2l);
 
         return mapper.writeValueAsString(employeeAssignDTO);
     }
@@ -265,7 +236,7 @@ class ProjectControllerTest {
 
         projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
-        return  mapper.writeValueAsString(projectCreationDTO);
+        return mapper.writeValueAsString(projectCreationDTO);
     }
 
     private String prepareResourceManagerSearchProjectDto() throws JsonProcessingException {
@@ -303,6 +274,13 @@ class ProjectControllerTest {
         return mapper.writeValueAsString(projectAspectLineDTO);
     }
 
+    private String prepareRealEndDateDTO(int offset, String reason) throws JsonProcessingException {
+        RealEndDateDTO realEndDateDTO = new RealEndDateDTO();
+        realEndDateDTO.setEndDate(LocalDateTime.now().plusDays(offset));
+        realEndDateDTO.setReason(reason);
+        return mapper.writeValueAsString(realEndDateDTO);
+    }
+
     private void loadProjectManager(EntityManagerFactory entityManagerFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -312,7 +290,4 @@ class ProjectControllerTest {
         entityManager.persist(projectManager);
         transaction.commit();
     }
-
-
-
 }

@@ -1,6 +1,5 @@
 package com.mbor.domain;
 
-import com.mbor.dataloader.RemoveLogger;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
@@ -18,7 +17,6 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@EntityListeners(RemoveLogger.class)
 public class Project implements IProjectDTO {
 
     @Id
@@ -62,7 +60,7 @@ public class Project implements IProjectDTO {
 
     private LocalDateTime plannedEndDate;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<RealEndDate> realEndDateSet = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.MERGE} )

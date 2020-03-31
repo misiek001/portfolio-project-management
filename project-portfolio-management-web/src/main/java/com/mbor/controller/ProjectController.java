@@ -2,9 +2,10 @@ package com.mbor.controller;
 
 import com.mbor.domain.Consultant;
 import com.mbor.domain.Supervisor;
-import com.mbor.domain.employeeinproject.ProjectRole;
+import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.model.ProjectDTO;
+import com.mbor.model.RealEndDateDTO;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -35,27 +36,20 @@ public class ProjectController extends RawController {
         this.employeeService = employeeService;
     }
 
+    @GetMapping(params = "searchingEmployee=consultant")
+    @PreAuthorize("hasAuthority('search_consultant_projects')")
+    public ResponseEntity<List<ProjectDTO>> findConsultantProjects(final Authentication authentication){
+        String principal = (String) authentication.getPrincipal();
+        Long consultantId = employeeService.getDemandedEmployeeId(Consultant.class, principal);
+        List<ProjectDTO> projects = getService().findConsultantProjects(consultantId);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('create_project')")
     public ResponseEntity<ProjectCreatedDTO> createProject(@RequestBody ProjectCreationDTO projectCreationDTO){
         ProjectCreatedDTO projectCreatedDTO =  getService().save(projectCreationDTO);
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
-    }
-
-    @PutMapping
-    @PreAuthorize("hasAuthority('assign_employee')")
-    public ResponseEntity<ProjectDTO> assignEmployeeToProject(@RequestBody EmployeeAssignDTO employeeAssignDTO){
-        ProjectDTO assignedProject = projectService.assignEmployee(employeeAssignDTO);
-        return new ResponseEntity<>(assignedProject, HttpStatus.OK);
-    }
-
-    @PutMapping(value = "/{projectId}", params = "action=add-project-aspect-line")
-    @PreAuthorize("hasAuthority('add_project_aspects_line')")
-    public ResponseEntity<ProjectDTO> addProjectAspectsLine(@PathVariable Long projectId, @RequestBody ProjectAspectLineDTO projectAspectLineDTO, final Authentication authentication) {
-        String principal = (String) authentication.getPrincipal();
-        Long projectManagerId = employeeService.getDemandedProjectRoleId(ProjectRole.class, principal);
-        ProjectDTO projectDTO = projectService.updateProjectAspects(projectId, projectAspectLineDTO, projectManagerId);
-        return new ResponseEntity<>(projectDTO, HttpStatus.OK);
     }
 
     @PostMapping(params = "search=true")
@@ -81,15 +75,30 @@ public class ProjectController extends RawController {
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
-    @GetMapping(params = "searchingEmployee=consultant")
-    @PreAuthorize("hasAuthority('search_consultant_projects')")
-    public ResponseEntity<List<ProjectDTO>> findConsultantProjects(final Authentication authentication){
-        String principal = (String) authentication.getPrincipal();
-        Long consultantId = employeeService.getDemandedEmployeeId(Consultant.class, principal);
-        List<ProjectDTO> projects = getService().findConsultantProjects(consultantId);
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+    @PatchMapping(value = "/{projectId}", params = "action=assign-employee")
+    @PreAuthorize("hasAuthority('assign_employee')")
+    public ResponseEntity<ProjectDTO> assignEmployeeToProject(@PathVariable Long projectId, @RequestBody EmployeeAssignDTO employeeAssignDTO){
+        ProjectDTO assignedProject = projectService.assignEmployee(projectId, employeeAssignDTO);
+        return new ResponseEntity<>(assignedProject, HttpStatus.OK);
     }
 
+    @PatchMapping(value = "/{projectId}", params = "action=add-real-end-date")
+    @PreAuthorize("hasAuthority('add_real_end_date')")
+    public ResponseEntity<ProjectDTO> addRealEndDateToProject(@PathVariable Long projectId, @RequestBody RealEndDateDTO realEndDateDTO, final  Authentication authentication) {
+        String principal = (String) authentication.getPrincipal();
+        Long projectManagerId = employeeService.getDemandedProjectRoleId(ProjectManager.class, principal);
+        ProjectDTO projectDTO = projectService.addProjectEndDate(projectId, realEndDateDTO, projectManagerId);
+        return new ResponseEntity<>(projectDTO, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/{projectId}", params = "action=add-project-aspect-line")
+    @PreAuthorize("hasAuthority('add_project_aspects_line')")
+    public ResponseEntity<ProjectDTO> addProjectAspectsLine(@PathVariable Long projectId, @RequestBody ProjectAspectLineDTO projectAspectLineDTO, final Authentication authentication) {
+        String principal = (String) authentication.getPrincipal();
+        Long projectManagerId = employeeService.getDemandedProjectRoleId(ProjectManager.class, principal);
+        ProjectDTO projectDTO = projectService.updateProjectAspects(projectId, projectAspectLineDTO, projectManagerId);
+        return new ResponseEntity<>(projectDTO, HttpStatus.OK);
+    }
 
     @Override
     public IProjectService getService() {
