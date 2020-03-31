@@ -1,4 +1,4 @@
-package com.mbor.mapper;
+package com.mbor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

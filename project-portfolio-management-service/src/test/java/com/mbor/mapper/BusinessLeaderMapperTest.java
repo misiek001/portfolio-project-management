@@ -48,8 +48,6 @@ class BusinessLeaderMapperTest {
         businessEmployee = new BusinessEmployee();
         businessEmployee.setId(businessEmployeeDTO.getId());
 
-
-
         businessLeader = new BusinessLeader();
 
         businessLeader.setEmployee(businessEmployee);
@@ -60,7 +58,6 @@ class BusinessLeaderMapperTest {
         BusinessLeaderDTO createdBusinessLeaderDTO = businessLeaderMapper.convertToDto(businessLeader);
 
         assertEquals(createdBusinessLeaderDTO.getEmployee().getId(), businessLeaderDTO.getEmployee().getId());
-
     }
 
     @Test

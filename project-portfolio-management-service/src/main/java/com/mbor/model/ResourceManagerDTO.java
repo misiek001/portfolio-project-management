@@ -1,5 +1,5 @@
 package com.mbor.model;
 
-public class ResourceManagerDTO extends ProjectRoleDTO{
+public class ResourceManagerDTO extends ProjectRoleDTO<SupervisorDTO>{
 
 }

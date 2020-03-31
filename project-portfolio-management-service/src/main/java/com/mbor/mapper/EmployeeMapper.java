@@ -38,4 +38,5 @@ public abstract class EmployeeMapper<T extends EmployeeDTO, U extends Employee, 
     public V convertEntityToCreatedDto(U u) {
         return modelMapper.map(u, createdDtoClazz);
     }
+
 }

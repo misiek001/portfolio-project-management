@@ -1,7 +1,14 @@
 package com.mbor.mapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.BusinessLeader;
+import com.mbor.domain.employeeinproject.ProjectManager;
+import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -17,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -36,7 +45,11 @@ import static org.mockito.Mockito.doReturn;
 class ProjectMapperTest {
     private static Random random = new Random();
 
+    @Autowired
+    private ApplicationContext context;
+
     private static ProjectCreationDTO projectCreationDTO;
+    private static DirectorDTO directorDTO;
     private static BusinessRelationManagerDTO businessRelationManagerDTO;
     private static BusinessEmployeeDTO businessEmployeeDTO;
     private static BusinessLeaderDTO businessLeaderDTO;
@@ -44,7 +57,13 @@ class ProjectMapperTest {
     private static BusinessUnitDTO businessUnitDTOSecond;
 
     private static Project expectedProject;
+    private static BusinessUnit ITBusinessUnit;
+    private static Director director;
     private static BusinessRelationManager businessRelationManager;
+    private static Supervisor supervisor;
+    private static ResourceManager resourceManager;
+    private static Consultant firstConsultant;
+    private static ProjectManager projectManager;
     private static BusinessEmployee businessEmployee;
     private static BusinessLeader businessLeader;
     private static BusinessUnit businessUnitFirst;
@@ -70,7 +89,6 @@ class ProjectMapperTest {
 
     @Spy
     private  ModelMapper modelMapper;
-
 
     @BeforeAll
     static void setUp() {
@@ -102,24 +120,68 @@ class ProjectMapperTest {
         //Creating Expected Project
 
         expectedProject = new Project();
-        expectedProject.setProjectName("Project Name");
+        expectedProject.setProjectName(projectCreationDTO.getProjectName());
         expectedProject.setProjectStatus(ProjectStatus.ANALYSIS);
+
+        ITBusinessUnit = new BusinessUnit();
+        ITBusinessUnit.setName("IT Business Unit");
+
+        director = new Director();
+        director.setUserName("Director Username");
+        director.setBusinessUnit(ITBusinessUnit);
+        ITBusinessUnit.getEmployees().add(director);
 
         businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setId(businessRelationManagerDTO.getId());
+        businessRelationManager.setUserName("BRM Username");
+        businessRelationManager.setBusinessUnit(ITBusinessUnit);
+        director.getBusinessRelationManagers().add(businessRelationManager);
+        businessRelationManager.setDirector(director);
+        ITBusinessUnit.getEmployees().add(businessRelationManager);
 
         expectedProject.setBusinessRelationManager(businessRelationManager);
 
-        businessLeader = new BusinessLeader();
+        supervisor = new Supervisor();
+        supervisor.setId(random.nextLong());
+        supervisor.setUserName("Supervisor UserName");
+        supervisor.setBusinessUnit(ITBusinessUnit);
+        supervisor.setDirector(director);
+        director.getSupervisors().add(supervisor);
+        ITBusinessUnit.getEmployees().add(supervisor);
+        resourceManager = new ResourceManager();
+        resourceManager.setEmployee(supervisor);
+        supervisor.addProjectRole(resourceManager);
+        expectedProject.setResourceManager(resourceManager);
+        resourceManager.getProjects().add(expectedProject);
+
+        firstConsultant = new Consultant();
+        firstConsultant.setId(random.nextLong());
+        firstConsultant.setUserName("Consultant Username");
+        firstConsultant.setSupervisor(supervisor);
+        firstConsultant.setBusinessUnit(ITBusinessUnit);
+        ITBusinessUnit.getEmployees().add(firstConsultant);
+        projectManager = new ProjectManager();
+        projectManager.setEmployee(firstConsultant);
+        firstConsultant.addProjectRole(projectManager);
+        projectManager.getProjects().add(expectedProject);
+        expectedProject.setProjectManager(projectManager);
+
         businessEmployee = new BusinessEmployee();
         businessEmployee.setId(businessEmployeeDTO.getId());
+        businessEmployee.setUserName("Business Employee Username");
 
+        businessLeader = new BusinessLeader();
         businessLeader.setEmployee(businessEmployee);
+        businessEmployee.addProjectRole(businessLeader);
+        businessLeader.getProjects().add(expectedProject);
+
         expectedProject.setBusinessLeader(businessLeader);
 
         businessUnitFirst = new BusinessUnit();
         businessUnitFirst.setId(businessUnitDTOFirst.getId());
         businessUnitFirst.setName("First Business Unit");
+        businessUnitFirst.getEmployees().add(businessEmployee);
+        businessEmployee.addProjectRole(businessLeader);
 
         businessUnitSecond = new BusinessUnit();
         businessUnitSecond.setId(businessUnitDTOSecond.getId());
@@ -173,8 +235,11 @@ class ProjectMapperTest {
     }
 
     @Test
-    void convertToDto() {
+    void convertToDto() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        FilterProvider filters = new SimpleFilterProvider().addFilter("BusinessUnitOnlyData", SimpleBeanPropertyFilter.serializeAllExcept("employees", "projects"));
         ProjectDTO projectDTO = projectMapper.convertToDto(expectedProject);
+        Object converter = context.getBean("mappingJackson2HttpMessageConverter");
     }
 
     @Test

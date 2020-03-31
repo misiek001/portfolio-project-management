@@ -2,7 +2,6 @@ package com.mbor.service;
 
 import com.mbor.dao.IDao;
 import com.mbor.dao.IEmployeeDao;
-import com.mbor.dao.IUserDao;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.Employee;
 import com.mbor.domain.security.Privilege;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -39,12 +39,9 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
 
     private Random random = new Random();
 
-    private final IUserDao userDao;
-
-    public EmployeeService(IEmployeeDao employeeDao, CustomUserDetailsService customUserDetailsService, IUserDao userDao) {
+    public EmployeeService(IEmployeeDao employeeDao, CustomUserDetailsService customUserDetailsService) {
         this.employeeDao = employeeDao;
         this.customUserDetailsService = customUserDetailsService;
-        this.userDao = userDao;
     }
 
     @Override
@@ -55,13 +52,17 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
     //TODO implement mapping for differentType of Employee
     @Override
     public List<EmployeeDTO> findAll() {
-        return null;
+        List<Employee> employees = findAllInternal();
+        return  employees.stream()
+                .map(employee -> mappers.get(EmployeeType.valueOf(employee.getClass().getSimpleName())).convertToDto(employee))
+                .collect(Collectors.toList());
     }
 
-    //TODO implement mapping for differentType of Employee
+
     @Override
     public EmployeeDTO find(Long id) {
-        return null;
+        Employee employee = findInternal(id);
+        return mappers.get(EmployeeType.valueOf(employee.getClass().getSimpleName())).convertToDto(employee);
     }
 
     @Override
@@ -132,7 +133,7 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
         mappers.put(EmployeeType.BusinessRelationManager, context.getBean("businessRelationManagerMapper", BusinessRelationManagerMapper.class));
         mappers.put(EmployeeType.Supervisor, context.getBean("supervisorMapper", SupervisorMapper.class));
         mappers.put(EmployeeType.Director, context.getBean("directorMapper", DirectorMapper.class));
+        mappers.put(EmployeeType.Consultant, context.getBean("consultantMapper", ConsultantMapper.class));
     }
-
 
 }

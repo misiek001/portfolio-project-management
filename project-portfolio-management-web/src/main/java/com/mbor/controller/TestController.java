@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
@@ -44,7 +46,7 @@ public class TestController {
     }
 
     @GetMapping(params = {"creationDto=project"})
-    public ResponseEntity<ProjectCreationDTO> test(){
+    public ResponseEntity<ProjectCreationDTO> test(HttpServletResponse response) throws IOException {
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName("Project Name");
 

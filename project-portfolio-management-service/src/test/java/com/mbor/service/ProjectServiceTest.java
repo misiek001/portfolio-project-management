@@ -7,10 +7,7 @@ import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
-import com.mbor.model.BusinessEmployeeDTO;
-import com.mbor.model.BusinessLeaderDTO;
-import com.mbor.model.BusinessRelationManagerDTO;
-import com.mbor.model.BusinessUnitDTO;
+import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.*;
@@ -97,7 +94,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
     @Test
     void updateProjectAspectThenSuccess(){
         ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
-        projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
+        ProjectDTO projectDTO = projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
         assertEquals(1, projectService.find(firstProjectId).getProjectAspectLineSet().size());
     }
 

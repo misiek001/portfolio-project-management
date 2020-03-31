@@ -1,5 +1,6 @@
 package com.mbor.mapper;
 
+import com.mbor.TestSecurityConfiguration;
 import com.mbor.domain.BusinessEmployee;
 import com.mbor.model.BusinessEmployeeDTO;
 import com.mbor.spring.ServiceConfiguration;
@@ -45,7 +46,6 @@ class BusinessEmployeeMapperTest {
         BusinessEmployeeDTO createdBusinessEmployeeDTO = businessEmployeeMapper.convertToDto(businessEmployee);
 
         assertEquals(createdBusinessEmployeeDTO.getId(), businessEmployeeDTO.getId());
-
     }
 
     @Test

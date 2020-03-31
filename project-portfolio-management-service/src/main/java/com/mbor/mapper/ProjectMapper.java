@@ -43,7 +43,7 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
 
     @Override
     public ProjectDTO convertToDto(Project project) {
-        return modelMapper.map(project, ProjectDTO.class);
+        return  modelMapper.map(project, ProjectDTO.class);
     }
 
     @Override

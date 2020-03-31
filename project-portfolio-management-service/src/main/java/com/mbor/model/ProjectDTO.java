@@ -1,10 +1,15 @@
 package com.mbor.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.mbor.domain.projectaspect.ProjectAspectLine;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "projectName")
 
 public class ProjectDTO implements IProjectDTO {
 

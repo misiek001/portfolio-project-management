@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 public class RealEndDateDTO {
 
-
     private Project project;
 
     private LocalDateTime endDate;

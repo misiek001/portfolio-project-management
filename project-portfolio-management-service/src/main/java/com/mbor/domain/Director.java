@@ -13,18 +13,18 @@ public class Director extends Employee {
 
     @OneToMany(mappedBy = "director")
     @Fetch(value = FetchMode.JOIN)
-    private Set<Supervisor> employees = new HashSet<>();
+    private Set<Supervisor> supervisors = new HashSet<>();
 
     @OneToMany(mappedBy = "director")
     @Fetch(value = FetchMode.JOIN)
     private Set<BusinessRelationManager> businessRelationManagers = new HashSet<>();
 
-    public Set<Supervisor> getEmployees() {
-        return employees;
+    public Set<Supervisor> getSupervisors() {
+        return supervisors;
     }
 
-    public void setEmployees(Set<Supervisor> employees) {
-        this.employees = employees;
+    public void setSupervisors(Set<Supervisor> employees) {
+        this.supervisors = employees;
     }
 
     public Set<BusinessRelationManager> getBusinessRelationManagers() {

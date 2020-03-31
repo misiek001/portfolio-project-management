@@ -127,6 +127,7 @@ public class Project implements IProjectDTO {
 
     public void setBusinessRelationManager(BusinessRelationManager businessRelationManager) {
         this.businessRelationManager = businessRelationManager;
+
         businessRelationManager.getProjects().add(this);
     }
 
