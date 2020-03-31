@@ -1,10 +1,6 @@
 package com.mbor.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
@@ -236,10 +232,7 @@ class ProjectMapperTest {
 
     @Test
     void convertToDto() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        FilterProvider filters = new SimpleFilterProvider().addFilter("BusinessUnitOnlyData", SimpleBeanPropertyFilter.serializeAllExcept("employees", "projects"));
         ProjectDTO projectDTO = projectMapper.convertToDto(expectedProject);
-        Object converter = context.getBean("mappingJackson2HttpMessageConverter");
     }
 
     @Test

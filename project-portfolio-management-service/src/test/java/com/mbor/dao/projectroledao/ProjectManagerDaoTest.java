@@ -8,11 +8,11 @@ import com.mbor.domain.employeeinproject.IProjectManager;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ProjectRole;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,7 +24,6 @@ import javax.persistence.EntityTransaction;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +31,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
-public class ProjectManagerDaoTest extends IDaoImplTest<ProjectManager> {
+public class ProjectManagerDaoTest  {
+
+    private static Random random= new Random();
 
     private static Long employeeId;
 
@@ -45,8 +46,9 @@ public class ProjectManagerDaoTest extends IDaoImplTest<ProjectManager> {
     @Autowired
     IProjectDao projectDao;
 
+    private static int createdEntityNumber = 3;
+
     @BeforeAll
-    @Rollback
     static void setUp(@Autowired EntityManagerFactory entityManagerFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -57,21 +59,22 @@ public class ProjectManagerDaoTest extends IDaoImplTest<ProjectManager> {
         entityManager.persist(consultant);
         ;
         employeeId = consultant.getId();
-        for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
+        for (int i = 0; i < createdEntityNumber; i++) {
             ProjectManager projectManager = new ProjectManager();
             entityManager.persist(projectManager);
         }
         transaction.commit();
     }
 
+    @AfterAll
+    static void clear(@Autowired TableClearer tableClearer){
+        tableClearer.clearTables();
+    }
+
     @Test
-    @Override
     public void findAll_ThenSuccess() {
-        List<ProjectManager> lists = (List<ProjectManager>) getDao().findAll()
-                .stream()
-                .filter(o -> o instanceof ProjectManager).
-                        collect(Collectors.toList());
-        assertEquals(createdEntitiesNumber, lists.size());
+        List<ProjectManager> lists =  getDao().findAll();
+        assertEquals(createdEntityNumber, lists.size());
     }
 
     @Test
@@ -112,12 +115,10 @@ public class ProjectManagerDaoTest extends IDaoImplTest<ProjectManager> {
         }
     }
 
-    @Override
     protected ProjectManager createNewEntity() {
         return new ProjectManager();
     }
 
-    @Override
     protected IDao getDao() {
         return projectRoleDao;
     }

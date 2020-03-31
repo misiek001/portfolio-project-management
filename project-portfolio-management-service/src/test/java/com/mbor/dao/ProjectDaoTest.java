@@ -6,6 +6,7 @@ import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Autowired
-    public  IProjectDao projectDao;
+    public IProjectDao projectDao;
+
+
+    private TableClearer tableClearer;
 
     private static Long firstConsultantId;
     private static Long secondConsultantId;
@@ -64,6 +68,11 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         }
         transaction.commit();
         prepareTestData(entityManagerFactory, projectDao);
+    }
+
+    @AfterAll
+    static void clear(@Autowired TableClearer tableClearer){
+        tableClearer.clearTables();
     }
 
     @Test
