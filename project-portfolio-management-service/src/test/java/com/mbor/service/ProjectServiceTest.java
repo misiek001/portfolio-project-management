@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -94,8 +95,15 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
     @Test
     void updateProjectAspectThenSuccess(){
         ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
-        ProjectDTO projectDTO = projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
+        projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
         assertEquals(1, projectService.find(firstProjectId).getProjectAspectLineSet().size());
+    }
+
+    @Test
+    void addRealEndDateThenSuccess(){
+        RealEndDateDTO realEndDateDTO = prepareRealEndDateDTO(10, "First Reason");
+        projectService.addProjectEndDate(firstProjectId, realEndDateDTO, firstProjectManagerId);
+        assertEquals(1, projectService.find(firstProjectId).getRealEndDateSet().size());
     }
 
     @Test
@@ -108,7 +116,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
     @Test
     void findAll_ThenSuccess() {
-        List<Project> lists = projectService.findAllInternal();
+        List<ProjectDTO> lists = projectService.findAll();
         assertEquals(createdEntitiesNumber, lists.size());
     }
 
@@ -120,7 +128,6 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         projectService.deleteInternal(createdProject.getId());
         assertEquals(createdEntitiesNumber, projectService.findAll().size());
     }
-
 
 
     private ProjectCreationDTO prepareProjectCreationDto(){
@@ -316,6 +323,14 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         project.setProjectName("ProjectName" + random.nextLong());
         return project;
     }
+
+    private RealEndDateDTO prepareRealEndDateDTO(int offset,String reason) {
+        RealEndDateDTO realEndDateDTO = new RealEndDateDTO();
+        realEndDateDTO.setEndDate(LocalDateTime.now().plusDays(offset));
+        realEndDateDTO.setReason(reason);
+        return realEndDateDTO;
+    }
+
 
     @Override
     protected IProjectService getService() {

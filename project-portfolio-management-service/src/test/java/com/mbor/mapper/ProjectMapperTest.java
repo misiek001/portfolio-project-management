@@ -1,10 +1,5 @@
 package com.mbor.mapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
@@ -24,13 +19,12 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,10 +37,8 @@ import static org.mockito.Mockito.doReturn;
 @ActiveProfiles("test")
 @Transactional
 class ProjectMapperTest {
-    private static Random random = new Random();
 
-    @Autowired
-    private ApplicationContext context;
+    private static Random random = new Random();
 
     private static ProjectCreationDTO projectCreationDTO;
     private static DirectorDTO directorDTO;
@@ -68,6 +60,8 @@ class ProjectMapperTest {
     private static BusinessLeader businessLeader;
     private static BusinessUnit businessUnitFirst;
     private static BusinessUnit businessUnitSecond;
+    private static RealEndDate firstRealEndDate;
+    private static RealEndDate secondRealEndDate;
 
     private static ProjectCreatedDTO expectedProjectCreatedDTO;
 
@@ -190,6 +184,17 @@ class ProjectMapperTest {
         expectedProject.addBusinessUnit(businessUnitFirst);
         expectedProject.addBusinessUnit(businessUnitSecond);
 
+        firstRealEndDate = new RealEndDate();
+        firstRealEndDate.setEndDate(LocalDateTime.now().plusDays(10));
+        firstRealEndDate.setReason("First Reason");
+
+        secondRealEndDate = new RealEndDate();
+        secondRealEndDate.setEndDate(LocalDateTime.now().plusDays(20));
+        secondRealEndDate.setReason("Second Reason");
+
+        expectedProject.addRealEndDate(firstRealEndDate);
+        expectedProject.addRealEndDate(secondRealEndDate);
+
         //Creating expected ProjectCreatedDTO
         expectedProjectCreatedDTO = new ProjectCreatedDTO();
         expectedProjectCreatedDTO.setId(expectedProject.getId());
@@ -235,11 +240,8 @@ class ProjectMapperTest {
     }
 
     @Test
-    void convertToDto() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        FilterProvider filters = new SimpleFilterProvider().addFilter("BusinessUnitOnlyData", SimpleBeanPropertyFilter.serializeAllExcept("employees", "projects"));
-        ProjectDTO projectDTO = projectMapper.convertToDto(expectedProject);
-        Object converter = context.getBean("mappingJackson2HttpMessageConverter");
+    void convertToDto() {
+        projectMapper.convertToDto(expectedProject);
     }
 
     @Test

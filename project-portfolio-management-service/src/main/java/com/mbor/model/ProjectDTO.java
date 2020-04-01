@@ -10,7 +10,6 @@ import java.util.Set;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "projectName")
-
 public class ProjectDTO implements IProjectDTO {
 
     private Long Id;

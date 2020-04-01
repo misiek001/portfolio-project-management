@@ -49,7 +49,7 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
         return employeeDao;
     }
 
-    //TODO implement mapping for differentType of Employee
+
     @Override
     public List<EmployeeDTO> findAll() {
         List<Employee> employees = findAllInternal();
@@ -57,7 +57,6 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
                 .map(employee -> mappers.get(EmployeeType.valueOf(employee.getClass().getSimpleName())).convertToDto(employee))
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public EmployeeDTO find(Long id) {

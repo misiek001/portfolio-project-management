@@ -6,7 +6,6 @@ import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -24,7 +23,7 @@ public class TestDataLoader  {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostConstruct
+
     public void onApplicationEvent() {
         loadData();
     }
