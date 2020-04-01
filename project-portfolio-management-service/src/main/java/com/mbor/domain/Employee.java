@@ -72,6 +72,7 @@ public abstract class Employee implements IEmployee {
    }
 
    public void setBusinessUnit(BusinessUnit businessUnit) {
+      businessUnit.getEmployees().add(this);
       this.businessUnit = businessUnit;
    }
 

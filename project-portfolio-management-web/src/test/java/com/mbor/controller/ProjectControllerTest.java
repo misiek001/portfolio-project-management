@@ -2,8 +2,6 @@ package com.mbor.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mbor.domain.employeeinproject.IProjectManager;
-import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -32,12 +30,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
+import static com.mbor.dataloader.DevDataLoader.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -121,7 +117,7 @@ class ProjectControllerTest {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("action", "assign-employee");
 
-        mockMvc.perform(patch("/projects/1")
+        mockMvc.perform(patch("/projects/" + FIRST_PROJECT_ID)
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
                 .content(prepareEmployeeAssignDto())
@@ -132,12 +128,12 @@ class ProjectControllerTest {
 
     @Test
     public void addProjectRealEndDateThenSuccess() throws Exception {
-        String accessToken = obtainAccessToken(env.getProperty("user.consultant.name"), env.getProperty("user.consultant.password"));
+        String accessToken = obtainAccessToken(env.getProperty("user.firstconsultant.name"), env.getProperty("user.firstconsultant.password"));
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("action", "add-real-end-date");
 
-        mockMvc.perform(patch("/projects/1")
+        mockMvc.perform(patch("/projects/" + FIRST_PROJECT_ID)
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
                 .content(prepareRealEndDateDTO(10, "Some Reason"))
@@ -148,12 +144,12 @@ class ProjectControllerTest {
 
     @Test
     public void addProjectAspectLineThenSuccess() throws Exception {
-        String accessToken = obtainAccessToken(env.getProperty("user.consultant.name"), env.getProperty("user.consultant.password"));
+        String accessToken = obtainAccessToken(env.getProperty("user.firstconsultant.name"), env.getProperty("user.firstconsultant.password"));
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("action", "add-project-aspect-line");
 
-        mockMvc.perform(patch("/projects/1")
+        mockMvc.perform(patch("/projects/" + FIRST_PROJECT_ID)
                 .header("Authorization", "Bearer " + accessToken)
                 .params(params)
                 .content(prepareProjectAspectLineDTO())
@@ -164,7 +160,7 @@ class ProjectControllerTest {
 
     @Test
     public void findConsultantProjectsThenSuccess() throws Exception {
-        String accessToken = obtainAccessToken(env.getProperty("user.consultant.name"), env.getProperty("user.consultant.password"));
+        String accessToken = obtainAccessToken(env.getProperty("user.firstconsultant.name"), env.getProperty("user.firstconsultant.password"));
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("searchingEmployee", "consultant");
@@ -212,27 +208,25 @@ class ProjectControllerTest {
 
     private String prepareProjectCreationDto() throws JsonProcessingException {
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
-        projectCreationDTO.setProjectName("Project Name");
+        projectCreationDTO.setProjectName("Created Project Name");
 
         BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
-        businessRelationManagerDTO.setId(3l);
+        businessRelationManagerDTO.setId(BRM_ID);
 
         projectCreationDTO.setBusinessRelationManager(businessRelationManagerDTO);
 
         BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
-        BusinessEmployeeDTO businessEmployeeDTO = new BusinessEmployeeDTO();
-        businessEmployeeDTO.setId(5l);
+        businessLeaderDTO.setId(FIRST_BUSINESS_LEADER_ID);
 
-        businessLeaderDTO.setEmployee(businessEmployeeDTO);
         projectCreationDTO.setBusinessLeader(businessLeaderDTO);
 
         BusinessUnitDTO businessUnitDTOFirst = new BusinessUnitDTO();
-        businessUnitDTOFirst.setId(1l);
+        businessUnitDTOFirst.setId(FIRST_OPERATION_BUSINESS_UNIT_ID);
 
         projectCreationDTO.addBusinessUnit(businessUnitDTOFirst);
 
         BusinessUnitDTO businessUnitDTOSecond = new BusinessUnitDTO();
-        businessUnitDTOSecond.setId(2l);
+        businessUnitDTOSecond.setId(SECOND_OPERATION_BUSINESS_UNIT_ID);
 
         projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
@@ -241,7 +235,7 @@ class ProjectControllerTest {
 
     private String prepareResourceManagerSearchProjectDto() throws JsonProcessingException {
         ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO = new ResourceManagerSearchProjectDTO();
-        resourceManagerSearchProjectDTO.setProjectId(1l);
+        resourceManagerSearchProjectDTO.setProjectId(FIRST_PROJECT_ID);
         resourceManagerSearchProjectDTO.setProjectClassDTOList(Collections.singletonList(ProjectClassDTO.I));
         resourceManagerSearchProjectDTO.setProjectStatusDTOList(Collections.singletonList(ProjectStatusDTO.ANALYSIS));
 
@@ -281,13 +275,4 @@ class ProjectControllerTest {
         return mapper.writeValueAsString(realEndDateDTO);
     }
 
-    private void loadProjectManager(EntityManagerFactory entityManagerFactory) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        ProjectManager projectManager = new ProjectManager();
-        projectManager.setEmployee((IProjectManager) employeeService.findInternal(4l));
-        entityManager.persist(projectManager);
-        transaction.commit();
-    }
 }

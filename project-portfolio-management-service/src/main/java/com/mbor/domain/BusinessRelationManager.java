@@ -32,6 +32,7 @@ public class BusinessRelationManager extends Employee {
     }
 
     public void setDirector(Director director) {
+        director.getBusinessRelationManagers().add(this);
         this.director = director;
     }
 }

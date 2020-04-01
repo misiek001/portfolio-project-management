@@ -116,7 +116,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
     @Test
     void findAll_ThenSuccess() {
-        List<Project> lists = projectService.findAllInternal();
+        List<ProjectDTO> lists = projectService.findAll();
         assertEquals(createdEntitiesNumber, lists.size());
     }
 
