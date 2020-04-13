@@ -197,12 +197,6 @@ class ProjectControllerTest {
     private String prepareEmployeeAssignDto() throws JsonProcessingException {
         EmployeeAssignDTO employeeAssignDTO = new EmployeeAssignDTO();
 
-//        employeeAssignDTO.setProjectManagerId(4l);
-//
-//        employeeAssignDTO.setBusinessRelationManagerId(3l);
-//
-//        employeeAssignDTO.setResourceManagerId(2l);
-
         return mapper.writeValueAsString(employeeAssignDTO);
     }
 
