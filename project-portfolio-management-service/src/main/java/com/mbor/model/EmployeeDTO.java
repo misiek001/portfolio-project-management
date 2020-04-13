@@ -1,7 +1,10 @@
 package com.mbor.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.mbor.model.views.Views;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,16 +12,22 @@ import java.util.Set;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "userName")
+@JsonTypeInfo(include= JsonTypeInfo.As.WRAPPER_OBJECT, use= JsonTypeInfo.Id.NAME)
 public  class EmployeeDTO extends IdDTO {
 
+    @JsonView(Views.Public.class)
     private String firstName;
 
+    @JsonView(Views.Public.class)
     private String lastName;
 
+    @JsonView(Views.Public.class)
     private String userName;
 
+    @JsonView({Views.EmployeeInternal.class, Views.ProjectInternal.class})
     private BusinessUnitDTO businessUnit;
 
+    @JsonView({Views.Public.class})
     private Set<ProjectRoleDTO> projectRoleSet = new HashSet<>();
 
     public String getFirstName() {

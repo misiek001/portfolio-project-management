@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class ProjectRole<IEmployee> {
+public abstract class ProjectRole< T extends IEmployee> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +14,7 @@ public abstract class ProjectRole<IEmployee> {
     Long id;
 
     @ManyToOne(targetEntity = Employee.class)
-    IEmployee employee;
+    T employee;
 
     public Long getId() {
         return id;
@@ -28,7 +28,8 @@ public abstract class ProjectRole<IEmployee> {
         return employee;
     }
 
-    public void setEmployee(IEmployee employee) {
+    public void setEmployee(T employee) {
+        employee.getProjectRoleSet().add(this);
         this.employee = employee;
     }
 

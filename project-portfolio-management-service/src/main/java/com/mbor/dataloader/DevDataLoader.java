@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 @Profile({"dev", "controller-integration"})
 public class DevDataLoader {
 
-
     private final PasswordEncoder passwordEncoder;
 
     @PersistenceUnit
@@ -72,16 +71,6 @@ public class DevDataLoader {
         doWithinTransaction(addProjectRoles);
         doWithinTransaction(addProject);
     }
-
-    //Add ProjectRoleRoles - DONE
-
-    //Add Business Unit - DONE
-
-    //Add Employees - DONE
-
-    //Add ProjectRole - DONE
-
-    //Add Project
 
     private void doWithinTransaction(Consumer<EntityManager> consumer){
         EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -252,9 +241,9 @@ public class DevDataLoader {
         SECOND_PROJECT_MANAGER_ID = secondProjectManager.getId();
 
         ProjectManager thirdProjectManager = new ProjectManager();
-        secondProjectManager.setEmployee(entityManager.find(Supervisor.class, SUPERVISOR_ID));
+        thirdProjectManager.setEmployee(entityManager.find(Supervisor.class, SUPERVISOR_ID));
         entityManager.persist(thirdProjectManager);
-        THIRD_PROJECT_MANAGER_ID = secondProjectManager.getId();
+        THIRD_PROJECT_MANAGER_ID = thirdProjectManager.getId();
 
         BusinessLeader businessLeader = new BusinessLeader();
         businessLeader.setEmployee(simpleFind(entityManager, BusinessEmployee.class, FIRST_BUSINESS_EMPLOYEE_ID));
@@ -262,17 +251,17 @@ public class DevDataLoader {
         FIRST_BUSINESS_LEADER_ID = businessLeader.getId();
 
         SolutionArchitect firstSolutionArchitect = new SolutionArchitect();
-        firstSolutionArchitect.setEmployee(simpleFind(entityManager, BusinessEmployee.class, FIRST_CONSULTANT_ID));
+        firstSolutionArchitect.setEmployee(simpleFind(entityManager, Consultant.class, FIRST_CONSULTANT_ID));
         entityManager.persist(firstSolutionArchitect);
         FIRST_SOLUTION_ARCHITECT_ID = firstSolutionArchitect.getId();
 
         SolutionArchitect secondSolutionArchitect = new SolutionArchitect();
-        secondSolutionArchitect.setEmployee(simpleFind(entityManager, BusinessEmployee.class, SECOND_CONSULTANT_ID));
+        secondSolutionArchitect.setEmployee(simpleFind(entityManager, Consultant.class, SECOND_CONSULTANT_ID));
         entityManager.persist(secondSolutionArchitect);
         SECOND_SOLUTION_ARCHITECT_ID = secondSolutionArchitect.getId();
 
         SolutionArchitect thirdSolutionArchitect = new SolutionArchitect();
-        thirdSolutionArchitect.setEmployee(simpleFind(entityManager, BusinessEmployee.class, SECOND_CONSULTANT_ID));
+        thirdSolutionArchitect.setEmployee(simpleFind(entityManager, Consultant.class, THIRD_CONSULTANT_ID));
         entityManager.persist(thirdSolutionArchitect);
         THIRD_SOLUTION_ARCHITECT_ID = thirdSolutionArchitect.getId();
     };
@@ -300,15 +289,19 @@ public class DevDataLoader {
         firstProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, FIRST_PROJECT_MANAGER_ID));
         firstProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, FIRST_SOLUTION_ARCHITECT_ID));
         firstProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, SECOND_SOLUTION_ARCHITECT_ID));
+        firstProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID));
+        firstProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, SECOND_OPERATION_BUSINESS_UNIT_ID));
 
         secondProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, THIRD_SOLUTION_ARCHITECT_ID));
         secondProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
         secondProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, SECOND_PROJECT_MANAGER_ID));
         secondProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, SECOND_SOLUTION_ARCHITECT_ID));
+        secondProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID));
 
         thirdProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, FIRST_PROJECT_MANAGER_ID));
         thirdProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, SECOND_SOLUTION_ARCHITECT_ID));
         thirdProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
+        thirdProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, SECOND_OPERATION_BUSINESS_UNIT_ID));
 
         entityManager.persist(firstProject);
         FIRST_PROJECT_ID = firstProject.getId();
@@ -319,9 +312,6 @@ public class DevDataLoader {
         entityManager.persist(thirdProject);
         THIRD_PROJECT_ID = thirdProject.getId();
     };
-
-
-
 
     private void createUser(Employee employee) {
         User user = new User();

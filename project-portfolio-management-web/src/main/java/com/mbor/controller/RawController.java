@@ -1,5 +1,7 @@
 package com.mbor.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.mbor.model.views.Views;
 import com.mbor.service.IAPIService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ public abstract class RawController implements IController {
     }
 
     @GetMapping
+    @JsonView(Views.ProjectInternal.class)
     @Override
     public <U>  ResponseEntity<List<U>> findAll() {
         List<U> result = getService().findAll();

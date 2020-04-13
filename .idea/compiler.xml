@@ -6,10 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="projtectportfoliomanagementweb" />
+        <module name="project-portfolio-management-service" />
         <module name="projectportfoliomanagementservice" />
         <module name="project-portfolio-management-web" />
-        <module name="project-portfolio-management-service" />
+        <module name="projtectportfoliomanagementweb" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

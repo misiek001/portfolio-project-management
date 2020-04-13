@@ -1,7 +1,10 @@
 package com.mbor.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.mbor.model.views.Views;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,14 +12,19 @@ import java.util.Set;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "name")
+@JsonTypeInfo(include= JsonTypeInfo.As.WRAPPER_OBJECT, use= JsonTypeInfo.Id.NAME)
 public class BusinessUnitDTO extends IdDTO {
 
+    @JsonView(Views.Public.class)
     private Long id;
 
+    @JsonView(Views.Public.class)
     private String name;
 
+    @JsonView(Views.BusinessUnitInternal.class)
     private Set<EmployeeDTO> employees = new HashSet<>();
 
+    @JsonView(Views.BusinessUnitInternal.class)
     private Set<ProjectDTO> projects = new HashSet<>();
 
     @Override
