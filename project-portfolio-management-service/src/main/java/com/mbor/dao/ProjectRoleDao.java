@@ -17,7 +17,7 @@ public class ProjectRoleDao extends RawDao<ProjectRole> implements IProjectRoleD
     }
 
     @Override
-    public List<ProjectRole> findAllRoleOfEmployee(Long employeeId){
+    public List<ProjectRole> findAllRoleOfEmployee(Long employeeId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<ProjectRole> criteriaQuery = criteriaBuilder.createQuery(clazz);
         Root<ProjectRole> root = criteriaQuery.from(clazz);
@@ -26,4 +26,13 @@ public class ProjectRoleDao extends RawDao<ProjectRole> implements IProjectRoleD
         return allQuery.getResultList();
     }
 
+    @Override
+    public <T extends ProjectRole> List<T> findAllDemandedRole(Class<T> clazz) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<T> root = criteriaQuery.from(clazz);
+        criteriaQuery.select(root);
+        TypedQuery<T> allQuery = entityManager.createQuery(criteriaQuery);
+        return allQuery.getResultList();
+    }
 }

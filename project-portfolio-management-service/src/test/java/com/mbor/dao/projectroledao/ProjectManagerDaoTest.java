@@ -52,7 +52,6 @@ public class ProjectManagerDaoTest  {
     static void setUp(@Autowired EntityManagerFactory entityManagerFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        Random random = new Random();
         Consultant consultant = new Consultant();
         consultant.setUserName("ConsultantUserName" + random.nextLong());
         transaction.begin();

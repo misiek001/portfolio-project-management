@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 public class ResourceManagerDaoTest  {
 
-    private static Random random= new Random();
+    private static Random random = new Random();
 
     private static Long employeeId;
 
@@ -51,10 +51,8 @@ public class ResourceManagerDaoTest  {
     static void setUp(@Autowired EntityManagerFactory entityManagerFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-        Random random = new Random();
         Supervisor supervisor = new Supervisor();
         supervisor.setUserName("Supervisor" + random.nextLong());
-
         transaction.begin();
         entityManager.persist(supervisor);
 

@@ -281,9 +281,10 @@ public class DevDataLoader {
         secondProject.setProjectClass(ProjectClass.I);
         thirdProject.setProjectClass(ProjectClass.II);
 
-        firstProject.setProjectStatus(ProjectStatus.ANALYSIS);
-        secondProject.setProjectStatus(ProjectStatus.ANALYSIS);
-        thirdProject.setProjectStatus(ProjectStatus.IN_PROGRESS);
+        //TODO To fix during Open Project Task
+//        firstProject.setProjectStatus(ProjectStatus.ANALYSIS);
+//        secondProject.setProjectStatus(ProjectStatus.ANALYSIS);
+//        thirdProject.setProjectStatus(ProjectStatus.IN_PROGRESS);
 
         firstProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
         firstProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, FIRST_PROJECT_MANAGER_ID));

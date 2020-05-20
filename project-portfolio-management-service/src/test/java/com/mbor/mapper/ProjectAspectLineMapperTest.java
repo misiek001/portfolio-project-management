@@ -1,10 +1,5 @@
 package com.mbor.mapper;
 
-import com.mbor.dao.IProjectDao;
-import com.mbor.domain.*;
-import com.mbor.domain.employeeinproject.ProjectManager;
-import com.mbor.domain.employeeinproject.ResourceManager;
-import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.model.projectaspect.*;
 import com.mbor.spring.ServiceConfiguration;
@@ -16,10 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class})
@@ -30,7 +21,6 @@ class ProjectAspectLineMapperTest {
     private static ProjectAspectLine projectAspectLine;
 
     private static ProjectAspectLineDTO projectAspectLineDTO;
-
 
     @Autowired
     ProjectAspectLineMapper projectAspectLineMapper;

@@ -87,7 +87,8 @@ public class TestDataLoader  {
 
         Project project = new Project();
         project.setProjectName("First Project Name");
-        project.setProjectStatus(ProjectStatus.ANALYSIS);
+        //TODO To fix during Open Project Task
+        //project.setProjectStatus(ProjectStatus.ANALYSIS);
         project.setProjectClass(ProjectClass.I);
         project.addBusinessUnit(operationBusinessUnit);
         entityManager.persist(project);

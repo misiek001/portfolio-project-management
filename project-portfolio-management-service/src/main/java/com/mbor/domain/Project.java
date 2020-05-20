@@ -14,6 +14,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -53,8 +54,9 @@ public class Project implements IProjectDTO {
     @Fetch(value = FetchMode.JOIN)
     private Set<SolutionArchitect> solutionArchitects = new HashSet<>();
 
-    @Enumerated(EnumType.STRING)
-    private ProjectStatus projectStatus;
+    @OneToMany(cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.JOIN)
+    private Set<ProjectStatusHistoryLine> projectStatusHistoryLines = new HashSet<>();
 
     private LocalDateTime startDate;
 
@@ -72,7 +74,7 @@ public class Project implements IProjectDTO {
 
     @OneToMany(cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.JOIN)
-    private Set<ProjectAspectLine> projectAspectLineSet = new HashSet<>();
+    private Set<ProjectAspectLine> projectAspectLines = new HashSet<>();
 
     public void addBusinessUnit(BusinessUnit businessUnit){
         this.businessUnits.add(businessUnit);
@@ -156,12 +158,17 @@ public class Project implements IProjectDTO {
         solutionArchitect.getProjects().add(this);
     }
 
-    public ProjectStatus getProjectStatus() {
-        return projectStatus;
+    public Set<ProjectStatusHistoryLine> getProjectStatusHistoryLines() {
+        return projectStatusHistoryLines;
     }
 
-    public void setProjectStatus(ProjectStatus status) {
-        this.projectStatus = status;
+    public void addProjectStatusHistoryLine(ProjectStatusHistoryLine projectStatusHistoryLine){
+        projectStatusHistoryLines.add(projectStatusHistoryLine);
+        projectStatusHistoryLine.setProject(this);
+    }
+
+    public Optional<ProjectStatusHistoryLine> getRecentStatus(){
+        return projectStatusHistoryLines.stream().min((e1, e2) -> e2.getCreationTime().compareTo(e1.getCreationTime()));
     }
 
     public LocalDateTime getStartDate() {
@@ -210,16 +217,16 @@ public class Project implements IProjectDTO {
         this.businessUnits = businessUnits;
     }
 
-    public Set<ProjectAspectLine> getProjectAspectLineSet() {
-        return projectAspectLineSet;
+    public Set<ProjectAspectLine> getProjectAspectLines() {
+        return projectAspectLines;
     }
 
-    public void setProjectAspectLineSet(Set<ProjectAspectLine> projectAspectLineSet) {
-        this.projectAspectLineSet = projectAspectLineSet;
+    public void setProjectAspectLines(Set<ProjectAspectLine> projectAspectLineSet) {
+        this.projectAspectLines = projectAspectLineSet;
     }
 
     public void addProjectAspectLine(ProjectAspectLine projectAspectLine){
-        this.projectAspectLineSet.add(projectAspectLine);
+        this.projectAspectLines.add(projectAspectLine);
         projectAspectLine.setProject(this);
     }
 
