@@ -95,6 +95,7 @@ public abstract class Employee implements IEmployee {
       projectRole.setEmployee(null);
    }
 
+   @Override
    public String getUserName() {
       return userName;
    }

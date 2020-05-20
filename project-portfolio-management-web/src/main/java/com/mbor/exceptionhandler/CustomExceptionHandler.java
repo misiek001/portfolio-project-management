@@ -1,7 +1,7 @@
 package com.mbor.exceptionhandler;
 
 import com.mbor.exception.NoSetProjectManagerException;
-import com.mbor.exception.ProjectRoleAlreadyExist;
+import com.mbor.exception.ProjectRoleAlreadyExistException;
 import com.mbor.exception.WrongProjectManagerException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
     }
 
-    @ExceptionHandler(ProjectRoleAlreadyExist.class)
+    @ExceptionHandler(ProjectRoleAlreadyExistException.class)
     protected ResponseEntity<Object> handleProjectRoleAlreadyExistException(RuntimeException exception, WebRequest webRequest){
         String responseBody = "message:" + exception.getMessage();
         return handleExceptionInternal(exception, responseBody,

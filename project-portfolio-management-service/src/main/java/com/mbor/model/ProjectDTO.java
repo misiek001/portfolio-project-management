@@ -42,7 +42,7 @@ public class ProjectDTO implements IProjectDTO {
     private Set<SolutionArchitectDTO> solutionArchitect;
 
     @JsonView(Views.Public.class)
-    private ProjectStatusDTO status;
+    private Set<ProjectStatusHistoryLineDTO> projectStatusHistoryLines;
 
     @JsonView(Views.Public.class)
     private LocalDateTime startDate;
@@ -51,13 +51,16 @@ public class ProjectDTO implements IProjectDTO {
     private LocalDateTime plannedEndDate;
 
     @JsonView(Views.Public.class)
-    private Set<RealEndDateDTO> realEndDateSet = new HashSet<>();
-
-    @JsonView(Views.ProjectInternal.class)
-    private Set<BusinessUnitDTO> businessUnits;
+    private Set<RealEndDateDTO> realEndDates = new HashSet<>();
 
     @JsonView(Views.Public.class)
-    private Set<ProjectAspectLine> projectAspectLineSet;
+    private BusinessUnitDTO primaryBusinessUnit;
+
+    @JsonView(Views.ProjectInternal.class)
+    private Set<BusinessUnitDTO> secondaryBusinessUnits;
+
+    @JsonView(Views.Public.class)
+    private Set<ProjectAspectLine> projectAspectLines;
 
     public Long getId() {
         return Id;
@@ -123,12 +126,20 @@ public class ProjectDTO implements IProjectDTO {
         this.solutionArchitect = solutionArchitect;
     }
 
-    public ProjectStatusDTO getStatus() {
-        return status;
+    public Set<ProjectStatusHistoryLineDTO> getProjectStatusHistoryLines() {
+        return projectStatusHistoryLines;
     }
 
-    public void setStatus(ProjectStatusDTO status) {
-        this.status = status;
+    public void setProjectStatusHistoryLines(Set<ProjectStatusHistoryLineDTO> projectStatusHistoryLines) {
+        this.projectStatusHistoryLines = projectStatusHistoryLines;
+    }
+
+    public BusinessUnitDTO getPrimaryBusinessUnit() {
+        return primaryBusinessUnit;
+    }
+
+    public void setPrimaryBusinessUnit(BusinessUnitDTO primaryBusinessUnit) {
+        this.primaryBusinessUnit = primaryBusinessUnit;
     }
 
     public LocalDateTime getStartDate() {
@@ -147,27 +158,27 @@ public class ProjectDTO implements IProjectDTO {
         this.plannedEndDate = plannedEndDate;
     }
 
-    public Set<RealEndDateDTO> getRealEndDateSet() {
-        return realEndDateSet;
+    public Set<RealEndDateDTO> getRealEndDates() {
+        return realEndDates;
     }
 
-    public void setRealEndDateSet(Set<RealEndDateDTO> realEndDateSet) {
-        this.realEndDateSet = realEndDateSet;
+    public void setRealEndDates(Set<RealEndDateDTO> realEndDates) {
+        this.realEndDates = realEndDates;
     }
 
-    public Set<BusinessUnitDTO> getBusinessUnits() {
-        return businessUnits;
+    public Set<BusinessUnitDTO> getSecondaryBusinessUnits() {
+        return secondaryBusinessUnits;
     }
 
-    public void setBusinessUnits(Set<BusinessUnitDTO> businessUnits) {
-        this.businessUnits = businessUnits;
+    public void setSecondaryBusinessUnits(Set<BusinessUnitDTO> secondaryBusinessUnits) {
+        this.secondaryBusinessUnits = secondaryBusinessUnits;
     }
 
-    public Set<ProjectAspectLine> getProjectAspectLineSet() {
-        return projectAspectLineSet;
+    public Set<ProjectAspectLine> getProjectAspectLines() {
+        return projectAspectLines;
     }
 
-    public void setProjectAspectLineSet(Set<ProjectAspectLine> projectAspectLineSet) {
-        this.projectAspectLineSet = projectAspectLineSet;
+    public void setProjectAspectLines(Set<ProjectAspectLine> projectAspectLines) {
+        this.projectAspectLines = projectAspectLines;
     }
 }

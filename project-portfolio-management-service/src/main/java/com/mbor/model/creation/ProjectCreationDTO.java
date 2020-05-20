@@ -1,29 +1,27 @@
 package com.mbor.model.creation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mbor.model.*;
+import com.mbor.model.IProjectDTO;
+import com.mbor.model.ProjectClassDTO;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ProjectCreationDTO implements IProjectDTO {
 
     @NotNull
     String projectName;
 
-    @JsonIgnore
-    ProjectStatusDTO projectStatus = ProjectStatusDTO.ANALYSIS;
+    @NotNull
+    Long  businessRelationManagerId;
 
     @NotNull
-    BusinessRelationManagerDTO businessRelationManager;
-
-    @NotNull
-    BusinessLeaderDTO businessLeader;
+    Long businessLeaderId;
 
     @NotEmpty
-    Set<BusinessUnitDTO> businessUnits = new HashSet<>();
+    Long primaryBusinessUnitId;
+
+    @NotEmpty
+    private ProjectClassDTO projectClass;
 
     public String getProjectName() {
         return projectName;
@@ -33,39 +31,35 @@ public class ProjectCreationDTO implements IProjectDTO {
         this.projectName = projectName;
     }
 
-    public ProjectStatusDTO getProjectStatus() {
-        return projectStatus;
+    public Long getBusinessRelationManagerId() {
+        return businessRelationManagerId;
     }
 
-    public void setProjectStatus(ProjectStatusDTO projectStatus) {
-        this.projectStatus = projectStatus;
+    public void setBusinessRelationManagerId(Long businessRelationManagerId) {
+        this.businessRelationManagerId = businessRelationManagerId;
     }
 
-    public BusinessRelationManagerDTO getBusinessRelationManager() {
-        return businessRelationManager;
+    public Long getBusinessLeaderId() {
+        return businessLeaderId;
     }
 
-    public void setBusinessRelationManager(BusinessRelationManagerDTO businessRelationManager) {
-        this.businessRelationManager = businessRelationManager;
+    public void setBusinessLeaderId(Long businessLeaderId) {
+        this.businessLeaderId = businessLeaderId;
     }
 
-    public BusinessLeaderDTO getBusinessLeader() {
-        return businessLeader;
+    public Long getPrimaryBusinessUnitId() {
+        return primaryBusinessUnitId;
     }
 
-    public void setBusinessLeader(BusinessLeaderDTO businessLeader) {
-        this.businessLeader = businessLeader;
+    public void setPrimaryBusinessUnitId(Long primaryBusinessUnitId) {
+        this.primaryBusinessUnitId = primaryBusinessUnitId;
     }
 
-    public Set<BusinessUnitDTO> getBusinessUnits() {
-        return businessUnits;
+    public ProjectClassDTO getProjectClass() {
+        return projectClass;
     }
 
-    public void setBusinessUnits(Set<BusinessUnitDTO> businessUnits) {
-        this.businessUnits = businessUnits;
-    }
-
-    public void addBusinessUnit(BusinessUnitDTO businessUnitDTO){
-        businessUnits.add(businessUnitDTO);
+    public void setProjectClass(ProjectClassDTO projectClass) {
+        this.projectClass = projectClass;
     }
 }

@@ -51,24 +51,23 @@ public class TestController {
         BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
         businessRelationManagerDTO.setId(random.nextLong());
 
-        projectCreationDTO.setBusinessRelationManager(businessRelationManagerDTO);
+        projectCreationDTO.setBusinessRelationManagerId(businessRelationManagerDTO.getId());
 
         BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
         BusinessEmployeeDTO businessEmployeeDTO = new BusinessEmployeeDTO();
         businessEmployeeDTO.setId(random.nextLong());
 
         businessLeaderDTO.setEmployee(businessEmployeeDTO);
-        projectCreationDTO.setBusinessLeader(businessLeaderDTO);
+        projectCreationDTO.setBusinessLeaderId(businessLeaderDTO.getId());
 
         BusinessUnitDTO businessUnitDTOFirst = new BusinessUnitDTO();
         businessUnitDTOFirst.setId(random.nextLong());
 
-        projectCreationDTO.addBusinessUnit(businessUnitDTOFirst);
+        projectCreationDTO.setPrimaryBusinessUnitId(businessUnitDTOFirst.getId());
 
         BusinessUnitDTO businessUnitDTOSecond = new BusinessUnitDTO();
         businessUnitDTOSecond.setId(random.nextLong());
 
-        projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
         return new ResponseEntity<>(projectCreationDTO, HttpStatus.OK);
     }

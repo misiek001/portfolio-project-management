@@ -43,9 +43,9 @@ class BusinessEmployeeMapperTest {
 
     @Test
     void convertToDto() {
-        BusinessEmployeeDTO createdBusinessEmployeeDTO = businessEmployeeMapper.convertToDto(businessEmployee);
+        BusinessEmployeeDTO mappedBusinessEmployeeDTO = businessEmployeeMapper.convertToDto(businessEmployee);
 
-        assertEquals(createdBusinessEmployeeDTO.getId(), businessEmployeeDTO.getId());
+        assertEquals(mappedBusinessEmployeeDTO.getId(), businessEmployeeDTO.getId());
     }
 
     @Test

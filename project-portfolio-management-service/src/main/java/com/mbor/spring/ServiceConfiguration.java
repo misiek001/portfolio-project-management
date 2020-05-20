@@ -3,6 +3,10 @@ package com.mbor.spring;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mbor.domain.BusinessRelationManager;
+import com.mbor.domain.BusinessUnit;
+import com.mbor.model.BusinessRelationManagerDTO;
+import com.mbor.model.BusinessUnitDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +21,19 @@ public class ServiceConfiguration {
     ModelMapper modelMapper(){
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        return modelMapper;
+    }
+
+    @Bean
+    ModelMapper projectModelMapper(){
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.typeMap(BusinessRelationManager.class, BusinessRelationManagerDTO.class)
+                .addMappings(mapping -> mapping.skip(BusinessRelationManagerDTO::setProjects));
+        modelMapper.typeMap(BusinessUnit.class, BusinessUnitDTO.class)
+                .addMappings(mapping -> mapping.skip(BusinessUnitDTO::setPrimaryProjects))
+                .addMappings(mapping -> mapping.skip(BusinessUnitDTO::setSecondaryProjects))
+                .addMappings(mapping -> mapping.skip(BusinessUnitDTO::setEmployees));
         return modelMapper;
     }
 

@@ -5,7 +5,7 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
 import com.mbor.domain.projectaspect.ProjectAspectLine;
 import com.mbor.exception.NoSetProjectManagerException;
-import com.mbor.exception.ProjectRoleAlreadyExist;
+import com.mbor.exception.ProjectRoleAlreadyExistException;
 import com.mbor.exception.WrongProjectManagerException;
 import com.mbor.mapper.ProjectAspectLineMapper;
 import com.mbor.mapper.ProjectMapper;
@@ -71,9 +71,18 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     @Override
     public ProjectCreatedDTO save(ProjectCreationDTO projectCreationDTO) {
         Project project = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
+        saveInternal(project);
+        ProjectStatusHistoryLine projectStatusHistoryLine = new ProjectStatusHistoryLine();
+        projectStatusHistoryLine.setPreviousStatus(ProjectStatus.ANALYSIS);
+        projectStatusHistoryLine.setCurrentStatus(ProjectStatus.ANALYSIS);
+        projectStatusHistoryLine.setDescription("Project opened");
+        project.addProjectStatusHistoryLine(projectStatusHistoryLine);
+        project.setBusinessRelationManager((BusinessRelationManager) employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId()));
+        project.setBusinessLeader((BusinessLeader) projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId()));
+        project.setPrimaryBusinessUnit(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId()));
 
-        Project savedProject = saveInternal(project);
-        return projectMapper.convertEntityToCreatedDto(savedProject);
+
+        return projectMapper.convertEntityToCreatedDto(project);
     }
 
     @Override
@@ -256,7 +265,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         List<ProjectRole> roles = projectRoleService.findAllRoleOfEmployee(employeeId);
         roles.forEach( role -> {
             if (clazz.isInstance(role)) {
-                throw new ProjectRoleAlreadyExist("Employee with id:" + employeeId + "already has a role:" + clazz.getName());
+                throw new ProjectRoleAlreadyExistException("Employee with id:" + employeeId + "already has a role:" + clazz.getName());
             }
         });
     }

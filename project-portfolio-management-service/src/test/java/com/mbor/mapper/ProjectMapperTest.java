@@ -7,39 +7,54 @@ import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
-import com.mbor.service.IBusinessUnitService;
-import com.mbor.service.IEmployeeService;
-import com.mbor.service.IProjectRoleService;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doReturn;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @ActiveProfiles("test")
-@Transactional
 class ProjectMapperTest {
 
-    private static Random random = new Random();
+    private static final long PROJECT_ID = 1L;
+    private static final String PROJECT_NAME = "Project Name";
+    private static final ProjectClassDTO DTO_PROJECT_CLASS = ProjectClassDTO.I;
+    private static final ProjectClass PROJECT_CLASS = ProjectClass.I;
+    private static final long IT_BUSINESS_UNIT_ID = 1L;
+    private static final long FIRST_BUSINESS_UNIT_ID = 2L;
+    private static final long SECOND_BUSINESS_UNIT_ID = 3L;
+    private static final String IT_BUSINESS_UNIT_NAME = "IT Business Unit";
+    private static final String FIRST_BUSINESS_UNIT_NAME = "First Business Unit";
+    private static final String SECOND_BUSINESS_UNIT_NAME = "Second Business Unit";
+    private static final Long DIRECTOR_ID = 1L;
+    private static final Long BRM_ID = 2L;
+    private static final Long SUPERVISOR_ID = 3L;
+    private static final Long CONSULTANT_ID = 4L;
+    private static final Long BUSINESS_EMPLOYEE_ID = 5L;
+    private static final Long RESOURCE_MANAGER_ID = 1L;
+    private static final Long PROJECT_MANAGER_ID = 2L;
+    private static final Long BUSINESS_LEADER_ID = 3L;
 
+    private static final String DIRECTOR_USER_NAME = "Director Username";
+    private static final String BRM_USER_NAME = "BRM Username";
+    private static final String SUPERVISOR_USER_NAME = "Supervisor Username";
+    private static final String CONSULTANT_USER_NAME = "Consultant Username";
+    private static final String BUSINESS_EMPLOYEE_USERNAME = "BU Username";
+    private static final String FIRST_REASON = "First Reason";
+    private static final String SECOND_REASON = "Second Reason";
+    private static Random random = new Random();
     private static ProjectCreationDTO projectCreationDTO;
     private static DirectorDTO directorDTO;
     private static BusinessRelationManagerDTO businessRelationManagerDTO;
@@ -65,7 +80,7 @@ class ProjectMapperTest {
 
     private static ProjectCreatedDTO expectedProjectCreatedDTO;
 
-    @InjectMocks
+    @Autowired
     ProjectMapper projectMapper;
 
     @Mock
@@ -74,61 +89,35 @@ class ProjectMapperTest {
     private BusinessEmployeeMapper businessEmployeeMapper;
     @Mock
     private BusinessRelationManagerMapper businessRelationManagerMapper;
-    @Mock
-    private  IEmployeeService employeeService;
-    @Mock
-    private  IBusinessUnitService businessUnitService;
-    @Mock
-    private  IProjectRoleService projectRoleService;
-
-    @Spy
-    private  ModelMapper modelMapper;
 
     @BeforeAll
     static void setUp() {
+        //ProjectCreationDTO
         projectCreationDTO = new ProjectCreationDTO();
-        projectCreationDTO.setProjectName("Project Name");
+        projectCreationDTO.setProjectName(PROJECT_NAME);
+        projectCreationDTO.setProjectClass(DTO_PROJECT_CLASS);
 
-        businessRelationManagerDTO = new BusinessRelationManagerDTO();
-        businessRelationManagerDTO.setId(random.nextLong());
-
-        projectCreationDTO.setBusinessRelationManager(businessRelationManagerDTO);
-
-        businessLeaderDTO = new BusinessLeaderDTO();
-        businessEmployeeDTO = new BusinessEmployeeDTO();
-        businessEmployeeDTO.setId(random.nextLong());
-
-        businessLeaderDTO.setEmployee(businessEmployeeDTO);
-        projectCreationDTO.setBusinessLeader(businessLeaderDTO);
-
-        businessUnitDTOFirst = new BusinessUnitDTO();
-        businessUnitDTOFirst.setId(random.nextLong());
-
-        projectCreationDTO.addBusinessUnit(businessUnitDTOFirst);
-
-        businessUnitDTOSecond = new BusinessUnitDTO();
-        businessUnitDTOSecond.setId(random.nextLong());
-
-        projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
-
-        //Creating Expected Project
+        //Expected Project from mapping CreationDTO
 
         expectedProject = new Project();
+        expectedProject.setId(PROJECT_ID);
         expectedProject.setProjectName(projectCreationDTO.getProjectName());
-        //TODO To fix during Open Project Task
-//        expectedProject.setProjectStatus(ProjectStatus.ANALYSIS);
+        expectedProject.setProjectClass(PROJECT_CLASS);
+        expectedProject.addProjectStatusHistoryLine(MapperUtils.prepareProjectStatusHistoryLine());
 
         ITBusinessUnit = new BusinessUnit();
-        ITBusinessUnit.setName("IT Business Unit");
+        ITBusinessUnit.setId(IT_BUSINESS_UNIT_ID);
+        ITBusinessUnit.setName(IT_BUSINESS_UNIT_NAME);
 
         director = new Director();
-        director.setUserName("Director Username");
+        director.setId(DIRECTOR_ID);
+        director.setUserName(DIRECTOR_USER_NAME);
         director.setBusinessUnit(ITBusinessUnit);
         ITBusinessUnit.getEmployees().add(director);
 
         businessRelationManager = new BusinessRelationManager();
-        businessRelationManager.setId(businessRelationManagerDTO.getId());
-        businessRelationManager.setUserName("BRM Username");
+        businessRelationManager.setId(BRM_ID);
+        businessRelationManager.setUserName(BRM_USER_NAME);
         businessRelationManager.setBusinessUnit(ITBusinessUnit);
         director.getBusinessRelationManagers().add(businessRelationManager);
         businessRelationManager.setDirector(director);
@@ -137,61 +126,62 @@ class ProjectMapperTest {
         expectedProject.setBusinessRelationManager(businessRelationManager);
 
         supervisor = new Supervisor();
-        supervisor.setId(random.nextLong());
-        supervisor.setUserName("Supervisor UserName");
+        supervisor.setId(SUPERVISOR_ID);
+        supervisor.setUserName(SUPERVISOR_USER_NAME);
         supervisor.setBusinessUnit(ITBusinessUnit);
         supervisor.setDirector(director);
         director.getSupervisors().add(supervisor);
         ITBusinessUnit.getEmployees().add(supervisor);
         resourceManager = new ResourceManager();
+        resourceManager.setId(RESOURCE_MANAGER_ID);
         resourceManager.setEmployee(supervisor);
         supervisor.addProjectRole(resourceManager);
         expectedProject.setResourceManager(resourceManager);
-        resourceManager.getProjects().add(expectedProject);
 
         firstConsultant = new Consultant();
-        firstConsultant.setId(random.nextLong());
-        firstConsultant.setUserName("Consultant Username");
+        firstConsultant.setId(CONSULTANT_ID);
+        firstConsultant.setUserName(CONSULTANT_USER_NAME);
         firstConsultant.setSupervisor(supervisor);
         firstConsultant.setBusinessUnit(ITBusinessUnit);
         ITBusinessUnit.getEmployees().add(firstConsultant);
+
         projectManager = new ProjectManager();
+        projectManager.setId(PROJECT_MANAGER_ID);
         projectManager.setEmployee(firstConsultant);
         firstConsultant.addProjectRole(projectManager);
         projectManager.getProjects().add(expectedProject);
         expectedProject.setProjectManager(projectManager);
 
         businessEmployee = new BusinessEmployee();
-        businessEmployee.setId(businessEmployeeDTO.getId());
-        businessEmployee.setUserName("Business Employee Username");
+        businessEmployee.setId(BUSINESS_EMPLOYEE_ID);
+        businessEmployee.setUserName(BUSINESS_EMPLOYEE_USERNAME);
 
         businessLeader = new BusinessLeader();
+        businessLeader.setId(BUSINESS_LEADER_ID);
         businessLeader.setEmployee(businessEmployee);
         businessEmployee.addProjectRole(businessLeader);
-        businessLeader.getProjects().add(expectedProject);
-
         expectedProject.setBusinessLeader(businessLeader);
 
         businessUnitFirst = new BusinessUnit();
-        businessUnitFirst.setId(businessUnitDTOFirst.getId());
-        businessUnitFirst.setName("First Business Unit");
+        businessUnitFirst.setId(FIRST_BUSINESS_UNIT_ID);
+        businessUnitFirst.setName(FIRST_BUSINESS_UNIT_NAME);
         businessUnitFirst.getEmployees().add(businessEmployee);
         businessEmployee.addProjectRole(businessLeader);
 
         businessUnitSecond = new BusinessUnit();
-        businessUnitSecond.setId(businessUnitDTOSecond.getId());
-        businessUnitSecond.setName("Second Business Unit");
+        businessUnitSecond.setId(SECOND_BUSINESS_UNIT_ID);
+        businessUnitSecond.setName(SECOND_BUSINESS_UNIT_NAME);
 
-        expectedProject.addBusinessUnit(businessUnitFirst);
-        expectedProject.addBusinessUnit(businessUnitSecond);
+        expectedProject.setPrimaryBusinessUnit(businessUnitFirst);
+        expectedProject.addSecondaryBusinessUnit(businessUnitSecond);
 
         firstRealEndDate = new RealEndDate();
         firstRealEndDate.setEndDate(LocalDateTime.now().plusDays(10));
-        firstRealEndDate.setReason("First Reason");
+        firstRealEndDate.setReason(FIRST_REASON);
 
         secondRealEndDate = new RealEndDate();
         secondRealEndDate.setEndDate(LocalDateTime.now().plusDays(20));
-        secondRealEndDate.setReason("Second Reason");
+        secondRealEndDate.setReason(SECOND_REASON);
 
         expectedProject.addRealEndDate(firstRealEndDate);
         expectedProject.addRealEndDate(secondRealEndDate);
@@ -202,51 +192,54 @@ class ProjectMapperTest {
         expectedProjectCreatedDTO.setProjectName(expectedProject.getProjectName());
         expectedProjectCreatedDTO.setBusinessLeader(businessLeaderDTO);
         expectedProjectCreatedDTO.setBusinessRelationManager(businessRelationManagerDTO);
-        expectedProjectCreatedDTO.getBusinessUnits().add(businessUnitDTOFirst);
-        expectedProjectCreatedDTO.getBusinessUnits().add(businessUnitDTOSecond);
-        expectedProjectCreatedDTO.setProjectStatus(ProjectStatusDTO.ANALYSIS);
+        expectedProjectCreatedDTO.setPrimaryBusinessUnit(businessUnitDTOFirst);
     }
 
     @Test
     void mapProjectCreationDTOtoProject() {
-        doReturn(businessRelationManager, businessEmployee).when(employeeService).findInternal(anyLong());
-        if (projectCreationDTO.getBusinessLeader().getId() != null) {
-            doReturn(businessLeader).when(projectRoleService).findInternal(anyLong());
-        }
-        doReturn(businessUnitFirst, businessUnitSecond).when(businessUnitService).findInternal(anyLong());
-
         Project mappedProject = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
-
         assertEquals(mappedProject.getProjectName(), expectedProject.getProjectName());
-        assertEquals(mappedProject.getBusinessRelationManager().getId(), expectedProject.getBusinessRelationManager().getId());
-        assertEquals(mappedProject.getBusinessRelationManager().getFirstName(), expectedProject.getBusinessRelationManager().getFirstName());
-        assertEquals(mappedProject.getBusinessRelationManager().getLastName(), expectedProject.getBusinessRelationManager().getLastName());
-        assertEquals(mappedProject.getBusinessLeader().getId(), expectedProject.getBusinessLeader().getId());
-        assertEquals(mappedProject.getBusinessLeader().getEmployee().getId(), expectedProject.getBusinessLeader().getEmployee().getId());
-        assertEquals(mappedProject.getBusinessLeader().getEmployee().getFirstName(), expectedProject.getBusinessLeader().getEmployee().getFirstName());
-        assertEquals(mappedProject.getBusinessLeader().getEmployee().getLastName(), expectedProject.getBusinessLeader().getEmployee().getLastName());
-        //TODO To fix during Open Project Task
-        //assertEquals(mappedProject.getProjectStatus().name(), expectedProject.getProjectStatus().name());
+        assertEquals(mappedProject.getProjectClass(), expectedProject.getProjectClass());
     }
 
     @Test
     void mapCreatedProjectToDTO() {
-        doReturn(businessLeaderDTO).when(businessLeaderMapper).convertToDto(any(BusinessLeader.class));
-
         ProjectCreatedDTO projectCreatedDTO = projectMapper.convertEntityToCreatedDto(expectedProject);
-        assertEquals(projectCreatedDTO.getId(), expectedProjectCreatedDTO.getId());
-        assertEquals(projectCreatedDTO.getProjectName(), expectedProjectCreatedDTO.getProjectName());
-        assertEquals(projectCreatedDTO.getBusinessRelationManager().getId(), expectedProjectCreatedDTO.getBusinessRelationManager().getId());
-        assertEquals(projectCreatedDTO.getBusinessLeader().getEmployee().getId(), expectedProjectCreatedDTO.getBusinessLeader().getEmployee().getId());
-        assertEquals(projectCreatedDTO.getProjectStatus().name(), expectedProjectCreatedDTO.getProjectStatus().name());
+
+        assertEquals(expectedProject.getId(), projectCreatedDTO.getId());
+        assertEquals(expectedProject.getProjectName(), projectCreatedDTO.getProjectName());
+        assertEquals(expectedProject.getBusinessRelationManager().getId(), projectCreatedDTO.getBusinessRelationManager().getId());
+        assertEquals(expectedProject.getBusinessLeader().getEmployee().getId(), projectCreatedDTO.getBusinessLeader().getEmployee().getId());
+        assertEquals(expectedProject.getProjectStatusHistoryLines().size(), projectCreatedDTO.getProjectStatusHistoryLines().size());
     }
 
     @Test
     void convertToDto() {
-        projectMapper.convertToDto(expectedProject);
+        ProjectDTO result = projectMapper.convertToDto(expectedProject);
+
+        assertEquals(expectedProject.getId(), result.getId());
+        assertEquals(expectedProject.getProjectName(), result.getProjectName());
+        assertEquals(expectedProject.getProjectClass().name(), result.getProjectClass().name());
+        assertEquals(expectedProject.getResourceManager().getId(), result.getResourceManager().getId());
+        assertEquals(expectedProject.getResourceManager().getEmployee().getId(), result.getResourceManager().getEmployee().getId());
+        assertEquals(expectedProject.getResourceManager().getEmployee().getUserName(), result.getResourceManager().getEmployee().getUserName());
+        assertEquals(0, result.getResourceManager().getEmployee().getBusinessUnit().getEmployees().size());
+        assertEquals(expectedProject.getProjectManager().getId(), result.getProjectManager().getId());
+        assertEquals(expectedProject.getProjectManager().getEmployee().getId(), result.getProjectManager().getEmployee().getId());
+        assertEquals(expectedProject.getProjectManager().getEmployee().getUserName(), result.getProjectManager().getEmployee().getUserName());
+        assertEquals(expectedProject.getBusinessRelationManager().getId(), result.getBusinessRelationManager().getId());
+        assertEquals(expectedProject.getBusinessRelationManager().getUserName(), result.getBusinessRelationManager().getUserName());
+        assertEquals(expectedProject.getProjectStatusHistoryLines().size(), result.getProjectStatusHistoryLines().size());
+        assertEquals(expectedProject.getPrimaryBusinessUnit().getId(), result.getPrimaryBusinessUnit().getId());
+        assertEquals(expectedProject.getPrimaryBusinessUnit().getName(), result.getPrimaryBusinessUnit().getName());
+        assertEquals(0, result.getPrimaryBusinessUnit().getPrimaryProjects().size());
+        assertEquals(0, result.getPrimaryBusinessUnit().getSecondaryProjects().size());
+
     }
 
     @Test
     void convertToEntity() {
     }
+
+
 }

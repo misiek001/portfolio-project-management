@@ -290,19 +290,19 @@ public class DevDataLoader {
         firstProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, FIRST_PROJECT_MANAGER_ID));
         firstProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, FIRST_SOLUTION_ARCHITECT_ID));
         firstProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, SECOND_SOLUTION_ARCHITECT_ID));
-        firstProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID));
-        firstProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, SECOND_OPERATION_BUSINESS_UNIT_ID));
+        firstProject.setPrimaryBusinessUnit(simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID));
+        firstProject.addSecondaryBusinessUnit(simpleFind(entityManager, BusinessUnit.class, SECOND_OPERATION_BUSINESS_UNIT_ID));
 
         secondProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, THIRD_SOLUTION_ARCHITECT_ID));
         secondProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
         secondProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, SECOND_PROJECT_MANAGER_ID));
         secondProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, SECOND_SOLUTION_ARCHITECT_ID));
-        secondProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID));
+        secondProject.setPrimaryBusinessUnit(simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID));
 
         thirdProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, FIRST_PROJECT_MANAGER_ID));
         thirdProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, SECOND_SOLUTION_ARCHITECT_ID));
         thirdProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
-        thirdProject.addBusinessUnit(simpleFind(entityManager, BusinessUnit.class, SECOND_OPERATION_BUSINESS_UNIT_ID));
+        thirdProject.setPrimaryBusinessUnit(simpleFind(entityManager, BusinessUnit.class, SECOND_OPERATION_BUSINESS_UNIT_ID));
 
         entityManager.persist(firstProject);
         FIRST_PROJECT_ID = firstProject.getId();

@@ -25,7 +25,10 @@ public class BusinessUnitDTO extends IdDTO {
     private Set<EmployeeDTO> employees = new HashSet<>();
 
     @JsonView(Views.BusinessUnitInternal.class)
-    private Set<ProjectDTO> projects = new HashSet<>();
+    private Set<ProjectDTO> primaryProjects = new HashSet<>();
+
+    @JsonView(Views.BusinessUnitInternal.class)
+    private Set<ProjectDTO> secondaryProjects = new HashSet<>();
 
     @Override
     public Long getId() {
@@ -53,11 +56,19 @@ public class BusinessUnitDTO extends IdDTO {
         this.employees = employees;
     }
 
-    public Set<ProjectDTO> getProjects() {
-        return projects;
+    public Set<ProjectDTO> getSecondaryProjects() {
+        return secondaryProjects;
     }
 
-    public void setProjects(Set<ProjectDTO> projects) {
-        this.projects = projects;
+    public void setSecondaryProjects(Set<ProjectDTO> secondaryProjects) {
+        this.secondaryProjects = secondaryProjects;
+    }
+
+    public Set<ProjectDTO> getPrimaryProjects() {
+        return primaryProjects;
+    }
+
+    public void setPrimaryProjects(Set<ProjectDTO> primaryProjects) {
+        this.primaryProjects = primaryProjects;
     }
 }

@@ -90,7 +90,7 @@ public class TestDataLoader  {
         //TODO To fix during Open Project Task
         //project.setProjectStatus(ProjectStatus.ANALYSIS);
         project.setProjectClass(ProjectClass.I);
-        project.addBusinessUnit(operationBusinessUnit);
+        project.setPrimaryBusinessUnit(operationBusinessUnit);
         entityManager.persist(project);
 
         entityTransaction.commit();

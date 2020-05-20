@@ -1,12 +1,17 @@
 package com.mbor.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.mbor.model.views.Views;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class DirectorDTO extends EmployeeDTO {
 
+    @JsonView(Views.EmployeeInternal.class)
     private Set<SupervisorDTO> supervisors = new HashSet<>();
 
+    @JsonView(Views.EmployeeInternal.class)
     private Set<BusinessRelationManagerDTO> businessRelationManagers = new HashSet<>();
 
     public Set<SupervisorDTO> getSupervisors() {

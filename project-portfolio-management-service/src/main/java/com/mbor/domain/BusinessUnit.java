@@ -1,5 +1,7 @@
 package com.mbor.domain;
 
+import com.mbor.exception.ProjectAlreadyAssignedAsPrimaryException;
+import com.mbor.exception.ProjectAlreadyAssignedAsSecondaryException;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
@@ -24,24 +26,37 @@ public class BusinessUnit {
     @Fetch(value = FetchMode.JOIN)
     private Set<Employee> employees = new HashSet<>();
 
-    @ManyToMany(mappedBy = "businessUnits")
+    @OneToMany
+    private Set<Project> primaryProjects = new HashSet<>();
+
+    @ManyToMany(mappedBy = "secondaryBusinessUnits")
     @Fetch(value = FetchMode.JOIN)
-    private Set<Project> projects = new HashSet<>();
-
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
-    }
+    private Set<Project> secondaryProjects = new HashSet<>();
 
     public Set<Employee> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(Set<Employee> employees) {
-        this.employees = employees;
+    public Set<Project> getPrimaryProjects() {
+        return primaryProjects;
+    }
+
+    public void addPrimaryProject(Project project){
+        if(getSecondaryProjects().contains(project)){
+            throw new ProjectAlreadyAssignedAsSecondaryException();
+        }
+        primaryProjects.add(project);
+    }
+
+    public Set<Project> getSecondaryProjects() {
+        return secondaryProjects;
+    }
+
+    public void addSecondaryProject(Project project){
+        if(getPrimaryProjects().contains(project)){
+            throw new ProjectAlreadyAssignedAsPrimaryException();
+        }
+        secondaryProjects.add(project);
     }
 
     public Long getId() {
@@ -59,6 +74,8 @@ public class BusinessUnit {
     public void setName(String name) {
         this.name = name;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

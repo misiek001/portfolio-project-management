@@ -96,14 +96,14 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
     void updateProjectAspectThenSuccess(){
         ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
         projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
-        assertEquals(1, projectService.find(firstProjectId).getProjectAspectLineSet().size());
+        assertEquals(1, projectService.find(firstProjectId).getProjectAspectLines().size());
     }
 
     @Test
     void addRealEndDateThenSuccess(){
         RealEndDateDTO realEndDateDTO = prepareRealEndDateDTO(10, "First Reason");
         projectService.addProjectEndDate(firstProjectId, realEndDateDTO, firstProjectManagerId);
-        assertEquals(1, projectService.find(firstProjectId).getRealEndDateSet().size());
+        assertEquals(1, projectService.find(firstProjectId).getRealEndDates().size());
     }
 
     @Test
@@ -139,21 +139,12 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
         businessLeaderDTO.setEmployee(businessEmployeeDTO);
 
-        Set<BusinessUnitDTO> businessUnitDTOSet = new HashSet<>();
-        BusinessUnitDTO firstBusinessUnitDto = new BusinessUnitDTO();
-        firstBusinessUnitDto.setId(firstBusinessUnitId);
-        BusinessUnitDTO secondBusinessUnitDto = new BusinessUnitDTO();
-        secondBusinessUnitDto.setId(secondBusinessUnitId);
-
-        businessUnitDTOSet.add(firstBusinessUnitDto);
-        businessUnitDTOSet.add(secondBusinessUnitDto);
-
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName("ProjectName" + random.nextInt());
 
-        projectCreationDTO.setBusinessRelationManager(businessRelationManagerDTO);
-        projectCreationDTO.setBusinessLeader(businessLeaderDTO);
-        projectCreationDTO.setBusinessUnits(businessUnitDTOSet);
+        projectCreationDTO.setBusinessRelationManagerId(businessRelationManagerDTO.getId());
+        projectCreationDTO.setBusinessLeaderId(businessLeaderDTO.getId());
+        projectCreationDTO.setPrimaryBusinessUnitId(firstBusinessUnitId);
 
         return projectCreationDTO;
     }

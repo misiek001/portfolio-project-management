@@ -65,36 +65,19 @@ public class Project implements IProjectDTO {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<RealEndDate> realEndDateSet = new HashSet<>();
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private BusinessUnit primaryBusinessUnit;
+
     @ManyToMany(cascade = {CascadeType.MERGE} )
-    @JoinTable(name = "projects_business_units",
+    @JoinTable(name = "project_secondary_business_units",
             joinColumns = {@JoinColumn(name = "project_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "business_unit_id", referencedColumnName = "id")})
     @Fetch(value = FetchMode.JOIN)
-    private Set<BusinessUnit> businessUnits = new HashSet<>();
+    private Set<BusinessUnit> secondaryBusinessUnits = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.JOIN)
     private Set<ProjectAspectLine> projectAspectLines = new HashSet<>();
-
-    public void addBusinessUnit(BusinessUnit businessUnit){
-        this.businessUnits.add(businessUnit);
-        businessUnit.getProjects().add(this);
-    }
-
-    public void removeBusinessUnit(BusinessUnit businessUnit){
-        this.businessUnits.remove(businessUnit);
-        businessUnit.getProjects().remove(this);
-    }
-
-    public void addRealEndDate(RealEndDate realEndDate){
-        this.realEndDateSet.add(realEndDate);
-        realEndDate.setProject(this);
-    }
-
-    public void removeRealEndDate(RealEndDate realEndDate){
-        this.realEndDateSet.remove(realEndDate);
-        realEndDate.setProject(null);
-    }
 
     public Long getId() {
         return id;
@@ -127,7 +110,6 @@ public class Project implements IProjectDTO {
 
     public void setBusinessRelationManager(BusinessRelationManager businessRelationManager) {
         this.businessRelationManager = businessRelationManager;
-
         businessRelationManager.getProjects().add(this);
     }
 
@@ -209,21 +191,48 @@ public class Project implements IProjectDTO {
         businessLeader.getProjects().remove(this);
     }
 
-    public Set<BusinessUnit> getBusinessUnits() {
-        return businessUnits;
+    public BusinessUnit getPrimaryBusinessUnit() {
+        return primaryBusinessUnit;
     }
 
-    public void setBusinessUnits(Set<BusinessUnit> businessUnits) {
-        this.businessUnits = businessUnits;
+    public void setPrimaryBusinessUnit(BusinessUnit businessUnit){
+        this.primaryBusinessUnit =  businessUnit;
+        businessUnit.addPrimaryProject(this);
+    }
+
+    public void removePrimaryBusinessUnit(BusinessUnit businessUnit){
+        this.primaryBusinessUnit = null;
+        businessUnit.getPrimaryProjects().remove(this);
+    }
+
+    public Set<BusinessUnit> getSecondaryBusinessUnits() {
+        return secondaryBusinessUnits;
+    }
+
+    public void addSecondaryBusinessUnit(BusinessUnit businessUnit){
+        this.secondaryBusinessUnits.add(businessUnit);
+        businessUnit.getSecondaryProjects().add(this);
+    }
+
+    public void removeSecondaryBusinessUnit(BusinessUnit businessUnit){
+        this.secondaryBusinessUnits.remove(businessUnit);
+        businessUnit.getSecondaryProjects().remove(this);
+    }
+
+    public void addRealEndDate(RealEndDate realEndDate){
+        this.realEndDateSet.add(realEndDate);
+        realEndDate.setProject(this);
+    }
+
+    public void removeRealEndDate(RealEndDate realEndDate){
+        this.realEndDateSet.remove(realEndDate);
+        realEndDate.setProject(null);
     }
 
     public Set<ProjectAspectLine> getProjectAspectLines() {
         return projectAspectLines;
     }
 
-    public void setProjectAspectLines(Set<ProjectAspectLine> projectAspectLineSet) {
-        this.projectAspectLines = projectAspectLineSet;
-    }
 
     public void addProjectAspectLine(ProjectAspectLine projectAspectLine){
         this.projectAspectLines.add(projectAspectLine);
@@ -249,12 +258,12 @@ public class Project implements IProjectDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return projectName.equals(project.projectName);
+        return id.equals(project.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(projectName);
+        return Objects.hash(id);
     }
 
     @PostRemove

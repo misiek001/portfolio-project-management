@@ -12,6 +12,8 @@ public interface IEmployee {
 
     String getLastName();
 
+    String getUserName();
+
     BusinessUnit getBusinessUnit();
 
     Set<ProjectRole> getProjectRoleSet();

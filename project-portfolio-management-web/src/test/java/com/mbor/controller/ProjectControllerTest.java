@@ -207,22 +207,20 @@ class ProjectControllerTest {
         BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
         businessRelationManagerDTO.setId(BRM_ID);
 
-        projectCreationDTO.setBusinessRelationManager(businessRelationManagerDTO);
+        projectCreationDTO.setBusinessRelationManagerId(businessRelationManagerDTO.getId());
 
         BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
         businessLeaderDTO.setId(FIRST_BUSINESS_LEADER_ID);
 
-        projectCreationDTO.setBusinessLeader(businessLeaderDTO);
+        projectCreationDTO.setBusinessLeaderId(businessLeaderDTO.getId());
 
         BusinessUnitDTO businessUnitDTOFirst = new BusinessUnitDTO();
         businessUnitDTOFirst.setId(FIRST_OPERATION_BUSINESS_UNIT_ID);
 
-        projectCreationDTO.addBusinessUnit(businessUnitDTOFirst);
+        projectCreationDTO.setPrimaryBusinessUnitId(businessUnitDTOFirst.getId());
 
         BusinessUnitDTO businessUnitDTOSecond = new BusinessUnitDTO();
         businessUnitDTOSecond.setId(SECOND_OPERATION_BUSINESS_UNIT_ID);
-
-        projectCreationDTO.addBusinessUnit(businessUnitDTOSecond);
 
         return mapper.writeValueAsString(projectCreationDTO);
     }
