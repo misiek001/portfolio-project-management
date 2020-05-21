@@ -14,6 +14,9 @@ public class BusinessRelationManagerDTO  extends EmployeeDTO {
     @JsonView(Views.EmployeeInternal.class)
     private DirectorDTO director;
 
+    @JsonView(Views.EmployeeInternal.class)
+    private Set<BusinessUnitDTO> assignedBusinessUnits;
+
     public Set<ProjectDTO> getProjects() {
         return projects;
     }
@@ -28,5 +31,13 @@ public class BusinessRelationManagerDTO  extends EmployeeDTO {
 
     public void setDirector(DirectorDTO director) {
         this.director = director;
+    }
+
+    public Set<BusinessUnitDTO> getAssignedBusinessUnits() {
+        return assignedBusinessUnits;
+    }
+
+    public void setAssignedBusinessUnits(Set<BusinessUnitDTO> assignedBusinessUnits) {
+        this.assignedBusinessUnits = assignedBusinessUnits;
     }
 }

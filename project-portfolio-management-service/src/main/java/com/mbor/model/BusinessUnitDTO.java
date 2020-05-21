@@ -25,6 +25,9 @@ public class BusinessUnitDTO extends IdDTO {
     private Set<EmployeeDTO> employees = new HashSet<>();
 
     @JsonView(Views.BusinessUnitInternal.class)
+    private BusinessRelationManagerDTO businessRelationManager;
+
+    @JsonView(Views.BusinessUnitInternal.class)
     private Set<ProjectDTO> primaryProjects = new HashSet<>();
 
     @JsonView(Views.BusinessUnitInternal.class)
@@ -54,6 +57,14 @@ public class BusinessUnitDTO extends IdDTO {
 
     public void setEmployees(Set<EmployeeDTO> employees) {
         this.employees = employees;
+    }
+
+    public BusinessRelationManagerDTO getBusinessRelationManager() {
+        return businessRelationManager;
+    }
+
+    public void setBusinessRelationManager(BusinessRelationManagerDTO businessRelationManager) {
+        this.businessRelationManager = businessRelationManager;
     }
 
     public Set<ProjectDTO> getSecondaryProjects() {

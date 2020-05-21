@@ -26,7 +26,10 @@ public class BusinessUnit {
     @Fetch(value = FetchMode.JOIN)
     private Set<Employee> employees = new HashSet<>();
 
-    @OneToMany
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private BusinessRelationManager businessRelationManager;
+
+    @OneToMany(mappedBy = "primaryBusinessUnit")
     private Set<Project> primaryProjects = new HashSet<>();
 
     @ManyToMany(mappedBy = "secondaryBusinessUnits")
@@ -75,7 +78,13 @@ public class BusinessUnit {
         this.name = name;
     }
 
+    public BusinessRelationManager getBusinessRelationManager() {
+        return businessRelationManager;
+    }
 
+    public void setBusinessRelationManager(BusinessRelationManager businessRelationManager) {
+        this.businessRelationManager = businessRelationManager;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -4,7 +4,7 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
-import com.mbor.model.*;
+import com.mbor.model.ProjectDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.spring.ServiceConfiguration;
@@ -19,8 +19,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
-import java.util.Random;
 
+import static com.mbor.mapper.MapperUtils.*;
+import static com.sun.corba.se.impl.util.Version.PROJECT_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -28,40 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 class ProjectMapperTest {
 
-    private static final long PROJECT_ID = 1L;
-    private static final String PROJECT_NAME = "Project Name";
-    private static final ProjectClassDTO DTO_PROJECT_CLASS = ProjectClassDTO.I;
-    private static final ProjectClass PROJECT_CLASS = ProjectClass.I;
-    private static final long IT_BUSINESS_UNIT_ID = 1L;
-    private static final long FIRST_BUSINESS_UNIT_ID = 2L;
-    private static final long SECOND_BUSINESS_UNIT_ID = 3L;
-    private static final String IT_BUSINESS_UNIT_NAME = "IT Business Unit";
-    private static final String FIRST_BUSINESS_UNIT_NAME = "First Business Unit";
-    private static final String SECOND_BUSINESS_UNIT_NAME = "Second Business Unit";
-    private static final Long DIRECTOR_ID = 1L;
-    private static final Long BRM_ID = 2L;
-    private static final Long SUPERVISOR_ID = 3L;
-    private static final Long CONSULTANT_ID = 4L;
-    private static final Long BUSINESS_EMPLOYEE_ID = 5L;
-    private static final Long RESOURCE_MANAGER_ID = 1L;
-    private static final Long PROJECT_MANAGER_ID = 2L;
-    private static final Long BUSINESS_LEADER_ID = 3L;
 
-    private static final String DIRECTOR_USER_NAME = "Director Username";
-    private static final String BRM_USER_NAME = "BRM Username";
-    private static final String SUPERVISOR_USER_NAME = "Supervisor Username";
-    private static final String CONSULTANT_USER_NAME = "Consultant Username";
-    private static final String BUSINESS_EMPLOYEE_USERNAME = "BU Username";
-    private static final String FIRST_REASON = "First Reason";
-    private static final String SECOND_REASON = "Second Reason";
-    private static Random random = new Random();
+
     private static ProjectCreationDTO projectCreationDTO;
-    private static DirectorDTO directorDTO;
-    private static BusinessRelationManagerDTO businessRelationManagerDTO;
-    private static BusinessEmployeeDTO businessEmployeeDTO;
-    private static BusinessLeaderDTO businessLeaderDTO;
-    private static BusinessUnitDTO businessUnitDTOFirst;
-    private static BusinessUnitDTO businessUnitDTOSecond;
 
     private static Project expectedProject;
     private static BusinessUnit ITBusinessUnit;
@@ -113,15 +83,13 @@ class ProjectMapperTest {
         director.setId(DIRECTOR_ID);
         director.setUserName(DIRECTOR_USER_NAME);
         director.setBusinessUnit(ITBusinessUnit);
-        ITBusinessUnit.getEmployees().add(director);
+
 
         businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setId(BRM_ID);
         businessRelationManager.setUserName(BRM_USER_NAME);
         businessRelationManager.setBusinessUnit(ITBusinessUnit);
-        director.getBusinessRelationManagers().add(businessRelationManager);
         businessRelationManager.setDirector(director);
-        ITBusinessUnit.getEmployees().add(businessRelationManager);
 
         expectedProject.setBusinessRelationManager(businessRelationManager);
 
@@ -186,13 +154,6 @@ class ProjectMapperTest {
         expectedProject.addRealEndDate(firstRealEndDate);
         expectedProject.addRealEndDate(secondRealEndDate);
 
-        //Creating expected ProjectCreatedDTO
-        expectedProjectCreatedDTO = new ProjectCreatedDTO();
-        expectedProjectCreatedDTO.setId(expectedProject.getId());
-        expectedProjectCreatedDTO.setProjectName(expectedProject.getProjectName());
-        expectedProjectCreatedDTO.setBusinessLeader(businessLeaderDTO);
-        expectedProjectCreatedDTO.setBusinessRelationManager(businessRelationManagerDTO);
-        expectedProjectCreatedDTO.setPrimaryBusinessUnit(businessUnitDTOFirst);
     }
 
     @Test
