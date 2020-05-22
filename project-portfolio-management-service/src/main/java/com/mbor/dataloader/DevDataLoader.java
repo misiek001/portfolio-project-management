@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 @Profile({"dev", "controller-integration"})
 public class DevDataLoader {
 
+
     private final PasswordEncoder passwordEncoder;
 
     @PersistenceUnit
@@ -33,6 +34,7 @@ public class DevDataLoader {
     public static Long BRM_ROLE_ID;
     public static Long SUPERVISOR_ROLE_ID;
     public static Long CONSULTANT_ROLE_ID;
+    public static  Long BUSINESS_EMPLOYEE_ROLE_ID;
 
     public static Long IT_BUSINESS_UNIT_ID;
     public static Long FIRST_OPERATION_BUSINESS_UNIT_ID;
@@ -68,6 +70,7 @@ public class DevDataLoader {
         doWithinTransaction(addProjectRoleRoles);
         doWithinTransaction(addBusinessUnits);
         doWithinTransaction(addEmployees);
+        doWithinTransaction(addBRMToBusinessUnits);
         doWithinTransaction(addProjectRoles);
         doWithinTransaction(addProject);
     }
@@ -130,6 +133,14 @@ public class DevDataLoader {
         consultantRole.addPrivilege(searchConsultantProjectsPrivilege);
         entityManager.persist(consultantRole);
         CONSULTANT_ROLE_ID  = consultantRole.getId();
+
+        Role businessEmployeeRole = new Role();
+        businessEmployeeRole.setName("business-employee");
+        Privilege createDemandSheetPrivilege = new Privilege();
+        createDemandSheetPrivilege.setName("create_demandsheet");
+        businessEmployeeRole.addPrivilege(createDemandSheetPrivilege);
+        entityManager.persist(businessEmployeeRole);
+        BUSINESS_EMPLOYEE_ROLE_ID = businessEmployeeRole.getId();
 
     };
 
@@ -216,8 +227,20 @@ public class DevDataLoader {
         BusinessEmployee firstBusinessEmployee = new BusinessEmployee();
         firstBusinessEmployee.setUserName("FirstBusinessEmployeeUserName");
         firstBusinessEmployee.setBusinessUnit(entityManager.find(BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID));
+        createUser(firstBusinessEmployee);
+        firstBusinessEmployee.getUser().getRoles().add(entityManager.find(Role.class, BUSINESS_EMPLOYEE_ROLE_ID));
         entityManager.persist(firstBusinessEmployee);
         FIRST_BUSINESS_EMPLOYEE_ID = firstBusinessEmployee.getId();
+
+    };
+
+    private Consumer<EntityManager> addBRMToBusinessUnits = entityManager -> {
+
+      BusinessUnit firstBusinessUnit = simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID);
+      firstBusinessUnit.setBusinessRelationManager(simpleFind(entityManager, BusinessRelationManager.class, BRM_ID));
+
+      BusinessUnit secondBusinessUnit = simpleFind(entityManager, BusinessUnit.class, FIRST_OPERATION_BUSINESS_UNIT_ID);
+      secondBusinessUnit.setBusinessRelationManager(simpleFind(entityManager, BusinessRelationManager.class, BRM_ID));
 
     };
 
@@ -269,7 +292,6 @@ public class DevDataLoader {
 
 
     private Consumer<EntityManager> addProject = entityManager -> {
-
         Project firstProject = new Project();
         firstProject.setProjectName("FirstProjectName");
         Project secondProject = new Project();
@@ -280,8 +302,7 @@ public class DevDataLoader {
         firstProject.setProjectClass(ProjectClass.I);
         secondProject.setProjectClass(ProjectClass.I);
         thirdProject.setProjectClass(ProjectClass.II);
-
-        //TODO To fix during Open Project Task
+        
 //        firstProject.setProjectStatus(ProjectStatus.ANALYSIS);
 //        secondProject.setProjectStatus(ProjectStatus.ANALYSIS);
 //        thirdProject.setProjectStatus(ProjectStatus.IN_PROGRESS);
@@ -312,6 +333,7 @@ public class DevDataLoader {
 
         entityManager.persist(thirdProject);
         THIRD_PROJECT_ID = thirdProject.getId();
+
     };
 
     private void createUser(Employee employee) {

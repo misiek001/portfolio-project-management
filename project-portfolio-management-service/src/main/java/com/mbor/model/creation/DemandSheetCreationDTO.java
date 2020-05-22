@@ -1,6 +1,5 @@
 package com.mbor.model.creation;
 
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 
 public class DemandSheetCreationDTO {
@@ -11,7 +10,30 @@ public class DemandSheetCreationDTO {
     @NotEmpty
     private String description;
 
-    @OneToOne
+    @NotEmpty
     private Long businessUnitId;
 
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Long getBusinessUnitId() {
+        return businessUnitId;
+    }
+
+    public void setBusinessUnitId(Long businessUnitId) {
+        this.businessUnitId = businessUnitId;
+    }
 }

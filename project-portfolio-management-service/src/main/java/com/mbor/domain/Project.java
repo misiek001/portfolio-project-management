@@ -269,12 +269,12 @@ public class Project implements IProjectDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return id.equals(project.id);
+        return projectName.equals(project.projectName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(projectName);
     }
 
     @PostRemove

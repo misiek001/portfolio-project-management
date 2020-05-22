@@ -1,5 +1,6 @@
 package com.mbor.exceptionhandler;
 
+import com.mbor.exception.NoBRMAssignedToBusinessUnitException;
 import com.mbor.exception.NoSetProjectManagerException;
 import com.mbor.exception.ProjectRoleAlreadyExistException;
 import com.mbor.exception.WrongProjectManagerException;
@@ -39,6 +40,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoSetProjectManagerException.class)
     protected ResponseEntity<Object> handleNoSetProjectManagerException(RuntimeException exception, WebRequest webRequest){
+        String responseBody = "message:" + exception.getMessage();
+        return handleExceptionInternal(exception, responseBody,
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+    }
+
+    @ExceptionHandler(NoBRMAssignedToBusinessUnitException.class)
+    protected ResponseEntity<Object> NoBRMAssignedToBusinessUnitException(RuntimeException exception, WebRequest webRequest){
         String responseBody = "message:" + exception.getMessage();
         return handleExceptionInternal(exception, responseBody,
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);

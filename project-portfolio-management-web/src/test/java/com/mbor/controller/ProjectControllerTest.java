@@ -7,7 +7,6 @@ import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.*;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
-import com.mbor.service.IEmployeeService;
 import com.mbor.spring.ServiceConfiguration;
 import com.mbor.spring.WebConfiguration;
 import org.junit.jupiter.api.Assertions;
@@ -47,9 +46,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProjectControllerTest {
 
     private static MockMvc mockMvc;
+
     ObjectMapper mapper = new ObjectMapper();
-    @Autowired
-    private IEmployeeService employeeService;
+
     @Autowired
     private Environment env;
 

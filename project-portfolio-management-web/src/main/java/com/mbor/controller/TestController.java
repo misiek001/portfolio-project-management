@@ -116,4 +116,15 @@ public class TestController {
         return new ResponseEntity<>(employeeAssignDTO, HttpStatus.OK);
     }
 
+    @GetMapping(params = {"prepareDto=createDemandSheet"})
+    public ResponseEntity<DemandSheetCreationDTO> getDemandSheetCreationDto(){
+       DemandSheetCreationDTO demandSheetCreationDTO = new DemandSheetCreationDTO();
+
+       demandSheetCreationDTO.setProjectName("Project name");
+       demandSheetCreationDTO.setDescription("Description");
+       demandSheetCreationDTO.setBusinessUnitId(1L);
+
+       return new ResponseEntity<>(demandSheetCreationDTO, HttpStatus.OK);
+    }
+
 }
