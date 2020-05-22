@@ -23,6 +23,9 @@ public class ProjectDTO implements IProjectDTO {
     @JsonView(Views.Public.class)
     private String projectName;
 
+    @JsonView(Views.ProjectInternal.class)
+    private DemandSheetDTO demandSheetDTO;
+
     @JsonView(Views.Public.class)
     private ProjectClassDTO projectClass;
 

@@ -24,6 +24,9 @@ public class BusinessRelationManager extends Employee {
     @Fetch(value = FetchMode.JOIN)
     private Set<BusinessUnit> assignedBusinessUnits = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.MERGE)
+    private Set<DemandSheet> demandSheets;
+
     public Set<Project> getProjects() {
         return projects;
     }

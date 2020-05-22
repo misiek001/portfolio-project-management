@@ -25,6 +25,9 @@ public class Project implements IProjectDTO {
     @Column(nullable = false, unique = true)
     private Long id;
 
+    @OneToOne
+    private DemandSheet demandSheet;
+
     @NaturalId
     private String projectName;
 
@@ -85,6 +88,14 @@ public class Project implements IProjectDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public DemandSheet getDemandSheet() {
+        return demandSheet;
+    }
+
+    public void setDemandSheet(DemandSheet demandSheet) {
+        this.demandSheet = demandSheet;
     }
 
     public String getProjectName() {
