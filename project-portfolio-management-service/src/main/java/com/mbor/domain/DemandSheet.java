@@ -14,10 +14,10 @@ public class DemandSheet {
 
     private String description;
 
-    @OneToOne
+    @ManyToOne
     private BusinessUnit businessUnit;
 
-    @OneToOne(mappedBy = "demandSheet")
+    @OneToOne
     private Project project;
 
     @ManyToOne

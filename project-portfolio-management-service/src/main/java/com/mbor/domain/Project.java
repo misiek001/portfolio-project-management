@@ -25,7 +25,7 @@ public class Project implements IProjectDTO {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "project", cascade = CascadeType.MERGE)
     private DemandSheet demandSheet;
 
     @NaturalId
@@ -96,6 +96,7 @@ public class Project implements IProjectDTO {
 
     public void setDemandSheet(DemandSheet demandSheet) {
         this.demandSheet = demandSheet;
+        demandSheet.setProject(this);
     }
 
     public String getProjectName() {
