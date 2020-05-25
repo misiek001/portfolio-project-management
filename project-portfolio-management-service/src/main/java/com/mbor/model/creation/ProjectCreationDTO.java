@@ -12,7 +12,7 @@ public class ProjectCreationDTO implements IProjectDTO {
     String projectName;
 
     @NotNull
-    Long  businessRelationManagerId;
+    Long businessRelationManagerId;
 
     @NotNull
     Long businessLeaderId;

@@ -29,7 +29,7 @@ public class DemandSheetMapper  extends CreationPojoMapper<DemandSheetDTO, Deman
 
     @Override
     public DemandSheetDTO convertToDto(DemandSheet demandSheet) {
-        return null;
+        return modelMapper.map(demandSheet, DemandSheetDTO.class);
     }
 
     @Override

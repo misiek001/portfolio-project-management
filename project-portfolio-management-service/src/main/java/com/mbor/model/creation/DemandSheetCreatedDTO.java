@@ -7,7 +7,6 @@ import com.mbor.model.views.Views;
 
 public class DemandSheetCreatedDTO {
 
-
     @JsonView(Views.Public.class)
     private Long id;
 
@@ -62,4 +61,5 @@ public class DemandSheetCreatedDTO {
     public void setBusinessRelationManager(BusinessRelationManagerDTO businessRelationManager) {
         this.businessRelationManager = businessRelationManager;
     }
+
 }

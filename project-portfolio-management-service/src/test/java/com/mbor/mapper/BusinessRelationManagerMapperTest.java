@@ -32,7 +32,7 @@ class BusinessRelationManagerMapperTest {
     private static Director director;
 
     @BeforeAll
-    static void setup(){
+    static void init(){
 
         ITBusinessUnit = new BusinessUnit();
         ITBusinessUnit.setId(IT_BUSINESS_UNIT_ID);
