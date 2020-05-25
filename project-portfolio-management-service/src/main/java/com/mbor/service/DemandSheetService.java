@@ -13,6 +13,7 @@ import com.mbor.model.creation.DemandSheetCreationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,6 +40,13 @@ public class DemandSheetService extends RawService<DemandSheet> implements IDema
     @Override
     public DemandSheetDTO find(Long id) {
         return null;
+    }
+
+    @Override
+    public List<DemandSheetDTO> getAllDemandSheetsOfBRMWithNoProject(Long brmId){
+        List<DemandSheetDTO> result = new ArrayList<>();
+        demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(brmId).forEach(demandSheet -> result.add(demandSheetMapper.convertToDto(demandSheet)));
+        return result;
     }
 
     @Override

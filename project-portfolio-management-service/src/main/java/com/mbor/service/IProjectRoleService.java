@@ -1,10 +1,6 @@
 package com.mbor.service;
 
-import com.mbor.domain.employeeinproject.ProjectRole;
+public interface IProjectRoleService extends IInternalProjectRoleService, IAPIProjectRoleService {
 
-import java.util.List;
 
-public interface IProjectRoleService<T> extends IInternalProjectRoleService, IAPIService {
-
-    List<ProjectRole> findAllRoleOfEmployee(Long id);
 }

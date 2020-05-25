@@ -87,7 +87,6 @@ class DemandSheetDaoTest  extends IDaoImplTest<DemandSheet> {
 
     @Test
     public void  getAllDemandSheetsOfBRMWithNoProjectThenSuccess(){
-        demandSheetDao.findAll();
         assertEquals(1, demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(FIRST_BRM_ID).size());
     }
 

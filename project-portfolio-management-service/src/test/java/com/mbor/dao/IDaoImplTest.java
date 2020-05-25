@@ -32,8 +32,8 @@ public abstract class IDaoImplTest<T> implements IDaoTest {
     @Override
     @Test
     public void delete_ThenSuccess() {
-        getDao().findAll().size();
         getDao().delete(1L);
+        assertEquals(createdEntitiesNumber - 1, getDao().findAll().size());
     }
 
     @Override

@@ -112,8 +112,11 @@ public class DevDataLoader {
         createProjectPrivilege.setName("create_project");
         Privilege assignEmployeePrivilege = new Privilege();
         assignEmployeePrivilege.setName("assign_employee");
+        Privilege getAllDemandSheetsOfBrmWithNoProjectsPrivilege = new Privilege();
+        getAllDemandSheetsOfBrmWithNoProjectsPrivilege.setName("get_all_demandsheets_of_brm_with_no_projects");
         brmRole.addPrivilege(createProjectPrivilege);
         brmRole.addPrivilege(assignEmployeePrivilege);
+        brmRole.addPrivilege(getAllDemandSheetsOfBrmWithNoProjectsPrivilege);
         entityManager.persist(brmRole);
         BRM_ROLE_ID = brmRole.getId();
 

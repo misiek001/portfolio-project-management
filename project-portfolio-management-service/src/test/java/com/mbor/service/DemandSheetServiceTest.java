@@ -3,6 +3,7 @@ package com.mbor.service;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.DemandSheet;
+import com.mbor.domain.Project;
 import com.mbor.exception.NoBRMAssignedToBusinessUnitException;
 import com.mbor.model.creation.DemandSheetCreatedDTO;
 import com.mbor.model.creation.DemandSheetCreationDTO;
@@ -20,8 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ServiceConfiguration.class)
@@ -33,6 +33,10 @@ class DemandSheetServiceTest extends IServiceTestImpl<DemandSheet> {
     IDemandSheetService demandSheetService;
 
     private static Long FIRST_BRM_ID;
+    private static Long SECOND_BRM_ID;
+
+    private static Long PROJECT_ID;
+
     private static Long FIRST_BUSINESS_UNIT_ID;
     private static Long SECOND_BUSINESS_UNIT_ID;
 
@@ -66,7 +70,30 @@ class DemandSheetServiceTest extends IServiceTestImpl<DemandSheet> {
         entityManager.persist(secondBusinessUnit);
         SECOND_BUSINESS_UNIT_ID = secondBusinessUnit.getId();
 
+        BusinessRelationManager secondBRM = new BusinessRelationManager();
+        entityManager.persist(secondBRM);
+        SECOND_BRM_ID = secondBRM.getId();
+
+        Project project = new Project();
+        entityManager.persist(project);
+        PROJECT_ID = project.getId();
+
+        DemandSheet demandSheetWithBRMAndNoProject = entityManager.find(DemandSheet.class, entityIdList.get(0));
+        demandSheetWithBRMAndNoProject.setBusinessRelationManager(entityManager.find(BusinessRelationManager.class, FIRST_BRM_ID));
+
+        DemandSheet demandSheetWithBRMAndProject = entityManager.find(DemandSheet.class, entityIdList.get(1));
+        demandSheetWithBRMAndProject.setBusinessRelationManager(entityManager.find(BusinessRelationManager.class, FIRST_BRM_ID));
+        entityManager.find(Project.class, PROJECT_ID).setDemandSheet(demandSheetWithBRMAndProject);
+
+        DemandSheet demandSheetWithOtherBRMAndNoProject = entityManager.find(DemandSheet.class, entityIdList.get(2));
+        demandSheetWithOtherBRMAndNoProject.setBusinessRelationManager(entityManager.find(BusinessRelationManager.class, SECOND_BRM_ID));
+
         transaction.commit();
+    }
+
+    @Test
+    void getAllDemandSheetsOfBRMWithNoProjectThenSuccess(){
+        assertEquals(1, demandSheetService.getAllDemandSheetsOfBRMWithNoProject(FIRST_BRM_ID).size());
     }
 
 
@@ -75,7 +102,7 @@ class DemandSheetServiceTest extends IServiceTestImpl<DemandSheet> {
         DemandSheetCreationDTO demandSheetCreationDTO =  prepareDemandSheetCreationDTO("Project Name", "Project Description", FIRST_BUSINESS_UNIT_ID);
         DemandSheetCreatedDTO result = demandSheetService.save(demandSheetCreationDTO);
 
-        assertEquals(++createdEntitiesNumber, result.getId());
+        assertNotNull(result.getId());
         assertEquals(demandSheetCreationDTO.getProjectName(), result.getProjectName());
         assertEquals(demandSheetCreationDTO.getDescription(), result.getDescription());
         assertEquals(FIRST_BUSINESS_UNIT_ID, result.getBusinessUnit().getId());

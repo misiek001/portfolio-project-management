@@ -18,7 +18,6 @@ import com.mbor.model.projectaspect.ProjectAspectLineDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,16 +35,15 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     private final IProjectDao projectDao;
 
-    private final IEmployeeService employeeService;
-    private final IBusinessUnitService businessUnitService;
-    private final IProjectRoleService projectRoleService;
+    private final IInternalEmployeeService employeeService;
+    private final IInternalBusinessUnitService businessUnitService;
+    private final IInternalProjectRoleService projectRoleService;
 
     private final ProjectMapper projectMapper;
     private final ProjectAspectLineMapper projectAspectMapper;
     private final RealEndDateMapper realEndDateMapper;
 
-    @Autowired
-    public ProjectService(IProjectDao projectDao, IEmployeeService employeeService, IBusinessUnitService businessUnitService, IProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper, RealEndDateMapper realEndDateMapper) {
+    public ProjectService(IProjectDao projectDao, IInternalEmployeeService employeeService, IInternalBusinessUnitService businessUnitService, IInternalProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper, RealEndDateMapper realEndDateMapper) {
         this.projectDao = projectDao;
         this.employeeService = employeeService;
         this.businessUnitService = businessUnitService;
@@ -235,7 +233,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             project.setProjectManager(projectManager);
             }
         if (employeeAssignDTO.getBusinessRelationManagerId() != null) {
-            project.setBusinessRelationManager(tryCast(BusinessRelationManager.class, employeeService.find(employeeAssignDTO.getBusinessRelationManagerId())));
+            project.setBusinessRelationManager(tryCast(BusinessRelationManager.class, employeeService.findInternal(employeeAssignDTO.getBusinessRelationManagerId())));
         }
         if (employeeAssignDTO.getResourceManagerId() != null) {
             ResourceManager resourceManager = tryCast(ResourceManager.class, projectRoleService.findInternal(employeeAssignDTO.getResourceManagerId()));
@@ -243,7 +241,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         }
         if (!employeeAssignDTO.getSolutionArchitectIdSet().isEmpty()) {
             employeeAssignDTO.getSolutionArchitectIdSet().forEach(solutionArchitectId -> {
-                project.addSolutionArchitect(tryCast(SolutionArchitect.class, projectRoleService.find(solutionArchitectId)));
+                project.addSolutionArchitect(tryCast(SolutionArchitect.class, projectRoleService.findInternal(solutionArchitectId)));
             });
         }
         if (employeeAssignDTO.getBusinessLeaderId() != null) {

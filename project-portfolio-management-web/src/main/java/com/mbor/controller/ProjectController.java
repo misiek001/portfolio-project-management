@@ -13,8 +13,8 @@ import com.mbor.model.projectaspect.ProjectAspectLineDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
+import com.mbor.service.IAPIProjectService;
 import com.mbor.service.IEmployeeService;
-import com.mbor.service.IProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,11 +27,11 @@ import java.util.List;
 @RequestMapping("/projects")
 public class ProjectController extends RawController {
 
-    private final IProjectService projectService;
+    private final IAPIProjectService projectService;
 
     private final IEmployeeService employeeService;
 
-    public ProjectController(IProjectService projectService, IEmployeeService employeeService) {
+    public ProjectController(IAPIProjectService projectService, IEmployeeService employeeService) {
         this.projectService = projectService;
         this.employeeService = employeeService;
     }
@@ -101,7 +101,7 @@ public class ProjectController extends RawController {
     }
 
     @Override
-    public IProjectService getService() {
+    public IAPIProjectService getService() {
         return projectService;
     }
 

@@ -64,7 +64,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    void createProject() throws Exception {
+    void createProjectThenSuccess() throws Exception {
         String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
 
         mockMvc.perform(post("/projects")

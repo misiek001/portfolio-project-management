@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-public class ProjectRoleService extends RawService<ProjectRole> implements IProjectRoleService<ProjectRole> {
+public class ProjectRoleService extends RawService<ProjectRole> implements IProjectRoleService {
 
     private final IProjectRoleDao projectRoleDao;
 

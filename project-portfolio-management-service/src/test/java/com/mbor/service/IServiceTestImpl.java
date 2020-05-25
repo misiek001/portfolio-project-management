@@ -43,9 +43,11 @@ public abstract class IServiceTestImpl<T> implements IServiceTest {
     @Override
     @Test
     public void saveThenSuccess() {
+        System.out.println("Begining of save test");
         T t = createNewEntity();
         assertNotNull(getService().saveInternal(t));
         assertEquals(createdEntitiesNumber + 1, getService().findAllInternal().size());
+        System.out.println("End of save test. SHould be rollback");
     }
 
     protected abstract T createNewEntity();

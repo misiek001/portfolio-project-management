@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,7 +51,7 @@ class DemandSheetControllerTest {
     }
 
     @Test
-    void createDemandSheet() throws Exception {
+    void createDemandSheetThenSuccess() throws Exception {
         String accessToken = obtainAccessToken(env.getProperty("user.businessemployee.name"), env.getProperty("user.businessemployee.password"));
 
         mockMvc.perform(post("/demandsheets")
@@ -60,6 +61,23 @@ class DemandSheetControllerTest {
                 .accept("application/json;charset=UTF-8")
         ).andExpect(status().isCreated());
     }
+
+    @Test
+    void getAllDemandSheetsOfBrmWithNoProjectThenSuccess() throws Exception {
+        String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("searchingDemandSheets", "ofBrmNoProject");
+
+        mockMvc.perform(get("/demandsheets")
+                .header("Authorization", "Bearer " + accessToken)
+                .params(params)
+                .contentType("application/json;charset=UTF-8")
+                .accept("application/json;charset=UTF-8")
+        ).andExpect(status().isOk());
+    }
+
+
 
     @Test
     public void obtainAccessTokenThenSuccess() throws Exception {
