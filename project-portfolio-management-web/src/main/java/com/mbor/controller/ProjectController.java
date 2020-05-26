@@ -1,5 +1,6 @@
 package com.mbor.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.mbor.domain.Consultant;
 import com.mbor.domain.Project;
 import com.mbor.domain.Supervisor;
@@ -11,9 +12,11 @@ import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.ProjectAspectLineDTO;
+import com.mbor.model.projectworkflow.OpenProjectDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
+import com.mbor.model.views.Views;
 import com.mbor.service.IAPIProjectService;
 import com.mbor.service.IEmployeeService;
 import org.springframework.http.HttpStatus;
@@ -51,6 +54,14 @@ public class ProjectController extends RawController<ProjectDTO, Project> {
     public ResponseEntity<ProjectCreatedDTO> createProject(@RequestBody ProjectCreationDTO projectCreationDTO){
         ProjectCreatedDTO projectCreatedDTO =  getService().save(projectCreationDTO);
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/{projectId}")
+    @JsonView(Views.ProjectInternal.class)
+    @PreAuthorize("hasAuthority('open_project')")
+    public ResponseEntity<ProjectDTO> openProject(@PathVariable long projectId, @RequestBody OpenProjectDTO openProjectDTO){
+        ProjectDTO openedProject = projectService.openProject(projectId, openProjectDTO);
+        return new ResponseEntity<>(openedProject, HttpStatus.OK);
     }
 
     @PostMapping(params = "search=true")

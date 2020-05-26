@@ -60,6 +60,7 @@ public class DevDataLoader {
     public static Long FIRST_PROJECT_ID;
     public static Long SECOND_PROJECT_ID;
     public static Long THIRD_PROJECT_ID;
+    public static Long FOURTH_PROJECT_ID;
 
     public DevDataLoader(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -67,7 +68,7 @@ public class DevDataLoader {
 
     @PostConstruct
     public void onApplicationEvent() {
-        doWithinTransaction(addProjectRoleRoles);
+        doWithinTransaction(addUserRoles);
         doWithinTransaction(addBusinessUnits);
         doWithinTransaction(addEmployees);
         doWithinTransaction(addBRMToBusinessUnits);
@@ -85,7 +86,7 @@ public class DevDataLoader {
         entityTransaction.commit();
     }
 
-    private Consumer<EntityManager> addProjectRoleRoles = entityManager ->  {
+    private Consumer<EntityManager> addUserRoles = entityManager ->  {
 
         Role resourceManagerRole = new Role();
         resourceManagerRole.setName("resource-manager");
@@ -112,11 +113,14 @@ public class DevDataLoader {
         createProjectPrivilege.setName("create_project");
         Privilege assignEmployeePrivilege = new Privilege();
         assignEmployeePrivilege.setName("assign_employee");
+        Privilege openProjectPrivilege = new Privilege();
+        openProjectPrivilege.setName("open_project");
         Privilege getAllDemandSheetsOfBrmWithNoProjectsPrivilege = new Privilege();
         getAllDemandSheetsOfBrmWithNoProjectsPrivilege.setName("get_all_demandsheets_of_brm_with_no_projects");
         brmRole.addPrivilege(createProjectPrivilege);
         brmRole.addPrivilege(assignEmployeePrivilege);
         brmRole.addPrivilege(getAllDemandSheetsOfBrmWithNoProjectsPrivilege);
+        brmRole.addPrivilege(openProjectPrivilege);
         entityManager.persist(brmRole);
         BRM_ROLE_ID = brmRole.getId();
 
@@ -301,14 +305,14 @@ public class DevDataLoader {
         secondProject.setProjectName("SecondProjectName");
         Project thirdProject = new Project();
         thirdProject.setProjectName("ThirdProjectName");
+        Project fourthProject = new Project();
+        fourthProject.setProjectName("Fourth ProjectName");
 
         firstProject.setProjectClass(ProjectClass.I);
         secondProject.setProjectClass(ProjectClass.I);
         thirdProject.setProjectClass(ProjectClass.II);
-        
-//        firstProject.setProjectStatus(ProjectStatus.ANALYSIS);
-//        secondProject.setProjectStatus(ProjectStatus.ANALYSIS);
-//        thirdProject.setProjectStatus(ProjectStatus.IN_PROGRESS);
+        fourthProject.setProjectClass(ProjectClass.III);
+
 
         firstProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
         firstProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, FIRST_PROJECT_MANAGER_ID));
@@ -328,6 +332,8 @@ public class DevDataLoader {
         thirdProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
         thirdProject.setPrimaryBusinessUnit(simpleFind(entityManager, BusinessUnit.class, SECOND_OPERATION_BUSINESS_UNIT_ID));
 
+        fourthProject.setPrimaryBusinessUnit(simpleFind(entityManager, BusinessUnit.class,  FIRST_OPERATION_BUSINESS_UNIT_ID));
+
         entityManager.persist(firstProject);
         FIRST_PROJECT_ID = firstProject.getId();
 
@@ -336,6 +342,9 @@ public class DevDataLoader {
 
         entityManager.persist(thirdProject);
         THIRD_PROJECT_ID = thirdProject.getId();
+
+        entityManager.persist(fourthProject);
+        FOURTH_PROJECT_ID = fourthProject.getId();
 
     };
 

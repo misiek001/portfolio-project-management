@@ -2,10 +2,13 @@ package com.mbor.service;
 
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
-import com.mbor.domain.employeeinproject.*;
+import com.mbor.domain.employeeinproject.BusinessLeader;
+import com.mbor.domain.employeeinproject.ProjectManager;
+import com.mbor.domain.employeeinproject.ResourceManager;
+import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.ProjectAspectLine;
 import com.mbor.exception.NoSetProjectManagerException;
-import com.mbor.exception.ProjectRoleAlreadyExistException;
+import com.mbor.exception.ProjectCannotBeOpenedException;
 import com.mbor.exception.WrongProjectManagerException;
 import com.mbor.mapper.ProjectAspectLineMapper;
 import com.mbor.mapper.ProjectMapper;
@@ -15,6 +18,7 @@ import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.ProjectAspectLineDTO;
+import com.mbor.model.projectworkflow.OpenProjectDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
@@ -70,17 +74,56 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     public ProjectCreatedDTO save(ProjectCreationDTO projectCreationDTO) {
         Project project = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
         saveInternal(project);
+        project.setProjectClass(Enum.valueOf(ProjectClass.class, projectCreationDTO.getProjectClass().name()));
+        project.setBusinessRelationManager((BusinessRelationManager) employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId()));
+        project.setBusinessLeader((BusinessLeader) projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId()));
+        project.setPrimaryBusinessUnit(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId()));
+        projectCreationDTO.getSecondaryBusinessUnitIds().forEach( id -> {
+            project.addSecondaryBusinessUnit(businessUnitService.findInternal(id));
+        });
         ProjectStatusHistoryLine projectStatusHistoryLine = new ProjectStatusHistoryLine();
         projectStatusHistoryLine.setPreviousStatus(ProjectStatus.ANALYSIS);
         projectStatusHistoryLine.setCurrentStatus(ProjectStatus.ANALYSIS);
         projectStatusHistoryLine.setDescription("Project opened");
         project.addProjectStatusHistoryLine(projectStatusHistoryLine);
-        project.setBusinessRelationManager((BusinessRelationManager) employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId()));
-        project.setBusinessLeader((BusinessLeader) projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId()));
-        project.setPrimaryBusinessUnit(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId()));
-
 
         return projectMapper.convertEntityToCreatedDto(project);
+    }
+
+    @Override
+    public ProjectDTO openProject(long projectId, OpenProjectDTO openProjectDTO) {
+        Project project = findInternal(projectId);
+
+        validateProjectIfCanByOpen(project);
+        project.setResourceManager((ResourceManager) projectRoleService.findInternal(openProjectDTO.getResourceManagerId()));
+        project.setProjectManager((ProjectManager) projectRoleService.findInternal(openProjectDTO.getProjectManagerId()));
+        openProjectDTO.getSolutionArchitects().forEach( id -> {
+            project.addSolutionArchitect((SolutionArchitect) projectRoleService.findInternal(id));
+        });
+        ProjectStatusHistoryLine projectStatusHistoryLine = new ProjectStatusHistoryLine();
+        projectStatusHistoryLine.setPreviousStatus(ProjectStatus.ANALYSIS);
+        projectStatusHistoryLine.setCurrentStatus(ProjectStatus.AWAITING);
+        project.addProjectStatusHistoryLine(projectStatusHistoryLine);
+        updateInternal(project);
+        return projectMapper.convertToDto(project);
+    }
+
+    private void validateProjectIfCanByOpen(Project project) {
+        if(project.getResourceManager() != null){
+            throw new ProjectCannotBeOpenedException("Project has already assigned RM with ID " + project.getResourceManager().getId());
+        }
+        if(project.getProjectManager() != null){
+            throw new ProjectCannotBeOpenedException("Project has already assigned PM with ID " + project.getProjectManager().getId());
+        }
+        if(!project.getSolutionArchitects().isEmpty()){
+            throw new ProjectCannotBeOpenedException("Project has already assigned SA");
+        }
+        if(project.getRecentStatus().isPresent()){
+            ProjectStatusHistoryLine projectStatusHistoryLine = project.getRecentStatus().get();
+            if(!projectStatusHistoryLine.getCurrentStatus().equals(ProjectStatus.ANALYSIS)){
+                throw new ProjectCannotBeOpenedException("Project is not in ANALYSIS status, but: " + projectStatusHistoryLine.getCurrentStatus());
+            }
+        }
     }
 
     @Override
@@ -217,6 +260,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         return projectDTOList;
     }
 
+
     @Override
     public List<ProjectDTO> findConsultantProjects(Long consultantId){
         List<Project> foundProject = getDao().findConsultantProject(consultantId);
@@ -257,15 +301,6 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     private Function<ProjectStatusDTO, ProjectStatus> mapProjectStatusDTOToProjectStatus() {
         return projectStatusDTO -> Enum.valueOf(ProjectStatus.class, projectStatusDTO.name());
-    }
-
-    private  <T extends ProjectRole> void  checkIfRoleAlreadyExist(Class<T> clazz, Long employeeId){
-        List<ProjectRole> roles = projectRoleService.findAllRoleOfEmployee(employeeId);
-        roles.forEach( role -> {
-            if (clazz.isInstance(role)) {
-                throw new ProjectRoleAlreadyExistException("Employee with id:" + employeeId + "already has a role:" + clazz.getName());
-            }
-        });
     }
 
     @Override

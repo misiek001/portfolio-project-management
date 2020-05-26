@@ -9,6 +9,7 @@ import com.mbor.model.projectaspect.*;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.spring.ServiceConfiguration;
 import com.mbor.spring.WebConfiguration;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -172,6 +173,11 @@ class ProjectControllerTest {
         ).andExpect(status().isOk());
     }
 
+    @Test
+    @Ignore
+    void openProjectThenSuccess() {
+    }
+
     private String obtainAccessToken(String username, String password) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
@@ -265,5 +271,6 @@ class ProjectControllerTest {
         realEndDateDTO.setReason(reason);
         return mapper.writeValueAsString(realEndDateDTO);
     }
+
 
 }

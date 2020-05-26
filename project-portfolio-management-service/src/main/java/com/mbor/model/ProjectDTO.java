@@ -40,7 +40,7 @@ public class ProjectDTO implements IProjectDTO {
     private BusinessLeaderDTO businessLeader;
 
     @JsonView(Views.Public.class)
-    private Set<SolutionArchitectDTO> solutionArchitect;
+    private Set<SolutionArchitectDTO> solutionArchitects;
 
     @JsonView(Views.Public.class)
     private Set<ProjectStatusHistoryLineDTO> projectStatusHistoryLines;
@@ -73,6 +73,14 @@ public class ProjectDTO implements IProjectDTO {
 
     public String getProjectName() {
         return projectName;
+    }
+
+    public DemandSheetDTO getDemandSheetDTO() {
+        return demandSheetDTO;
+    }
+
+    public void setDemandSheetDTO(DemandSheetDTO demandSheetDTO) {
+        this.demandSheetDTO = demandSheetDTO;
     }
 
     public void setProjectName(String projectName) {
@@ -119,12 +127,12 @@ public class ProjectDTO implements IProjectDTO {
         this.businessLeader = businessLeader;
     }
 
-    public Set<SolutionArchitectDTO> getSolutionArchitect() {
-        return solutionArchitect;
+    public Set<SolutionArchitectDTO> getSolutionArchitects() {
+        return solutionArchitects;
     }
 
-    public void setSolutionArchitect(Set<SolutionArchitectDTO> solutionArchitect) {
-        this.solutionArchitect = solutionArchitect;
+    public void setSolutionArchitects(Set<SolutionArchitectDTO> solutionArchitects) {
+        this.solutionArchitects = solutionArchitects;
     }
 
     public Set<ProjectStatusHistoryLineDTO> getProjectStatusHistoryLines() {

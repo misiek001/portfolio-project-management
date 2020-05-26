@@ -6,6 +6,7 @@ import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.ProjectAspectLineDTO;
+import com.mbor.model.projectworkflow.OpenProjectDTO;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.model.search.SupervisorSearchProjectDTO;
@@ -27,4 +28,6 @@ public interface IAPIProjectService extends IAPIService<ProjectCreatedDTO, Proje
     List<ProjectDTO> findConsultantProjects(Long consultantId);
 
     ProjectDTO assignEmployee(Long projectId, EmployeeAssignDTO employeeAssignDTO);
+
+    ProjectDTO openProject(long projectId, OpenProjectDTO openProjectDTO);
 }
