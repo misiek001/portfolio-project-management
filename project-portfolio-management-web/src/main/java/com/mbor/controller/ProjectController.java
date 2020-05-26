@@ -1,6 +1,7 @@
 package com.mbor.controller;
 
 import com.mbor.domain.Consultant;
+import com.mbor.domain.Project;
 import com.mbor.domain.Supervisor;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
@@ -25,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/projects")
-public class ProjectController extends RawController {
+public class ProjectController extends RawController<ProjectDTO, Project> {
 
     private final IAPIProjectService projectService;
 

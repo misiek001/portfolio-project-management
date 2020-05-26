@@ -8,5 +8,6 @@ public interface IProjectRoleDao extends IDao<ProjectRole> {
 
     List<ProjectRole> findAllRoleOfEmployee(Long employeeId);
 
-    <T extends ProjectRole> List<T> findAllDemandedRole(Class<T> clazz);
+    <T extends ProjectRole> List<T> findAllDemandedRole(Class<T> t);
+
 }

@@ -11,24 +11,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-public abstract class RawController implements IController {
+public abstract class RawController<U, T> implements IController<U, T>  {
 
     @Override
-    public <U, T> U save(T t) {
+    public  U save(T t) {
         return (U) getService().save(t);
     }
 
     @GetMapping
     @JsonView(Views.ProjectInternal.class)
     @Override
-    public <U>  ResponseEntity<List<U>> findAll() {
+    public  ResponseEntity<List<U>> findAll() {
         List<U> result = getService().findAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @Override
-    public <U> ResponseEntity<U> find(Long id) {
+    public  ResponseEntity<U> find(Long id) {
         U result = (U) getService().find(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

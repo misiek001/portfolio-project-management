@@ -8,6 +8,8 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class ProjectRole< T extends IEmployee> {
 
+    private String name;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column( nullable = false, unique = true)
@@ -22,6 +24,14 @@ public abstract class ProjectRole< T extends IEmployee> {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public IEmployee getEmployee() {
