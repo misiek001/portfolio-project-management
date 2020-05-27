@@ -95,17 +95,33 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         Project project = findInternal(projectId);
 
         validateProjectIfCanByOpen(project);
+
         project.setResourceManager((ResourceManager) projectRoleService.findInternal(openProjectDTO.getResourceManagerId()));
         project.setProjectManager((ProjectManager) projectRoleService.findInternal(openProjectDTO.getProjectManagerId()));
         openProjectDTO.getSolutionArchitects().forEach( id -> {
             project.addSolutionArchitect((SolutionArchitect) projectRoleService.findInternal(id));
         });
-        ProjectStatusHistoryLine projectStatusHistoryLine = new ProjectStatusHistoryLine();
-        projectStatusHistoryLine.setPreviousStatus(ProjectStatus.ANALYSIS);
-        projectStatusHistoryLine.setCurrentStatus(ProjectStatus.AWAITING);
+
+        ProjectStatusHistoryLine projectStatusHistoryLine = prepareProjectStatusHistoryLine(ProjectStatus.ANALYSIS, ProjectStatus.AWAITING, "Project awaiting to start");
         project.addProjectStatusHistoryLine(projectStatusHistoryLine);
         updateInternal(project);
         return projectMapper.convertToDto(project);
+    }
+
+    @Override
+    public void rejectProject(long projectId) {
+        Project project = findInternal(projectId);
+        ProjectStatusHistoryLine projectStatusHistoryLine = prepareProjectStatusHistoryLine(ProjectStatus.ANALYSIS, ProjectStatus.REJECTED, "Project rejected");
+        project.addProjectStatusHistoryLine(projectStatusHistoryLine);
+        updateInternal(project);
+    }
+
+    private ProjectStatusHistoryLine prepareProjectStatusHistoryLine(ProjectStatus previousStatus, ProjectStatus currentStatus, String description) {
+        ProjectStatusHistoryLine projectStatusHistoryLine = new ProjectStatusHistoryLine();
+        projectStatusHistoryLine.setPreviousStatus(previousStatus);
+        projectStatusHistoryLine.setCurrentStatus(currentStatus);
+        projectStatusHistoryLine.setDescription(description);
+        return projectStatusHistoryLine;
     }
 
     private void validateProjectIfCanByOpen(Project project) {

@@ -56,12 +56,19 @@ public class ProjectController extends RawController<ProjectDTO, Project> {
         return new ResponseEntity<>(projectCreatedDTO, HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/{projectId}")
+    @PostMapping(value = "/{projectId}", params="projectAction=open")
     @JsonView(Views.ProjectInternal.class)
     @PreAuthorize("hasAuthority('open_project')")
     public ResponseEntity<ProjectDTO> openProject(@PathVariable long projectId, @RequestBody OpenProjectDTO openProjectDTO){
         ProjectDTO openedProject = projectService.openProject(projectId, openProjectDTO);
         return new ResponseEntity<>(openedProject, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{projectId}", params="projectAction=reject")
+    @PreAuthorize("hasAuthority('reject_project')")
+    public ResponseEntity<Void> rejectProject(@PathVariable long projectId){
+        projectService.rejectProject(projectId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(params = "search=true")

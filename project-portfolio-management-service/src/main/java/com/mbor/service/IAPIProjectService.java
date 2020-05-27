@@ -30,4 +30,6 @@ public interface IAPIProjectService extends IAPIService<ProjectCreatedDTO, Proje
     ProjectDTO assignEmployee(Long projectId, EmployeeAssignDTO employeeAssignDTO);
 
     ProjectDTO openProject(long projectId, OpenProjectDTO openProjectDTO);
+
+    void rejectProject(long projectId);
 }
