@@ -9,10 +9,12 @@ import com.mbor.service.IAPIProjectRoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/projectRoles")
+@RestController
+@RequestMapping(("/projectRoles"))
 public class ProjectRoleController extends RawController<ProjectRoleDTO, ProjectRole> {
 
     private final IAPIProjectRoleService projectRoleService;

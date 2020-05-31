@@ -8,8 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,7 @@ import java.util.Map;
 @EnableWebMvc
 @Configuration
 @ComponentScan(basePackages = {"com.mbor.controller", "com.mbor.mapper", "com.mbor.security", "com.mbor.exceptionhandler" })
+@EnableSwagger2
 public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
@@ -35,5 +38,14 @@ public class WebConfiguration implements WebMvcConfigurer {
         viewResolver.setContentNegotiationManager(contentNegotiationManager);
         return viewResolver;
 }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/swagger/**").addResourceLocations("classpath:/swagger/");
+    }
+
 
 }
