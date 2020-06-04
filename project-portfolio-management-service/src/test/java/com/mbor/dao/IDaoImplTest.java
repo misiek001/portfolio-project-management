@@ -1,6 +1,6 @@
 package com.mbor.dao;
 
-import com.mbor.entityFactory.TestEntityFactory;
+import com.mbor.entityFactory.TestObjectFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public abstract class IDaoImplTest<T> implements IDaoTest {
     protected static final int CREATED_ENTITIES_NUMBER = 3;
 
     @Autowired
-    protected  TestEntityFactory testEntityFactory;
+    protected TestObjectFactory testObjectsFactory;
 
     @Override
     @Test

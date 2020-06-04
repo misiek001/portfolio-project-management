@@ -2,7 +2,7 @@ package com.mbor.dao;
 
 import com.mbor.configuration.TestConfiguration;
 import com.mbor.domain.BusinessUnit;
-import com.mbor.entityFactory.TestEntityFactory;
+import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,12 +27,12 @@ class BusinessUnitDaoTest extends IDaoImplTest<BusinessUnit> {
     IBusinessUnitDao businessUnitDao;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestEntityFactory testEntityFactory) {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestObjectFactory testObjectsFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
         for (int i = 0; i < IDaoImplTest.CREATED_ENTITIES_NUMBER; i++) {
-            BusinessUnit businessUnit = testEntityFactory.prepareBusinessUnit();
+            BusinessUnit businessUnit = testObjectsFactory.prepareBusinessUnit();
             entityManager.persist(businessUnit);
             entityIdList.add(businessUnit.getId());
         }
@@ -52,6 +52,6 @@ class BusinessUnitDaoTest extends IDaoImplTest<BusinessUnit> {
 
     @Override
     protected BusinessUnit createNewEntity() {
-        return testEntityFactory.prepareBusinessUnit();
+        return testObjectsFactory.prepareBusinessUnit();
     }
 }

@@ -4,7 +4,7 @@ import com.mbor.configuration.TestConfiguration;
 import com.mbor.domain.Consultant;
 import com.mbor.domain.Employee;
 import com.mbor.domain.security.User;
-import com.mbor.entityFactory.TestEntityFactory;
+import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class UserDaoTest {
     private IUserDao userDao;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestEntityFactory testEntityFactory) {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestObjectFactory testObjectsFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         Random random = new Random();

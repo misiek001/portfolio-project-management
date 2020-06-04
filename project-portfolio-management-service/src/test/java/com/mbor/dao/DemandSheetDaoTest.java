@@ -4,7 +4,7 @@ import com.mbor.configuration.TestConfiguration;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.DemandSheet;
 import com.mbor.domain.Project;
-import com.mbor.entityFactory.TestEntityFactory;
+import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,12 +38,12 @@ class DemandSheetDaoTest  extends IDaoImplTest<DemandSheet> {
     private static Long PROJECT_ID;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestEntityFactory testEntityFactory)  {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestObjectFactory testObjectsFactory)  {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
         for (int i = 0; i < IDaoImplTest.CREATED_ENTITIES_NUMBER; i++) {
-            DemandSheet demandSheet = testEntityFactory.prepareDemandSheet();
+            DemandSheet demandSheet = testObjectsFactory.prepareDemandSheet();
             entityManager.persist(demandSheet);
             entityIdList.add(demandSheet.getId());
         }
@@ -100,7 +100,7 @@ class DemandSheetDaoTest  extends IDaoImplTest<DemandSheet> {
 
     @Override
     protected DemandSheet createNewEntity() {
-        return testEntityFactory.prepareDemandSheet();
+        return testObjectsFactory.prepareDemandSheet();
     }
 
 }
