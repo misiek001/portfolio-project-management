@@ -3,11 +3,13 @@ package com.mbor.dao.projectroledao;
 import com.mbor.dao.IEmployeeDao;
 import com.mbor.dao.IProjectDao;
 import com.mbor.dao.IProjectRoleDao;
+import com.mbor.dao.TableClearer;
 import com.mbor.domain.Consultant;
 import com.mbor.domain.Supervisor;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,6 +64,11 @@ class ProjectRoleDaoTest {
             entityManager.persist(resourceManager);
         }
         transaction.commit();
+    }
+
+    @AfterAll
+    static void clear(@Autowired TableClearer tableClearer){
+        tableClearer.clearTables();
     }
 
     @Test

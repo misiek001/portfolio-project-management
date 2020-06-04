@@ -1,5 +1,6 @@
 package com.mbor.service;
 
+import com.mbor.dao.IDao;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.model.creation.BusinessUnitCreatedDTO;
 import com.mbor.model.creation.BusinessUnitCreationDTO;
@@ -74,5 +75,10 @@ class BusinessUnitServiceTest extends IServiceTestImpl {
     @Override
     protected IBusinessUnitService getService() {
         return businessUnitService;
+    }
+
+    @Override
+    protected IDao getDao() {
+        return null;
     }
 }

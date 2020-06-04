@@ -1,5 +1,6 @@
 package com.mbor.service.employee;
 
+import com.mbor.dao.IDao;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.security.User;
 import com.mbor.model.creation.EmployeeCreatedDTO;
@@ -97,5 +98,10 @@ class BusinessRelationManagerServiceTest extends IServiceTestImpl<BusinessRelati
     @Override
     protected IEmployeeService getService() {
         return employeeService;
+    }
+
+    @Override
+    protected IDao getDao() {
+        return null;
     }
 }

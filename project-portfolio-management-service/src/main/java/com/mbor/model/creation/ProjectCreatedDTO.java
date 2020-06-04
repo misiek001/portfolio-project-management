@@ -5,7 +5,7 @@ import com.mbor.model.BusinessRelationManagerDTO;
 import com.mbor.model.BusinessUnitDTO;
 import com.mbor.model.ProjectStatusHistoryLineDTO;
 
-import java.util.Set;
+import java.util.List;
 
 public class ProjectCreatedDTO  {
 
@@ -13,7 +13,7 @@ public class ProjectCreatedDTO  {
 
     private String projectName;
 
-    private Set<ProjectStatusHistoryLineDTO> projectStatusHistoryLines;
+    private List<ProjectStatusHistoryLineDTO> projectStatusHistoryLines;
 
     private BusinessRelationManagerDTO businessRelationManager;
 
@@ -37,11 +37,11 @@ public class ProjectCreatedDTO  {
         this.projectName = projectName;
     }
 
-    public Set<ProjectStatusHistoryLineDTO> getProjectStatusHistoryLines() {
+    public List<ProjectStatusHistoryLineDTO> getProjectStatusHistoryLines() {
         return projectStatusHistoryLines;
     }
 
-    public void setProjectStatusHistoryLines(Set<ProjectStatusHistoryLineDTO> projectStatusHistoryLines) {
+    public void setProjectStatusHistoryLines(List<ProjectStatusHistoryLineDTO> projectStatusHistoryLines) {
         this.projectStatusHistoryLines = projectStatusHistoryLines;
     }
 

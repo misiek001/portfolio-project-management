@@ -3,11 +3,11 @@ package com.mbor.service;
 public interface IServiceTest {
 
 
-    void findThenSuccess();
+    void findInternalThenSuccess();
 
-    void findAllThenSuccess();
+    void findAllInternalThenSuccess();
 
-    void deleteThenSuccess();
+    void deleteInternalThenSuccess();
 
-    void saveThenSuccess();
+    void saveInternalThenSuccess();
 }

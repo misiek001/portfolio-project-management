@@ -1,16 +1,17 @@
 package com.mbor.service;
 
+import com.mbor.dao.IDao;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
-@Transactional
+@ExtendWith(MockitoExtension.class)
 public abstract class IServiceTestImpl<T> implements IServiceTest {
 
     protected static int createdEntitiesNumber = 3;
@@ -21,36 +22,56 @@ public abstract class IServiceTestImpl<T> implements IServiceTest {
 
     protected static Random random = new Random();
 
+
     @Override
     @Test
-    public void findThenSuccess() {
+    public void findInternalThenSuccess() {
+        Optional<T> entityOptional = Optional.of(createNewEntity());
+
+        when(getDao().find(getElementIndex(0))).thenReturn(entityOptional);
+
         assertNotNull(getService().findInternal(firstEntityId));
     }
 
     @Override
     @Test
-    public void findAllThenSuccess() {
+    public void findAllInternalThenSuccess() {
+        List<T> list = new ArrayList<>();
+        for(int i = 0; i < createdEntitiesNumber; i++){
+            list.add(createNewEntity());
+        }
+
+        when(getDao().findAll()).thenReturn(list);
+
         assertEquals(createdEntitiesNumber, getService().findAllInternal().size());
     }
 
     @Override
     @Test
-    public void deleteThenSuccess() {
-        getService().deleteInternal(firstEntityId);
-        assertEquals(createdEntitiesNumber - 1, getService().findAllInternal().size());
+    public void deleteInternalThenSuccess() {
+        getService().deleteInternal(getElementIndex(0));
+
+        verify(getDao(), times(1)).delete(getElementIndex(0));
     }
 
     @Override
     @Test
-    public void saveThenSuccess() {
-        System.out.println("Begining of save test");
-        T t = createNewEntity();
-        assertNotNull(getService().saveInternal(t));
-        assertEquals(createdEntitiesNumber + 1, getService().findAllInternal().size());
-        System.out.println("End of save test. SHould be rollback");
+    public void saveInternalThenSuccess() {
+        T entity = createNewEntity();
+        Optional<T> entityOptional = Optional.of(entity);
+
+        when(getDao().save(entity)).thenReturn(entityOptional);
+
+        assertNotNull(getService().saveInternal(entity));
+    }
+
+    protected static Long getElementIndex(int index){
+        return entityIdList.get(index);
     }
 
     protected abstract T createNewEntity();
+
+    protected abstract IDao getDao();
 
     protected abstract IInternalService getService();
 }

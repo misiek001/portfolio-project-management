@@ -74,7 +74,6 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     public ProjectCreatedDTO save(ProjectCreationDTO projectCreationDTO) {
         Project project = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
         saveInternal(project);
-        project.setProjectClass(Enum.valueOf(ProjectClass.class, projectCreationDTO.getProjectClass().name()));
         project.setBusinessRelationManager((BusinessRelationManager) employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId()));
         project.setBusinessLeader((BusinessLeader) projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId()));
         project.setPrimaryBusinessUnit(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId()));

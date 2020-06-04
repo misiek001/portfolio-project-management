@@ -1,6 +1,5 @@
 package com.mbor.mapper;
 
-import com.mbor.TestSecurityConfiguration;
 import com.mbor.domain.BusinessEmployee;
 import com.mbor.model.BusinessEmployeeDTO;
 import com.mbor.spring.ServiceConfiguration;
@@ -18,7 +17,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class})
-@ContextConfiguration(classes = {ServiceConfiguration.class, TestSecurityConfiguration.class})
+@ContextConfiguration(classes = ServiceConfiguration.class)
 @ActiveProfiles("test")
 @Transactional
 class BusinessEmployeeMapperTest {

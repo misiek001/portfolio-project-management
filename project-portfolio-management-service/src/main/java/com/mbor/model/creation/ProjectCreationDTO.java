@@ -5,7 +5,7 @@ import com.mbor.model.ProjectClassDTO;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
+import java.util.List;
 
 public class ProjectCreationDTO implements IProjectDTO {
 
@@ -27,7 +27,8 @@ public class ProjectCreationDTO implements IProjectDTO {
     @NotNull
     private Long primaryBusinessUnitId;
 
-    private Set<Long> secondaryBusinessUnitIds;
+    @NotNull
+    private List<Long> secondaryBusinessUnitIds;
 
     public String getProjectName() {
         return projectName;
@@ -77,11 +78,11 @@ public class ProjectCreationDTO implements IProjectDTO {
         this.description = description;
     }
 
-    public Set<Long> getSecondaryBusinessUnitIds() {
+    public List<Long> getSecondaryBusinessUnitIds() {
         return secondaryBusinessUnitIds;
     }
 
-    public void setSecondaryBusinessUnitIds(Set<Long> secondaryBusinessUnitIds) {
+    public void setSecondaryBusinessUnitIds(List<Long> secondaryBusinessUnitIds) {
         this.secondaryBusinessUnitIds = secondaryBusinessUnitIds;
     }
 }

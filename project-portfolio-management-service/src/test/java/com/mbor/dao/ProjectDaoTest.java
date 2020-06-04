@@ -1,10 +1,11 @@
 package com.mbor.dao;
 
+import com.mbor.configuration.TestConfiguration;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
-import com.mbor.domain.projectaspect.*;
+import com.mbor.entityFactory.TestEntityFactory;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,15 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith({SpringExtension.class})
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = {ServiceConfiguration.class, TestConfiguration.class})
 @ActiveProfiles("test")
 @Transactional
 @Rollback
@@ -36,9 +35,6 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Autowired
     public IProjectDao projectDao;
-
-
-    private TableClearer tableClearer;
 
     private static Long firstConsultantId;
     private static Long secondConsultantId;
@@ -57,37 +53,55 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired IProjectDao projectDao) {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestEntityFactory testEntityFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
-        for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
-            Project project = new Project();
-            project.setProjectName("ProjectName" + random.nextLong());
+        for (int i = 0; i < IDaoImplTest.CREATED_ENTITIES_NUMBER; i++) {
+            Project project = testEntityFactory.prepareProject();
             entityManager.persist(project);
+            entityIdList.add(project.getId());
         }
         transaction.commit();
-        prepareTestData(entityManagerFactory, projectDao);
+        prepareTestData(entityManagerFactory, testEntityFactory);
+    }
+
+    @Override
+    public void delete_ThenSuccess() {
+        getDao().delete(getElementIndex(3));
+        entityIdList.remove(3);
+        assertEquals(entityIdList.size(), getDao().findAll().size());
+    }
+
+    @Override
+    public void findAll_ThenSuccess() {
+        List<Project> lists = getDao().findAll();
+        assertEquals(entityIdList.size(), lists.size());
     }
 
     @AfterAll
     static void clear(@Autowired TableClearer tableClearer){
         tableClearer.clearTables();
+        entityIdList.clear();
     }
 
     @Test
     public void addProjectLineThenSuccess(){
-        Project project = projectDao.find(1L).get();
-        project.addProjectAspectLine(prepareProjectAspectLine());
+        Optional<Project> projectOptional = projectDao.find(getElementIndex(0));
+        if(!projectOptional.isPresent()){
+            fail();
+        }
+        Project project = projectOptional.get();
+        project.addProjectAspectLine(testEntityFactory.prepareProjectAspectLine());
         projectDao.update(project);
-        project = projectDao.find(1l).get();
+        project = projectDao.find(getElementIndex(0)).get();
         assertEquals(1, project.getProjectAspectLines().size());
     }
 
     @Test
-    public void findResourceManagerProjectsIndependentCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory){
+    public void findResourceManagerProjectsIndependentCriteriaThenSuccess(){
         assertEquals( 3, projectDao.findResourceManagerProjects(resourceManagerId, null, null, null, null).size());
-        assertEquals(1,  projectDao.findResourceManagerProjects(resourceManagerId, 1l, null, null, null).size());
+        assertEquals(1,  projectDao.findResourceManagerProjects(resourceManagerId, getElementIndex(3), null, null, null).size());
 
         List<ProjectClass> projectClasses = new ArrayList<>();
         projectClasses.add(ProjectClass.I);
@@ -102,85 +116,57 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
         assertEquals(3,  projectDao.findResourceManagerProjects(resourceManagerId, null, null, null, projectStatuses).size());
     }
     @Test
-    public void findResourceManagerProjectsCombinedCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory){
+    public void findResourceManagerProjectsCombinedCriteriaThenSuccess(){
         List<ProjectClass> projectClasses = new ArrayList<>();
         projectClasses.add(ProjectClass.I);
 
         List<ProjectStatus> projectStatuses = new ArrayList<>();
         projectStatuses.add(ProjectStatus.ANALYSIS);
 
-        assertEquals(1,  projectDao.findResourceManagerProjects(resourceManagerId, 1l, "Name", projectClasses, projectStatuses).size());
+        assertEquals(1,  projectDao.findResourceManagerProjects(resourceManagerId, getElementIndex(0), "Name", projectClasses, projectStatuses).size());
     }
 
     @Test
-    public void findSupervisorProjectsIndependentCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory){
+    public void findSupervisorProjectsIndependentCriteriaThenSuccess(){
         assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, null).size());
-
         assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId)).size());
-
         assertEquals(1, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, Collections.singletonList(thirdSolutionArchitectId)).size());
-
         assertEquals(1, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Collections.singletonList(firstProjectManagerId), null).size());
-
         assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Arrays.asList(firstProjectManagerId, secondProjectManagerId), null).size());
     }
 
     @Test
-    public void findSupervisorProjectsCombinedCriteriaThenSuccess(@Autowired EntityManagerFactory entityManagerFactory) {
+    public void findSupervisorProjectsCombinedCriteriaThenSuccess() {
         assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Collections.singletonList(firstProjectManagerId), Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId)).size());
     }
 
     @Test
-    public void findConsultantProjectThenSuccess(@Autowired EntityManagerFactory entityManagerFactory) throws InterruptedException {
+    public void findConsultantProjectThenSuccess()  {
         assertEquals(1, projectDao.findConsultantProject(firstConsultantId).size());
-
         assertEquals(2, projectDao.findConsultantProject(secondConsultantId).size());
-
         assertEquals(2, projectDao.findConsultantProject(thirdConsultantId).size());
     }
 
-    private ProjectAspectLine prepareProjectAspectLine(){
-        ProjectAspectLine projectAspectLine = new ProjectAspectLine();
 
-        BudgetAspect budgetAspect = new BudgetAspect();
-        budgetAspect.setAspectStatus(AspectStatus.GREEN);
-        budgetAspect.setDescription("Budget Description");
-        projectAspectLine.setBudgetAspect(budgetAspect);
-
-        ResourcesAspect resourcesAspect = new ResourcesAspect();
-        resourcesAspect.setAspectStatus(AspectStatus.RED);
-        resourcesAspect.setDescription("Resources Description");
-        projectAspectLine.setResourcesAspect(resourcesAspect);
-
-        ScopeAspect scopeAspect = new ScopeAspect();
-        scopeAspect.setAspectStatus(AspectStatus.YELLOW);
-        scopeAspect.setDescription("Scope Description");
-        projectAspectLine.setScopeAspect(scopeAspect);
-
-        DeadlineAspect deadlineAspect = new DeadlineAspect();
-        deadlineAspect.setAspectStatus(AspectStatus.GREEN);
-        deadlineAspect.setDescription("Deadline Description");
-        projectAspectLine.setDeadlineAspect(deadlineAspect);
-
-        return projectAspectLine;
-    }
-
-    private static void prepareTestData(EntityManagerFactory entityManagerFactory, IProjectDao projectDao) {
+    private static void prepareTestData(EntityManagerFactory entityManagerFactory, TestEntityFactory testEntityFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
 
-        Project firstProject = entityManager.find(Project.class,1l);
-        Project secondProject = entityManager.find(Project.class,2l);
-        Project thirdProject = entityManager.find(Project.class,3l);
+        Project firstProject = testEntityFactory.prepareProject();
+        entityManager.persist(firstProject);
+        entityIdList.add(firstProject.getId());
+        Project secondProject =testEntityFactory.prepareProject();
+        entityManager.persist(secondProject);
+        entityIdList.add(secondProject.getId());
+
+        Project thirdProject = testEntityFactory.prepareProject();
+        entityManager.persist(thirdProject);
+        entityIdList.add(thirdProject.getId());
 
         firstProject.setProjectClass(ProjectClass.I);
         secondProject.setProjectClass(ProjectClass.I);
         thirdProject.setProjectClass(ProjectClass.II);
-        //TODO To fix during Open Project Task
-//        firstProject.setProjectStatus(ProjectStatus.ANALYSIS);
-//        secondProject.setProjectStatus(ProjectStatus.ANALYSIS);
-//        thirdProject.setProjectStatus(ProjectStatus.IN_PROGRESS);
 
         Supervisor supervisor = new Supervisor();
         supervisor.setUserName("Supervisor");
@@ -253,9 +239,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Override
     protected Project createNewEntity() {
-        Project project = new Project();
-        project.setProjectName("ProjectName" + ProjectDaoTest.random.nextLong());
-        return project;
+        return testEntityFactory.prepareProject();
     }
 
     @Override

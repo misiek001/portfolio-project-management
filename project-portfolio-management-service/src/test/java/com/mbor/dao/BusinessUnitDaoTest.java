@@ -1,7 +1,10 @@
 package com.mbor.dao;
 
+import com.mbor.configuration.TestConfiguration;
 import com.mbor.domain.BusinessUnit;
+import com.mbor.entityFactory.TestEntityFactory;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 
 @ExtendWith({SpringExtension.class})
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = {ServiceConfiguration.class, TestConfiguration.class})
 @ActiveProfiles("test")
 @Transactional
 class BusinessUnitDaoTest extends IDaoImplTest<BusinessUnit> {
@@ -28,16 +27,22 @@ class BusinessUnitDaoTest extends IDaoImplTest<BusinessUnit> {
     IBusinessUnitDao businessUnitDao;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestEntityFactory testEntityFactory) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
-        for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
-            BusinessUnit businessUnit = new BusinessUnit();
-            businessUnit.setName("BusinessUnit" + random.nextLong());
+        for (int i = 0; i < IDaoImplTest.CREATED_ENTITIES_NUMBER; i++) {
+            BusinessUnit businessUnit = testEntityFactory.prepareBusinessUnit();
             entityManager.persist(businessUnit);
+            entityIdList.add(businessUnit.getId());
         }
         transaction.commit();
+    }
+
+    @AfterAll
+    static void clear(@Autowired TableClearer tableClearer){
+        tableClearer.clearTables();
+        entityIdList.clear();
     }
 
     @Override
@@ -47,8 +52,6 @@ class BusinessUnitDaoTest extends IDaoImplTest<BusinessUnit> {
 
     @Override
     protected BusinessUnit createNewEntity() {
-        BusinessUnit businessUnit = new BusinessUnit();
-        businessUnit.setName("BusinessUnit" + random.nextLong());
-        return businessUnit;
+        return testEntityFactory.prepareBusinessUnit();
     }
 }

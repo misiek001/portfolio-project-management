@@ -1,10 +1,14 @@
 package com.mbor.dao.employeedao;
 
+import com.mbor.configuration.TestConfiguration;
 import com.mbor.dao.EmployeeDao;
 import com.mbor.dao.IDao;
 import com.mbor.dao.IDaoImplTest;
+import com.mbor.dao.TableClearer;
 import com.mbor.domain.BusinessRelationManager;
+import com.mbor.entityFactory.TestEntityFactory;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import java.util.Random;
 
 @ExtendWith({SpringExtension.class})
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = {ServiceConfiguration.class, TestConfiguration.class})
 @ActiveProfiles("test")
 @Transactional
 class BusinessRelationManagerEmployeeDaoTest extends IDaoImplTest<BusinessRelationManager> {
@@ -31,28 +30,32 @@ class BusinessRelationManagerEmployeeDaoTest extends IDaoImplTest<BusinessRelati
     @Autowired
     EmployeeDao employeeDao;
 
-    @Override
-    protected BusinessRelationManager createNewEntity() {
-        Random random = new Random();
-        BusinessRelationManager brm = new BusinessRelationManager();
-        brm.setUserName("BRMUserName" + random.nextLong());
-        return brm;
-    }
-
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestEntityFactory testEntityFactory, @Autowired TableClearer tableClearer) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
-        for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
-            BusinessRelationManager  businessRelationManager = new BusinessRelationManager();
-            businessRelationManager.setUserName("BRMUserName" + random.nextLong());
+        for (int i = 0; i < IDaoImplTest.CREATED_ENTITIES_NUMBER; i++) {
+            BusinessRelationManager businessRelationManager = testEntityFactory.prepareBusinessRelationManager();
             entityManager.persist(businessRelationManager);
+            entityIdList.add(businessRelationManager.getId());
         }
         transaction.commit();
     }
+
+    @AfterAll
+    static void clear(@Autowired TableClearer tableClearer){
+        tableClearer.clearTables();
+        entityIdList.clear();
+    }
+
     @Override
     protected IDao getDao() {
         return employeeDao;
+    }
+
+    @Override
+    protected BusinessRelationManager createNewEntity() {
+        return testEntityFactory.prepareBusinessRelationManager();
     }
 }

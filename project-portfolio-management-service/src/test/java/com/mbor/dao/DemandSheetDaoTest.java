@@ -1,9 +1,12 @@
 package com.mbor.dao;
 
+import com.mbor.configuration.TestConfiguration;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.DemandSheet;
 import com.mbor.domain.Project;
+import com.mbor.entityFactory.TestEntityFactory;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,31 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class})
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = {ServiceConfiguration.class, TestConfiguration.class})
 @ActiveProfiles("test")
 @Transactional
 class DemandSheetDaoTest  extends IDaoImplTest<DemandSheet> {
 
     @Autowired
     private IDemandSheetDao demandSheetDao;
-
-    private static List<Long> demandSheetIdList = new LinkedList<>();
-
-    @Override
-    protected IDao getDao() {
-        return demandSheetDao;
-    }
 
     private static Long FIRST_BRM_ID;
 
@@ -49,17 +38,36 @@ class DemandSheetDaoTest  extends IDaoImplTest<DemandSheet> {
     private static Long PROJECT_ID;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+    static void init(@Autowired EntityManagerFactory entityManagerFactory, @Autowired TestEntityFactory testEntityFactory)  {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction =  entityManager.getTransaction();
         transaction.begin();
-        for (int i = 0; i < IDaoImplTest.createdEntitiesNumber; i++) {
-            DemandSheet demandSheet = new DemandSheet();
-            demandSheet.setProjectName("Project Name" + random.nextLong() );
-            demandSheet.setDescription("Project Description" + random.nextLong());
+        for (int i = 0; i < IDaoImplTest.CREATED_ENTITIES_NUMBER; i++) {
+            DemandSheet demandSheet = testEntityFactory.prepareDemandSheet();
             entityManager.persist(demandSheet);
-            demandSheetIdList.add(demandSheet.getId());
+            entityIdList.add(demandSheet.getId());
         }
+        transaction.commit();
+        prepareTestData(entityManagerFactory);
+    }
+
+    @AfterAll
+    static void clear(@Autowired TableClearer tableClearer){
+        tableClearer.clearTables();
+        entityIdList.clear();
+    }
+
+    @Test
+    public void  getAllDemandSheetsOfBRMWithNoProjectThenSuccess(){
+        assertEquals(1, demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(FIRST_BRM_ID).size());
+    }
+
+    private static void prepareTestData(EntityManagerFactory entityManagerFactory){
+
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction =  entityManager.getTransaction();
+        transaction.begin();
+
         BusinessRelationManager firstBRM = new BusinessRelationManager();
         entityManager.persist(firstBRM);
         FIRST_BRM_ID = firstBRM.getId();
@@ -72,31 +80,27 @@ class DemandSheetDaoTest  extends IDaoImplTest<DemandSheet> {
         entityManager.persist(project);
         PROJECT_ID = project.getId();
 
-        DemandSheet demandSheetWithBRMAndNoProject = entityManager.find(DemandSheet.class, demandSheetIdList.get(0));
+        DemandSheet demandSheetWithBRMAndNoProject = entityManager.find(DemandSheet.class, getElementIndex(0));
         demandSheetWithBRMAndNoProject.setBusinessRelationManager(entityManager.find(BusinessRelationManager.class, FIRST_BRM_ID));
 
-        DemandSheet demandSheetWithBRMAndProject = entityManager.find(DemandSheet.class, demandSheetIdList.get(1));
+        DemandSheet demandSheetWithBRMAndProject = entityManager.find(DemandSheet.class, getElementIndex(1));
         demandSheetWithBRMAndProject.setBusinessRelationManager(entityManager.find(BusinessRelationManager.class, FIRST_BRM_ID));
         entityManager.find(Project.class, PROJECT_ID).setDemandSheet(demandSheetWithBRMAndProject);
 
-        DemandSheet demandSheetWithOtherBRMAndNoProject = entityManager.find(DemandSheet.class, demandSheetIdList.get(2));
+        DemandSheet demandSheetWithOtherBRMAndNoProject = entityManager.find(DemandSheet.class, getElementIndex(2));
         demandSheetWithOtherBRMAndNoProject.setBusinessRelationManager(entityManager.find(BusinessRelationManager.class, SECOND_BRM_ID));
 
         transaction.commit();
     }
 
-    @Test
-    public void  getAllDemandSheetsOfBRMWithNoProjectThenSuccess(){
-        assertEquals(1, demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(FIRST_BRM_ID).size());
+    @Override
+    protected IDao getDao() {
+        return demandSheetDao;
     }
 
     @Override
     protected DemandSheet createNewEntity() {
-        Random random = new Random();
-        DemandSheet demandSheet = new DemandSheet();
-        demandSheet.setProjectName("Project Name" + random.nextLong() );
-        demandSheet.setDescription("Project Description" + random.nextLong());
-        return demandSheet;
+        return testEntityFactory.prepareDemandSheet();
     }
 
 }

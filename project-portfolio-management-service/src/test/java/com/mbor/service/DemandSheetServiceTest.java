@@ -1,5 +1,6 @@
 package com.mbor.service;
 
+import com.mbor.dao.IDao;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.DemandSheet;
@@ -134,4 +135,8 @@ class DemandSheetServiceTest extends IServiceTestImpl<DemandSheet> {
         return demandSheetService;
     }
 
+    @Override
+    protected IDao getDao() {
+        return null;
+    }
 }

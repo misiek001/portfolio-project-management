@@ -56,7 +56,7 @@ public class ProjectManagerDaoTest  {
         consultant.setUserName("ConsultantUserName" + random.nextLong());
         transaction.begin();
         entityManager.persist(consultant);
-        ;
+
         employeeId = consultant.getId();
         for (int i = 0; i < createdEntityNumber; i++) {
             ProjectManager projectManager = new ProjectManager();

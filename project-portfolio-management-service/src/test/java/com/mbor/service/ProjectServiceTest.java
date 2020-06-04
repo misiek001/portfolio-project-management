@@ -1,12 +1,17 @@
 package com.mbor.service;
 
-import com.mbor.dao.IEmployeeDao;
+import com.mbor.configuration.ServiceMockConfiguration;
+import com.mbor.configuration.TestConfiguration;
+import com.mbor.dao.IDao;
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
+import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
+import com.mbor.entityFactory.TestEntityFactory;
+import com.mbor.mapper.ProjectMapper;
 import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -19,137 +24,189 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ServiceConfiguration.class)
-@Transactional
-@ActiveProfiles("test")
+@ContextConfiguration(classes = {ServiceConfiguration.class, ServiceMockConfiguration.class, TestConfiguration.class})
+@ActiveProfiles({"test", "project-tests-mock"})
 public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
     private static final int createdEntitiesNumber = 3;
 
     private static Random random = new Random();
 
-    private static Long businessEmployeeId;
-    private static Long businessRelationManagerId;
-
-    private static Long firstBusinessUnitId;
-    private static Long secondBusinessUnitId;
-
-    private static Long firstProjectId;
-    private static Long secondProjectId;
-    private static Long thirdProjectId;
-
-    private static Long resourceManagerId;
-    private static Long superVisorId;
-    private static Long firstConsultantId;
-    private static Long secondConsultantId;
-    private static Long thirdConsultantId;
-
-    private static Long firstProjectManagerId;
-    private static Long secondProjectManagerId;
-    private static Long firstSolutionArchitectId;
-    private static Long secondSolutionArchitectId;
-    private static Long thirdSolutionArchitectId;
+    private static Project firstProject;
+    private static Project secondProject;
+    private static Project thirdProject;
+    private static Supervisor supervisor;
+    private static ResourceManager resourceManager;
+    private static Consultant firstConsultant;
+    private static Consultant secondConsultant;
+    private static Consultant thirdConsultant;
+    private static ProjectManager firstProjectManager;
+    private static ProjectManager secondProjectManager;
+    private static SolutionArchitect firstSolutionArchitect;
+    private static SolutionArchitect secondSolutionArchitect;
+    private static SolutionArchitect thirdSolutionArchitect;
+    private static BusinessEmployee businessEmployee;
+    private static BusinessRelationManager businessRelationManager;
+    private static BusinessUnit firstBusinessUnit;
+    private static BusinessUnit secondBusinessUnit;
+    private static BusinessLeader businessLeader;
+    private static BusinessRelationManagerDTO businessRelationManagerDTO;
+    private static ProjectStatusHistoryLineDTO openProjectStatusHistoryLine;
+    private static BusinessEmployeeDTO businessEmployeeDTO;
+    private static BusinessLeaderDTO businessLeaderDTO;
+    private static BusinessUnitDTO primaryBusinessUnitDTO;
 
     @Autowired
     IProjectService projectService;
 
     @Autowired
-    static IProjectDao projectDao;
+    IEmployeeService employeeService;
 
     @Autowired
-    IEmployeeDao employeeDao;
+    IProjectRoleService projectRoleService;
+
+    @Autowired
+    IBusinessUnitService businessUnitService;
+
+    @Autowired
+    IProjectDao projectDao;
+
+    @Autowired
+    ProjectMapper projectMapper;
+
+    @Autowired
+    TestEntityFactory testEntityFactory;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
+    static void init(@Autowired TestEntityFactory testEntityFactory) {
+        prepareTestData(testEntityFactory);
+    }
+
+    @Test
+    void findAllThenSuccess() {
+
+        List<Project> projects = new ArrayList<>();
         for (int i = 0; i < createdEntitiesNumber; i++) {
-            Project project = new Project();
-            project.setProjectName("ProjectName" + random.nextLong());
-            entityManager.persist(project);
-            entityIdList.add(project.getId());
+            projects.add(testEntityFactory.prepareProject());
         }
-        firstProjectId = entityIdList.get(createdEntitiesNumber - 3);
-        firstEntityId = firstProjectId;
-        secondProjectId = entityIdList.get(createdEntitiesNumber - 2);
-        thirdProjectId = entityIdList.get(createdEntitiesNumber - 1);
+        List<ProjectDTO> projectDTOs = new ArrayList<>();
+        for (int i = 0; i < createdEntitiesNumber; i++) {
+            projectDTOs.add(testEntityFactory.prepareProjectDTOFromProject(projects.get(i)));
+        }
 
-        transaction.commit();
-        prepareTestData(entityManagerFactory, projectDao);
+        when(projectDao.findAll()).thenReturn(projects);
+        when(projectMapper.convertToDto(any(Project.class))).thenReturn(projectDTOs.get(0), projectDTOs.get(1), projectDTOs.get(2));
+
+        List<ProjectDTO> result = projectService.findAll();
+        verify(projectMapper, times(3)).convertToDto(any());
+        assertEquals(createdEntitiesNumber, result.size());
+        result.forEach(projectDTO -> {
+            assertNotNull(projectDTO.getProjectName());
+        });
     }
 
     @Test
-    void updateProjectAspectThenSuccess(){
-        ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
-        projectService.updateProjectAspects(firstProjectId, projectAspectLineDTO, firstProjectManagerId );
-        assertEquals(1, projectService.find(firstProjectId).getProjectAspectLines().size());
+    void findThenSuccess() {
+        Project project = testEntityFactory.prepareProject();
+        Optional<Project> projectOptional = Optional.of(project);
+        ProjectDTO projectDTO = testEntityFactory.prepareProjectDTOFromProject(project);
+
+        when(projectDao.find(anyLong())).thenReturn(projectOptional);
+        when(projectMapper.convertToDto(any(Project.class))).thenReturn(projectDTO);
+
+        ProjectDTO result = projectService.find(1L);
+        assertEquals(project.getProjectName(), result.getProjectName());
     }
 
     @Test
-    void addRealEndDateThenSuccess(){
-        RealEndDateDTO realEndDateDTO = prepareRealEndDateDTO(10, "First Reason");
-        projectService.addProjectEndDate(firstProjectId, realEndDateDTO, firstProjectManagerId);
-        assertEquals(1, projectService.find(firstProjectId).getRealEndDates().size());
-    }
-
-    @Test
-    void saveFromDtoThenSuccess(){
+    void saveThenSuccess() {
         ProjectCreationDTO projectCreationDTO = prepareProjectCreationDto();
-        ProjectCreatedDTO projectCreatedDTO = projectService.save(projectCreationDTO);
-        assertNotNull(projectCreatedDTO);
-        assertNotNull(projectService.find(projectCreatedDTO.getId()));
+        Project projectFromCreationDTO = prepareProjectFromProjectCreationDTO(projectCreationDTO);
+        projectFromCreationDTO.setId(1L);
+        Optional<Project> optionalProject = Optional.of(projectFromCreationDTO);
+
+        ProjectCreatedDTO projectCreatedDTO = prepareProjectCreatedDTO(projectCreationDTO, projectFromCreationDTO);
+
+        when(projectMapper.convertCreationDtoToEntity(projectCreationDTO)).thenReturn(projectFromCreationDTO);
+        when(getDao().save(any(Project.class))).thenReturn(optionalProject);
+        when(employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId())).thenReturn(businessRelationManager);
+        when(projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId())).thenReturn(businessLeader);
+        when(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId())).thenReturn(firstBusinessUnit);
+        when(projectMapper.convertEntityToCreatedDto(any(Project.class))).thenReturn(projectCreatedDTO);
+
+        ProjectCreatedDTO result = projectService.save(projectCreationDTO);
+        assertNotNull(result);
+        assertEquals(result.getId(), projectCreatedDTO.getId());
+        assertEquals(result.getProjectStatusHistoryLines().size(), projectCreatedDTO.getProjectStatusHistoryLines().size());
+        assertEquals(result.getBusinessRelationManager().getId(), projectCreatedDTO.getBusinessRelationManager().getId());
+        assertEquals(result.getBusinessLeader().getId(), projectCreatedDTO.getBusinessLeader().getId());
+        assertEquals(result.getBusinessLeader().getEmployee(), projectCreatedDTO.getBusinessLeader().getEmployee());
+        assertEquals(result.getPrimaryBusinessUnit().getId(), projectCreatedDTO.getPrimaryBusinessUnit().getId());
+    }
+
+    private ProjectCreatedDTO prepareProjectCreatedDTO(ProjectCreationDTO projectCreationDTO, Project projectFromCreationDTO) {
+        ProjectCreatedDTO projectCreatedDTO = new ProjectCreatedDTO();
+        projectCreatedDTO.setId(projectFromCreationDTO.getId());
+        projectCreatedDTO.setProjectName(projectCreationDTO.getProjectName());
+        List<ProjectStatusHistoryLineDTO> projectStatusHistoryLines = new ArrayList<>();
+        projectStatusHistoryLines.add(openProjectStatusHistoryLine);
+        projectCreatedDTO.setProjectStatusHistoryLines(projectStatusHistoryLines);
+        projectCreatedDTO.setBusinessRelationManager(businessRelationManagerDTO);
+        projectCreatedDTO.setBusinessLeader(businessLeaderDTO);
+        projectCreatedDTO.setPrimaryBusinessUnit(primaryBusinessUnitDTO);
+        return projectCreatedDTO;
     }
 
     @Test
-    void findAll_ThenSuccess() {
-        List<ProjectDTO> lists = projectService.findAll();
-        assertEquals(createdEntitiesNumber, lists.size());
+    void updateProjectAspectThenSuccess() {
+        ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
+        projectService.updateProjectAspects(firstProject.getId(), projectAspectLineDTO, firstProjectManager.getId());
+        assertEquals(1, projectService.find(firstProject.getId()).getProjectAspectLines().size());
     }
 
     @Test
-    @Override
-    public void deleteThenSuccess() {
-        Project createdProject = createNewEntity();
-        createdProject = projectService.saveInternal(createdProject);
-        projectService.deleteInternal(createdProject.getId());
-        assertEquals(createdEntitiesNumber, projectService.findAll().size());
+    void addRealEndDateThenSuccess() {
+        RealEndDateDTO realEndDateDTO = prepareRealEndDateDTO(10, "First Reason");
+        projectService.addProjectEndDate(firstProject.getId(), realEndDateDTO, firstProjectManager.getId());
+        assertEquals(1, projectService.find(firstProject.getId()).getRealEndDates().size());
     }
 
-
-    private ProjectCreationDTO prepareProjectCreationDto(){
-        BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
-        businessRelationManagerDTO.setId(businessRelationManagerId);
-
-        BusinessEmployeeDTO businessEmployeeDTO = new BusinessEmployeeDTO();
-        businessEmployeeDTO.setId(businessEmployeeId);
-        BusinessLeaderDTO businessLeaderDTO = new BusinessLeaderDTO();
-        businessLeaderDTO.setEmployee(businessEmployeeDTO);
+    private ProjectCreationDTO prepareProjectCreationDto() {
 
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName("ProjectName" + random.nextInt());
 
-        projectCreationDTO.setBusinessRelationManagerId(businessRelationManagerDTO.getId());
-        projectCreationDTO.setBusinessLeaderId(businessLeaderDTO.getId());
-        projectCreationDTO.setPrimaryBusinessUnitId(firstBusinessUnitId);
+        projectCreationDTO.setProjectClass(ProjectClassDTO.I);
+
+        projectCreationDTO.setBusinessRelationManagerId(businessRelationManager.getId());
+        projectCreationDTO.setBusinessLeaderId(businessLeader.getId());
+        projectCreationDTO.setPrimaryBusinessUnitId(firstBusinessUnit.getId());
+        List<Long> secondaryBusinessUnitIds = new ArrayList<>();
+        projectCreationDTO.setSecondaryBusinessUnitIds(secondaryBusinessUnitIds);
 
         return projectCreationDTO;
     }
 
-    private ProjectAspectLine prepareProjectAspectLine(){
+    private Project prepareProjectFromProjectCreationDTO(ProjectCreationDTO projectCreationDTO) {
+        Project project = new Project();
+        project.setProjectName(projectCreationDTO.getProjectName());
+        project.setProjectClass(ProjectClass.valueOf(projectCreationDTO.getProjectClass().name()));
+        return project;
+    }
+
+    private ProjectAspectLine prepareProjectAspectLine() {
         ProjectAspectLine projectAspectLine = new ProjectAspectLine();
 
         BudgetAspect budgetAspect = new BudgetAspect();
@@ -175,7 +232,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         return projectAspectLine;
     }
 
-    private ProjectAspectLineDTO prepareProjectAspectLineDTO(){
+    private ProjectAspectLineDTO prepareProjectAspectLineDTO() {
         ProjectAspectLineDTO projectAspectLineDTO = new ProjectAspectLineDTO();
 
         BudgetAspectDTO budgetAspectDTO = new BudgetAspectDTO();
@@ -201,61 +258,80 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         return projectAspectLineDTO;
     }
 
-    private static void prepareTestData(EntityManagerFactory entityManagerFactory, IProjectDao projectDao) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction =  entityManager.getTransaction();
-        transaction.begin();
+    private RealEndDateDTO prepareRealEndDateDTO(int offset, String reason) {
+        RealEndDateDTO realEndDateDTO = new RealEndDateDTO();
+        realEndDateDTO.setEndDate(LocalDateTime.now().plusDays(offset));
+        realEndDateDTO.setReason(reason);
+        return realEndDateDTO;
+    }
 
-        Project firstProject = entityManager.find(Project.class,1l);
-        Project secondProject = entityManager.find(Project.class,2l);
-        Project thirdProject = entityManager.find(Project.class,3l);
+    private static void prepareTestData(TestEntityFactory testEntityFactory) {
+        firstProject = testEntityFactory.prepareProject();
+        secondProject = testEntityFactory.prepareProject();
+        thirdProject = testEntityFactory.prepareProject();
 
         firstProject.setProjectClass(ProjectClass.I);
         secondProject.setProjectClass(ProjectClass.I);
         thirdProject.setProjectClass(ProjectClass.II);
 
-        //TODO To fix during Open Project Task
-//        firstProject.setProjectStatus(ProjectStatus.ANALYSIS);
-//        secondProject.setProjectStatus(ProjectStatus.ANALYSIS);
-//        thirdProject.setProjectStatus(ProjectStatus.IN_PROGRESS);
+        firstBusinessUnit = new BusinessUnit();
+        firstBusinessUnit.setName("BusinessUnitName" + random.nextLong());
+        firstBusinessUnit.setId(1L);
 
-        Supervisor supervisor = new Supervisor();
+        secondBusinessUnit = new BusinessUnit();
+        secondBusinessUnit.setName("BusinessUnitName" + random.nextLong());
+        secondBusinessUnit.setId(2L);
+
+        supervisor = new Supervisor();
+        secondProject.setId(1L);
         supervisor.setUserName("Supervisor");
-        entityManager.persist(supervisor);
 
-        ResourceManager resourceManager = new ResourceManager();
-        resourceManager.setEmployee(supervisor);;
-
-        superVisorId = supervisor.getId();
-
-        Consultant firstConsultant = new Consultant();
+        firstConsultant = new Consultant();
+        firstConsultant.setId(2L);
         firstConsultant.setUserName("FirstConsultant");
         firstConsultant.setSupervisor(supervisor);
-        entityManager.persist(firstConsultant);
-        firstConsultantId = firstConsultant.getId();
 
-        Consultant secondConsultant = new Consultant();
+        secondConsultant = new Consultant();
+        secondConsultant.setId(3L);
         secondConsultant.setUserName("SecondConsultant");
         secondConsultant.setSupervisor(supervisor);
-        entityManager.persist(secondConsultant);
-        secondConsultantId = secondConsultant.getId();
 
-        Consultant thirdConsultant = new Consultant();
+        thirdConsultant = new Consultant();
+        thirdConsultant.setId(4L);
         thirdConsultant.setUserName("ThirdConsultant");
-        entityManager.persist(thirdConsultant);
-        thirdConsultantId = thirdConsultant.getId();
 
-        ProjectManager firstProjectManager = new ProjectManager();
+        businessEmployee = new BusinessEmployee();
+        businessEmployee.setId(5L);
+        businessEmployee.setUserName("UserName" + random.nextLong());
+
+        resourceManager = new ResourceManager();
+        resourceManager.setEmployee(supervisor);
+        resourceManager.setId(1L);
+
+        businessLeader = new BusinessLeader();
+        businessLeader.setId(7L);
+        businessLeader.setEmployee(businessEmployee);
+
+        businessRelationManager = new BusinessRelationManager();
+        businessRelationManager.setId(6L);
+        businessRelationManager.setUserName("BusinessRelationManager" + random.nextLong());
+
+        firstProjectManager = new ProjectManager();
+        firstProjectManager.setId(2L);
         firstProjectManager.setEmployee(firstConsultant);
-        SolutionArchitect firstSolutionArchitect = new SolutionArchitect();
+        firstSolutionArchitect = new SolutionArchitect();
+        firstSolutionArchitect.setId(3L);
         firstSolutionArchitect.setEmployee(firstConsultant);
 
-        ProjectManager secondProjectManager = new ProjectManager();
+        secondProjectManager = new ProjectManager();
+        secondProjectManager.setId(4L);
         secondProjectManager.setEmployee(secondConsultant);
-        SolutionArchitect secondSolutionArchitect = new SolutionArchitect();
+        secondSolutionArchitect = new SolutionArchitect();
+        secondSolutionArchitect.setId(5L);
         secondSolutionArchitect.setEmployee(secondConsultant);
 
-        SolutionArchitect thirdSolutionArchitect = new SolutionArchitect();
+        thirdSolutionArchitect = new SolutionArchitect();
+        thirdSolutionArchitect.setId(6L);
         thirdSolutionArchitect.setEmployee(thirdConsultant);
 
         firstProject.setResourceManager(resourceManager);
@@ -272,41 +348,27 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         thirdProject.addSolutionArchitect(thirdSolutionArchitect);
         thirdProject.setResourceManager(resourceManager);
 
-        BusinessEmployee businessEmployee = new BusinessEmployee();
-        businessEmployee.setUserName("UserName" + random.nextLong());
-        entityManager.persist(businessEmployee);
-        businessEmployeeId = businessEmployee.getId();
+         businessRelationManagerDTO = new BusinessRelationManagerDTO();
+        businessRelationManagerDTO.setId(businessRelationManager.getId());
+        businessRelationManagerDTO.setUserName(businessRelationManager.getUserName());
 
-        BusinessRelationManager businessRelationManager = new BusinessRelationManager();
-        businessRelationManager.setUserName("BusinessRelationManager" + random.nextLong());
-        entityManager.persist(businessRelationManager);
-        businessRelationManagerId = businessRelationManager.getId();
+        openProjectStatusHistoryLine = new ProjectStatusHistoryLineDTO();
+        openProjectStatusHistoryLine.setPreviousStatus(ProjectStatusDTO.ANALYSIS);
+        openProjectStatusHistoryLine.setCurrentStatus(ProjectStatusDTO.ANALYSIS);
+        openProjectStatusHistoryLine.setDescription("Project opened");
 
-        BusinessUnit firstBusinessUnit = new BusinessUnit();
-        firstBusinessUnit.setName("BusinessUnitName" + random.nextLong());
-        entityManager.persist(firstBusinessUnit);
-        firstBusinessUnitId = firstBusinessUnit.getId();
+         businessEmployeeDTO = new BusinessEmployeeDTO();
+        businessEmployeeDTO.setId(businessEmployee.getId());
+        businessEmployeeDTO.setUserName(businessEmployee.getUserName());
 
-        BusinessUnit secondBusinessUnit = new BusinessUnit();
-        secondBusinessUnit.setName("BusinessUnitName" + random.nextLong());
-        entityManager.persist(secondBusinessUnit);
-        secondBusinessUnitId = secondBusinessUnit.getId();
+         businessLeaderDTO = new BusinessLeaderDTO();
+        businessLeaderDTO.setId(businessLeader.getId());
+        businessLeaderDTO.setEmployee(businessEmployeeDTO);
 
-        transaction.commit();
-        entityManager.merge(firstProjectManager);
-        firstProjectManagerId = firstProjectManager.getId();
-        entityManager.merge(secondProjectManager);
-        secondProjectManagerId = secondProjectManager.getId();
+         primaryBusinessUnitDTO = new BusinessUnitDTO();
+        primaryBusinessUnitDTO.setId(firstProject.getId());
+        primaryBusinessUnitDTO.setName(firstBusinessUnit.getName());
 
-        entityManager.merge(firstSolutionArchitect);
-        firstSolutionArchitectId = firstSolutionArchitect.getId();
-        entityManager.merge(secondSolutionArchitect);
-        secondSolutionArchitectId = secondSolutionArchitect.getId();
-        entityManager.merge(thirdSolutionArchitect);
-
-        thirdSolutionArchitectId = thirdSolutionArchitect.getId();
-
-        resourceManagerId =  entityManager.merge(resourceManager).getId();
     }
 
     @Override
@@ -316,13 +378,10 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         return project;
     }
 
-    private RealEndDateDTO prepareRealEndDateDTO(int offset,String reason) {
-        RealEndDateDTO realEndDateDTO = new RealEndDateDTO();
-        realEndDateDTO.setEndDate(LocalDateTime.now().plusDays(offset));
-        realEndDateDTO.setReason(reason);
-        return realEndDateDTO;
+    @Override
+    protected IDao getDao() {
+        return projectDao;
     }
-
 
     @Override
     protected IProjectService getService() {
