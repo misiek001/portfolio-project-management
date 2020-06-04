@@ -3,10 +3,7 @@ package com.mbor.model;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.mbor.model.views.Views;
 
-public class DemandSheetDTO {
-
-    @JsonView(Views.Public.class)
-    private Long id;
+public class DemandSheetDTO extends IdDTO {
 
     @JsonView(Views.Public.class)
     private String projectName;
@@ -23,13 +20,6 @@ public class DemandSheetDTO {
     @JsonView(Views.Public.class)
     private ProjectDTO project;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getProjectName() {
         return projectName;

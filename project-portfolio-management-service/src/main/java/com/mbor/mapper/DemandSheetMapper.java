@@ -1,10 +1,17 @@
 package com.mbor.mapper;
 
+import com.mbor.domain.BusinessRelationManager;
+import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.DemandSheet;
+import com.mbor.domain.Project;
+import com.mbor.model.BusinessRelationManagerDTO;
+import com.mbor.model.BusinessUnitDTO;
 import com.mbor.model.DemandSheetDTO;
+import com.mbor.model.ProjectDTO;
 import com.mbor.model.creation.DemandSheetCreatedDTO;
 import com.mbor.model.creation.DemandSheetCreationDTO;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,7 +36,29 @@ public class DemandSheetMapper  extends CreationPojoMapper<DemandSheetDTO, Deman
 
     @Override
     public DemandSheetDTO convertToDto(DemandSheet demandSheet) {
-        return modelMapper.map(demandSheet, DemandSheetDTO.class);
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setImplicitMappingEnabled(false)
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.typeMap(DemandSheet.class, DemandSheetDTO.class)
+                .addMappings(mapping -> mapping.map(DemandSheet::getBusinessUnit, DemandSheetDTO::setBusinessUnit))
+                .addMappings(mapping -> mapping.map(DemandSheet::getBusinessRelationManager, DemandSheetDTO::setBusinessRelationManager))
+                .addMappings(mapping -> mapping.map(DemandSheet::getProject, DemandSheetDTO::setProject))
+                .addMappings(mapping -> mapping.map(DemandSheet::getId, DemandSheetDTO::setId))
+                .addMappings(mapping -> mapping.map(DemandSheet::getProjectName, DemandSheetDTO::setProjectName));
+        modelMapper.typeMap(BusinessUnit.class, BusinessUnitDTO.class)
+                .addMappings(mapping -> mapping.map(BusinessUnit::getId, BusinessUnitDTO::setId));
+        modelMapper.typeMap(BusinessRelationManager.class, BusinessRelationManagerDTO.class)
+                .addMappings(mapping -> mapping.skip(BusinessRelationManagerDTO::setProjects))
+                .addMappings(mapping -> mapping.skip(BusinessRelationManagerDTO::setDirector))
+                .addMappings(mapping -> mapping.skip(BusinessRelationManagerDTO::setAssignedBusinessUnits))
+                .addMappings(mapping -> mapping.skip(BusinessRelationManagerDTO::setBusinessUnit))
+                .addMappings(mapping -> mapping.skip(BusinessRelationManagerDTO::setProjectRoleSet))
+                .implicitMappings();
+        modelMapper.typeMap(Project.class, ProjectDTO.class)
+                .addMappings(mapping -> mapping.map(Project::getId,ProjectDTO::setId))
+                .addMappings(mapping -> mapping.map(Project::getProjectName,ProjectDTO::setProjectName));
+       return modelMapper.map(demandSheet, DemandSheetDTO.class);
     }
 
     @Override

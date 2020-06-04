@@ -13,10 +13,7 @@ import java.util.Set;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "projectName")
-public class ProjectDTO implements IProjectDTO {
-
-    @JsonView(Views.Public.class)
-    private Long Id;
+public class ProjectDTO extends IdDTO implements IProjectDTO {
 
     @JsonView(Views.Public.class)
     private String projectName;
@@ -62,14 +59,6 @@ public class ProjectDTO implements IProjectDTO {
 
     @JsonView(Views.Public.class)
     private Set<ProjectAspectLine> projectAspectLines;
-
-    public Long getId() {
-        return Id;
-    }
-
-    public void setId(Long id) {
-        Id = id;
-    }
 
     public String getProjectName() {
         return projectName;

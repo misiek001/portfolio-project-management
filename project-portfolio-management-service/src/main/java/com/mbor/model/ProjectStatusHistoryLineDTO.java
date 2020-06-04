@@ -11,10 +11,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
-public class ProjectStatusHistoryLineDTO {
+public class ProjectStatusHistoryLineDTO  extends IdDTO{
 
-    @JsonView(Views.Public.class)
-    private Long id;
 
     @JsonView(Views.Public.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -31,14 +29,6 @@ public class ProjectStatusHistoryLineDTO {
 
     @JsonView(Views.Public.class)
     private String description;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public LocalDateTime getCreationTime() {
         return creationTime;

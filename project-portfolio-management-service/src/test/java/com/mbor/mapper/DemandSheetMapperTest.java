@@ -1,9 +1,11 @@
 package com.mbor.mapper;
 
+import com.mbor.configuration.TestConfiguration;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.DemandSheet;
 import com.mbor.domain.Project;
+import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.model.DemandSheetDTO;
 import com.mbor.model.creation.DemandSheetCreatedDTO;
 import com.mbor.model.creation.DemandSheetCreationDTO;
@@ -19,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class})
-@ContextConfiguration(classes = ServiceConfiguration.class)
+@ContextConfiguration(classes = {ServiceConfiguration.class, TestConfiguration.class})
 @ActiveProfiles("test")
 class DemandSheetMapperTest {
 
@@ -39,12 +41,12 @@ class DemandSheetMapperTest {
     DemandSheetMapper demandSheetMapper;
 
     @BeforeAll
-    static void init() {
+    static void init(@Autowired TestObjectFactory testObjectFactory) {
 
-        businessUnit = new BusinessUnit();
+        businessUnit = testObjectFactory.prepareBusinessUnit("BusinessUnit");
         businessUnit.setId(BUSINESS_UNIT_ID);
 
-        businessRelationManager = new BusinessRelationManager();
+        businessRelationManager = testObjectFactory.prepareBusinessRelationManager("BusinessRelationManager");
         businessRelationManager.setId(BUSINESS_RELATION_MANAGER_ID);
         businessRelationManager.addAssignedBusinessUnit(businessUnit);
 
@@ -60,7 +62,7 @@ class DemandSheetMapperTest {
         demandSheet.setBusinessUnit(businessUnit);
         demandSheet.setBusinessRelationManager(businessRelationManager);
 
-        project = new Project();
+        project = testObjectFactory.prepareProject();
         project.setId(PROJECT_ID);
         project.setDemandSheet(demandSheet);
         project.setBusinessRelationManager(businessRelationManager);
