@@ -1,13 +1,7 @@
 package com.mbor.configuration;
 
-import com.mbor.dao.DemandSheetDao;
-import com.mbor.dao.IDemandSheetDao;
-import com.mbor.dao.IProjectDao;
-import com.mbor.dao.ProjectDao;
-import com.mbor.mapper.DemandSheetMapper;
-import com.mbor.mapper.ProjectAspectLineMapper;
-import com.mbor.mapper.ProjectMapper;
-import com.mbor.mapper.RealEndDateMapper;
+import com.mbor.dao.*;
+import com.mbor.mapper.*;
 import com.mbor.service.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +24,13 @@ public class ServiceMockConfiguration {
     @Primary
     IDemandSheetDao demandSheetDao() {
         return Mockito.mock((DemandSheetDao.class));
+    }
+
+    @Profile({"businessunit-tests-mock"})
+    @Bean
+    @Primary
+    IBusinessUnitDao businessUnitDao() {
+        return Mockito.mock((BusinessUnitDao.class));
     }
 
     @Profile("project-tests-mock")
@@ -58,6 +59,13 @@ public class ServiceMockConfiguration {
     @Primary
     DemandSheetMapper demandSheetMapper() {
         return Mockito.mock(DemandSheetMapper.class);
+    }
+
+    @Profile("businessunit-tests-mock")
+    @Bean
+    @Primary
+    BusinessUnitMapper businessUnitMapper() {
+        return Mockito.mock(BusinessUnitMapper.class);
     }
 
     @Profile("project-tests-mock")

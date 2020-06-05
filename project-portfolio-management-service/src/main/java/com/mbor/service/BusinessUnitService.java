@@ -31,7 +31,7 @@ public class BusinessUnitService extends RawService<BusinessUnit> implements IBu
     @Override
     public BusinessUnitCreatedDTO save(BusinessUnitCreationDTO businessUnitCreationDTO) {
         BusinessUnit businessUnit = businessUnitMapper.convertCreationDtoToEntity(businessUnitCreationDTO);
-        businessUnit = super.saveInternal(businessUnit);
+        businessUnit = saveInternal(businessUnit);
         return businessUnitMapper.convertEntityToCreatedDto(businessUnit);
     }
 

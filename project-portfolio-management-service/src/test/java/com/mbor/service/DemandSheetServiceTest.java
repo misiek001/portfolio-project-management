@@ -13,6 +13,7 @@ import com.mbor.model.DemandSheetDTO;
 import com.mbor.model.creation.DemandSheetCreatedDTO;
 import com.mbor.model.creation.DemandSheetCreationDTO;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,11 @@ class DemandSheetServiceTest extends IServiceTestImpl<DemandSheet> {
         reset(businessUnitService);
         reset(demandSheetDao);
         reset(demandSheetMapper);
+    }
+
+    @AfterAll
+    static void clear(){
+        entityIdList.clear();
     }
 
     @Test

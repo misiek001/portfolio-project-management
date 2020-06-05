@@ -19,6 +19,7 @@ import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.*;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -112,6 +113,11 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         reset(projectDao);
         reset(projectMapper);
         reset(projectAspectLineMapper);
+    }
+
+    @AfterAll
+    static void clear(){
+        entityIdList.clear();
     }
 
     @Test

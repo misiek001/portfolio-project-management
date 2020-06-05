@@ -2,11 +2,15 @@ package com.mbor.service;
 
 import com.mbor.configuration.ServiceMockConfiguration;
 import com.mbor.configuration.TestConfiguration;
-import com.mbor.dao.IDao;
+import com.mbor.dao.IBusinessUnitDao;
 import com.mbor.domain.BusinessUnit;
+import com.mbor.entityFactory.TestObjectFactory;
+import com.mbor.mapper.BusinessUnitMapper;
 import com.mbor.model.creation.BusinessUnitCreatedDTO;
 import com.mbor.model.creation.BusinessUnitCreationDTO;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,42 +19,68 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.persistence.EntityManagerFactory;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ServiceConfiguration.class, TestConfiguration.class, ServiceMockConfiguration.class})
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "businessunit-tests-mock"})
 class BusinessUnitServiceTest extends IServiceTestImpl {
 
     @Autowired
-    private IBusinessUnitService businessUnitService;
+    IBusinessUnitService businessUnitService;
+
+    @Autowired
+    IBusinessUnitDao businessUnitDao;
+
+    @Autowired
+    BusinessUnitMapper businessUnitMapper;
+
+    @Autowired
+    TestObjectFactory testObjectFactory;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) {
+    static void init() {
+        for(long i = 0; i < createdEntitiesNumber; i++){
+            entityIdList.add(i);
+        }
+    }
 
+    @AfterEach
+    void resetMock(){
+        reset(businessUnitDao);
+        reset(businessUnitMapper);
+    }
+
+    @AfterAll
+    static void clear(){
+        entityIdList.clear();
     }
 
     @Test
     void saveFromDtoThenSuccess() {
-        BusinessUnitCreationDTO businessUnitCreationDTO = prepareBusinessUnitCreationDto();
-        BusinessUnitCreatedDTO businessUnitCreatedDTO = businessUnitService.save(businessUnitCreationDTO);
-        assertNotNull(businessUnitCreatedDTO);
-        assertNotNull(businessUnitService.findInternal(businessUnitCreatedDTO.getId()));
-    }
+        BusinessUnitCreationDTO businessUnitCreationDTO = testObjectFactory.prepareBusinessUnitCreationDto();
+        BusinessUnit businessUnitFromCreationDTO = testObjectFactory.prepareBusinessUnitFromCreationDTO(businessUnitCreationDTO);
+        Optional<BusinessUnit> optionalBusinessUnit = Optional.of(businessUnitFromCreationDTO);
 
-    private BusinessUnitCreationDTO prepareBusinessUnitCreationDto() {
-        BusinessUnitCreationDTO businessUnitCreationDTO = new BusinessUnitCreationDTO();
-        businessUnitCreationDTO.setName("BusinessUnitName" + random.nextLong());
-        return businessUnitCreationDTO;
+        BusinessUnitCreatedDTO businessUnitCreatedDTO = testObjectFactory.prepareBusinessUnitCreatedDTOFromEntity(businessUnitFromCreationDTO);
+
+        when(businessUnitMapper.convertCreationDtoToEntity(businessUnitCreationDTO)).thenReturn(businessUnitFromCreationDTO);
+        when(businessUnitDao.save(businessUnitFromCreationDTO)).thenReturn(optionalBusinessUnit);
+        when(businessUnitMapper.convertEntityToCreatedDto(businessUnitFromCreationDTO)).thenReturn(businessUnitCreatedDTO);
+        BusinessUnitCreatedDTO result =businessUnitService.save(businessUnitCreationDTO);
+
+        assertNotNull(result);
+        assertEquals(businessUnitCreatedDTO.getName(),result.getName());
     }
 
     @Override
     public BusinessUnit createNewEntity() {
-        BusinessUnit businessUnit = new BusinessUnit();
-        businessUnit.setName("BusinessUnitName" + random.nextLong());
-        return businessUnit;
+        return testObjectFactory.prepareBusinessUnit();
     }
 
     @Override
@@ -59,7 +89,7 @@ class BusinessUnitServiceTest extends IServiceTestImpl {
     }
 
     @Override
-    protected IDao getDao() {
-        return null;
+    protected IBusinessUnitDao getDao() {
+        return businessUnitDao;
     }
 }

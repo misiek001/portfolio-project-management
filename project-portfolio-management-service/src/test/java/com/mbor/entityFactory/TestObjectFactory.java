@@ -4,10 +4,7 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.model.*;
-import com.mbor.model.creation.DemandSheetCreatedDTO;
-import com.mbor.model.creation.DemandSheetCreationDTO;
-import com.mbor.model.creation.ProjectCreatedDTO;
-import com.mbor.model.creation.ProjectCreationDTO;
+import com.mbor.model.creation.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -54,6 +51,11 @@ public class TestObjectFactory {
         return businessUnit;
     }
 
+    public BusinessUnitCreationDTO prepareBusinessUnitCreationDto() {
+        BusinessUnitCreationDTO businessUnitCreationDTO = new BusinessUnitCreationDTO();
+        businessUnitCreationDTO.setName("BusinessUnitName" + random.nextLong());
+        return businessUnitCreationDTO;
+    }
 
     public BusinessUnitDTO prepareBusinessUnitDTOFromEntity(BusinessUnit businessUnit){
         BusinessUnitDTO businessUnitDTO = new BusinessUnitDTO();
@@ -61,12 +63,16 @@ public class TestObjectFactory {
         businessUnitDTO.setName(businessUnit.getName());
         return businessUnitDTO;
     }
+    public BusinessUnit prepareBusinessUnitFromCreationDTO(BusinessUnitCreationDTO businessUnitCreationDTO){
+        BusinessUnit businessUnit = new BusinessUnit();
+        businessUnit.setName(businessUnitCreationDTO.getName());
+        return businessUnit;
+    }
 
-    public DemandSheet prepareDemandSheet() {
-        DemandSheet demandSheet = new DemandSheet();
-        demandSheet.setProjectName("Project Name" + random.nextLong());
-        demandSheet.setDescription("Project Description" + random.nextLong());
-        return demandSheet;
+    public BusinessUnitCreatedDTO prepareBusinessUnitCreatedDTOFromEntity(BusinessUnit businessUnit){
+        BusinessUnitCreatedDTO businessUnitCreatedDTO = new BusinessUnitCreatedDTO();
+        businessUnitCreatedDTO.setName(businessUnit.getName());
+        return businessUnitCreatedDTO;
     }
 
     public BusinessRelationManager prepareBusinessRelationManager(){
@@ -162,7 +168,6 @@ public class TestObjectFactory {
         return businessLeaderDTO;
     }
 
-
     public ProjectAspectLine prepareProjectAspectLine() {
         ProjectAspectLine projectAspectLine = new ProjectAspectLine();
 
@@ -189,16 +194,23 @@ public class TestObjectFactory {
         return projectAspectLine;
     }
 
+    public DemandSheet prepareDemandSheet() {
+        DemandSheet demandSheet = new DemandSheet();
+        demandSheet.setProjectName("Project Name" + random.nextLong());
+        demandSheet.setDescription("Project Description" + random.nextLong());
+        return demandSheet;
+    }
+
+    public DemandSheetDTO prepareDemandSheetDTO(){
+        return new DemandSheetDTO();
+    }
+
     public DemandSheetCreationDTO prepareDemandSheetCreationDTO(String projectName, String projectDescription, Long businessUnitId) {
         DemandSheetCreationDTO demandSheetCreationDTO = new DemandSheetCreationDTO();
         demandSheetCreationDTO.setProjectName(projectName);
         demandSheetCreationDTO.setDescription(projectDescription);
         demandSheetCreationDTO.setBusinessUnitId(businessUnitId);
         return demandSheetCreationDTO;
-    }
-
-    public DemandSheetDTO prepareDemandSheetDTO(){
-        return new DemandSheetDTO();
     }
 
     public DemandSheet prepareDemandSheetFromCreationDTO(DemandSheetCreationDTO demandSheetCreationDTO){
