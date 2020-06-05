@@ -126,21 +126,32 @@ public class TestObjectFactory {
     }
 
     public ResourceManager prepareResourceManager(Supervisor supervisor){
-        ResourceManager resourceManager = new ResourceManager();
+        ResourceManager resourceManager = prepareResourceManager();
         resourceManager.setEmployee(supervisor);
         return resourceManager;
     }
+    public ResourceManager prepareResourceManager(){
+        return new ResourceManager();
+    }
 
-    public ProjectManager prepareProjectManger(IProjectManager projectManager){
-        ProjectManager projectManager1 = new ProjectManager();
-        projectManager1.setEmployee(projectManager);
-        return projectManager1;
+    public ProjectManager prepareProjectManger(IProjectManager employee){
+        ProjectManager projectManager = prepareProjectManager();
+        projectManager.setEmployee(employee);
+        return projectManager;
+    }
+
+    public ProjectManager prepareProjectManager(){
+        return new ProjectManager();
     }
 
     public SolutionArchitect prepareSolutionArchitect(Consultant consultant){
-        SolutionArchitect solutionArchitect = new SolutionArchitect();
+        SolutionArchitect solutionArchitect = prepareSolutionArchitect();
         solutionArchitect.setEmployee(consultant);
         return solutionArchitect;
+    }
+
+    public SolutionArchitect prepareSolutionArchitect(){
+        return new SolutionArchitect();
     }
 
     public BusinessLeaderDTO prepareBusinessLeaderDTOFromEntity(BusinessLeader businessLeader){

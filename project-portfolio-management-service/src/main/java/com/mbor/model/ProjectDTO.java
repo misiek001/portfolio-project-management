@@ -3,7 +3,7 @@ package com.mbor.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.mbor.domain.projectaspect.ProjectAspectLine;
+import com.mbor.model.projectaspect.ProjectAspectLineDTO;
 import com.mbor.model.views.Views;
 
 import java.time.LocalDateTime;
@@ -58,7 +58,7 @@ public class ProjectDTO extends IdDTO implements IProjectDTO {
     private Set<BusinessUnitDTO> secondaryBusinessUnits;
 
     @JsonView(Views.Public.class)
-    private Set<ProjectAspectLine> projectAspectLines;
+    private Set<ProjectAspectLineDTO> projectAspectLines;
 
     public String getProjectName() {
         return projectName;
@@ -172,11 +172,11 @@ public class ProjectDTO extends IdDTO implements IProjectDTO {
         this.secondaryBusinessUnits = secondaryBusinessUnits;
     }
 
-    public Set<ProjectAspectLine> getProjectAspectLines() {
+    public Set<ProjectAspectLineDTO> getProjectAspectLines() {
         return projectAspectLines;
     }
 
-    public void setProjectAspectLines(Set<ProjectAspectLine> projectAspectLines) {
+    public void setProjectAspectLines(Set<ProjectAspectLineDTO> projectAspectLines) {
         this.projectAspectLines = projectAspectLines;
     }
 }

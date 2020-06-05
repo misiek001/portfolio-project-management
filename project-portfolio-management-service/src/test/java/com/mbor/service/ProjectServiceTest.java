@@ -2,7 +2,6 @@ package com.mbor.service;
 
 import com.mbor.configuration.ServiceMockConfiguration;
 import com.mbor.configuration.TestConfiguration;
-import com.mbor.dao.IDao;
 import com.mbor.dao.IProjectDao;
 import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.BusinessLeader;
@@ -11,12 +10,16 @@ import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.entityFactory.TestObjectFactory;
+import com.mbor.mapper.ProjectAspectLineMapper;
 import com.mbor.mapper.ProjectMapper;
+import com.mbor.mapper.RealEndDateMapper;
 import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.*;
+import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.spring.ServiceConfiguration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,11 +28,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,19 +73,25 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
     IProjectService projectService;
 
     @Autowired
-    IEmployeeService employeeService;
+     IEmployeeService employeeService;
 
     @Autowired
-    IProjectRoleService projectRoleService;
+     IProjectRoleService projectRoleService;
 
     @Autowired
-    IBusinessUnitService businessUnitService;
+     IBusinessUnitService businessUnitService;
 
     @Autowired
-    IProjectDao projectDao;
+     IProjectDao projectDao;
 
     @Autowired
-    ProjectMapper projectMapper;
+     ProjectMapper projectMapper;
+
+    @Autowired
+     ProjectAspectLineMapper projectAspectLineMapper;
+
+    @Autowired
+    RealEndDateMapper realEndDateMapper;
 
     @Autowired
     TestObjectFactory testObjectsFactory;
@@ -92,6 +99,19 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
     @BeforeAll
     static void init(@Autowired TestObjectFactory testObjectsFactory) {
         prepareTestData(testObjectsFactory);
+        entityIdList.add(1L);
+        entityIdList.add(2L);
+        entityIdList.add(3L);
+    }
+
+    @AfterEach
+     void resetMock(){
+        reset(employeeService);
+        reset(projectRoleService);
+        reset(businessUnitService);
+        reset(projectDao);
+        reset(projectMapper);
+        reset(projectAspectLineMapper);
     }
 
     @Test
@@ -158,24 +178,103 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
     }
 
     @Test
+    void findByMultipleCriteriaThenSuccess(){
+        SearchProjectDTO searchProjectDTO = new SearchProjectDTO();
+        searchProjectDTO.setProjectName("Some Project");
+
+        List<ProjectClassDTO> projectClassList = new ArrayList<>();;
+        projectClassList.add(ProjectClassDTO.I);
+        projectClassList.add(ProjectClassDTO.II);
+        searchProjectDTO.setProjectClassDTOList(projectClassList);
+
+        searchProjectDTO.setBusinessUnitName("Some Business Unit");
+
+        List<ProjectStatusDTO> projectStatusDTOList = new ArrayList<>();
+        projectStatusDTOList.add(ProjectStatusDTO.ANALYSIS);
+        projectStatusDTOList.add(ProjectStatusDTO.IN_PROGRESS);
+        searchProjectDTO.setProjectStatusDTOList(projectStatusDTOList);
+
+        searchProjectDTO.setProjectStartDateLaterThat(LocalDate.now().minusDays(10));
+
+        List<Project> resultProjects = new ArrayList<>();
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+
+        List<ProjectDTO> resultProjectsDTO = new ArrayList<>();
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+
+        when(getDao().findByMultipleCriteria(anyString(), anyList(),anyString(),anyList(),any(LocalDate.class))).thenReturn(resultProjects);
+        when(projectMapper.convertToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0),resultProjectsDTO.get(2),resultProjectsDTO.get(2));
+
+        List<ProjectDTO> result = projectService.findByMultipleCriteria(searchProjectDTO);
+        assertEquals(resultProjectsDTO.size(), result.size());
+        verify(projectMapper, times(3)).convertToDto(any(Project.class));
+
+    }
+
+    @Test
     void updateProjectAspectThenSuccess() {
-        ProjectAspectLineDTO projectAspectLineDTO = prepareProjectAspectLineDTO();
-        projectService.updateProjectAspects(firstProject.getId(), projectAspectLineDTO, firstProjectManager.getId());
-        assertEquals(1, projectService.find(firstProject.getId()).getProjectAspectLines().size());
+        ProjectAspectLineDTO projectAspectLineDTO = prepareTestProjectAspectLineDTO();
+        Project project = testObjectsFactory.prepareProject();
+        project.setId(firstProject.getId());
+        Optional<Project> projectOptional = Optional.of(project);
+        ProjectAspectLine projectAspectLine = prepareTestProjectAspectLine();
+        project.addProjectAspectLine(projectAspectLine);
+        project.setProjectManager(firstProjectManager);
+        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
+        Set<ProjectAspectLineDTO> projectAspectLines = new HashSet<>();
+        projectAspectLines.add(projectAspectLineDTO);
+        projectDTO.setProjectAspectLines(projectAspectLines);
+
+        when(projectDao.find(anyLong())).thenReturn(projectOptional);
+        when(projectDao.update(project)).thenReturn(projectOptional);
+        when(projectAspectLineMapper.convertToEntity(projectAspectLineDTO)).thenReturn(projectAspectLine);
+        when(projectMapper.convertToDto(project)).thenReturn(projectDTO);
+
+        ProjectDTO result  = projectService.updateProjectAspects(firstProject.getId(), projectAspectLineDTO, firstProjectManager.getId());
+
+        assertEquals(1, result.getProjectAspectLines().size());
     }
 
     @Test
     void addRealEndDateThenSuccess() {
         RealEndDateDTO realEndDateDTO = prepareRealEndDateDTO(10, "First Reason");
-        projectService.addProjectEndDate(firstProject.getId(), realEndDateDTO, firstProjectManager.getId());
-        assertEquals(1, projectService.find(firstProject.getId()).getRealEndDates().size());
+        RealEndDate realEndDate = prepareRealEndDate(10, "First Reason");
+
+        Project project = testObjectsFactory.prepareProject();
+        project.setId(firstProject.getId());
+
+        ProjectManager projectManager = testObjectsFactory.prepareProjectManager();
+        projectManager.setId(firstProjectManager.getId());
+
+        project.setProjectManager(projectManager);
+
+        Optional<Project> projectOptional = Optional.of(project);
+
+        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
+        Set<RealEndDateDTO> realEndDateDTOSet = new HashSet<>();
+        realEndDateDTOSet.add(realEndDateDTO);
+        projectDTO.setRealEndDates(realEndDateDTOSet);
+
+
+        when(projectDao.find(firstProject.getId())).thenReturn(projectOptional);
+        when(projectDao.update(project)).thenReturn(projectOptional);
+        when(realEndDateMapper.convertToEntity(realEndDateDTO)).thenReturn(realEndDate);
+        when(projectMapper.convertToDto(project)).thenReturn(projectDTO);
+        ProjectDTO result = projectService.addProjectEndDate(project.getId(), realEndDateDTO, firstProjectManager.getId());
+        assertEquals(1, result.getRealEndDates().size());
     }
 
     private static void prepareTestData(TestObjectFactory testObjectsFactory) {
         firstProject = testObjectsFactory.prepareProject();
+        firstProject.setId(1L);
         secondProject = testObjectsFactory.prepareProject();
+        secondProject.setId(2L);
         thirdProject = testObjectsFactory.prepareProject();
-
+        thirdProject.setId(3L);
         firstProject.setProjectClass(ProjectClass.I);
         secondProject.setProjectClass(ProjectClass.I);
         thirdProject.setProjectClass(ProjectClass.II);
@@ -259,7 +358,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
     }
 
-    private ProjectAspectLine prepareProjectAspectLine() {
+    private ProjectAspectLine prepareTestProjectAspectLine() {
         ProjectAspectLine projectAspectLine = new ProjectAspectLine();
 
         BudgetAspect budgetAspect = new BudgetAspect();
@@ -285,7 +384,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         return projectAspectLine;
     }
 
-    private ProjectAspectLineDTO prepareProjectAspectLineDTO() {
+    private ProjectAspectLineDTO prepareTestProjectAspectLineDTO() {
         ProjectAspectLineDTO projectAspectLineDTO = new ProjectAspectLineDTO();
 
         BudgetAspectDTO budgetAspectDTO = new BudgetAspectDTO();
@@ -318,13 +417,19 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         return realEndDateDTO;
     }
 
+    private RealEndDate prepareRealEndDate(int offset, String reason){
+        RealEndDate realEndDate = new RealEndDate();
+        realEndDate.setEndDate(LocalDateTime.now().plusDays(offset));
+        realEndDate.setReason(reason);
+        return realEndDate;
+    }
     @Override
     protected Project createNewEntity() {
         return testObjectsFactory.prepareProject();
     }
 
     @Override
-    protected IDao getDao() {
+    protected IProjectDao getDao() {
         return projectDao;
     }
 

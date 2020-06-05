@@ -30,7 +30,7 @@ public abstract class IServiceTestImpl<T> implements IServiceTest {
 
         when(getDao().find(getElementIndex(0))).thenReturn(entityOptional);
 
-        assertNotNull(getService().findInternal(firstEntityId));
+        assertNotNull(getService().findInternal(getElementIndex(0)));
     }
 
     @Override

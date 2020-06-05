@@ -2,7 +2,9 @@ package com.mbor.configuration;
 
 import com.mbor.dao.IProjectDao;
 import com.mbor.dao.ProjectDao;
+import com.mbor.mapper.ProjectAspectLineMapper;
 import com.mbor.mapper.ProjectMapper;
+import com.mbor.mapper.RealEndDateMapper;
 import com.mbor.service.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +26,18 @@ public class ServiceMockConfiguration {
     @Primary
     ProjectMapper projectMapper(){
         return Mockito.mock(ProjectMapper.class);
+    }
+
+    @Bean
+    @Primary
+    ProjectAspectLineMapper projectAspectMapper(){
+        return Mockito.mock(ProjectAspectLineMapper.class);
+    }
+
+    @Bean
+    @Primary
+    RealEndDateMapper realEndDateMapper(){
+        return Mockito.mock(RealEndDateMapper.class);
     }
 
     @Bean
