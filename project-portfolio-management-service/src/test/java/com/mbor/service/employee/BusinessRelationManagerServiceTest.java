@@ -16,11 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
@@ -31,11 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ServiceConfiguration.class)
-@Transactional
 @ActiveProfiles("test")
 class BusinessRelationManagerServiceTest extends IServiceTestImpl<BusinessRelationManager> {
-
-    private static final int createdEntitiesNumber = 3;
 
     private static Random random = new Random();
     private static Long firstBusinessRelationManagerId;
@@ -44,19 +37,8 @@ class BusinessRelationManagerServiceTest extends IServiceTestImpl<BusinessRelati
     IEmployeeService employeeService;
 
     @BeforeAll
-    static void init(@Autowired EntityManagerFactory entityManagerFactory) throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        for (int i = 0; i < createdEntitiesNumber; i++) {
-            BusinessRelationManager businessRelationManager = new BusinessRelationManager();
-            businessRelationManager.setUserName("BusinessRelationManager" + random.nextLong());
-            entityManager.persist(businessRelationManager);
-            entityIdList.add(businessRelationManager.getId());
-        }
-        firstBusinessRelationManagerId = entityIdList.get(0);
-        firstEntityId = firstBusinessRelationManagerId;
-        transaction.commit();
+    static void init() throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+
     }
 
     @Test

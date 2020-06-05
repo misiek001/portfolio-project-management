@@ -16,8 +16,6 @@ public abstract class IServiceTestImpl<T> implements IServiceTest {
 
     protected static int createdEntitiesNumber = 3;
 
-    protected static Long firstEntityId;
-
     protected static List<Long> entityIdList = new LinkedList<>();
 
     protected static Random random = new Random();

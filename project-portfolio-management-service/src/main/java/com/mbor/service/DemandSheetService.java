@@ -33,23 +33,6 @@ public class DemandSheetService extends RawService<DemandSheet> implements IDema
     }
 
     @Override
-    public List<DemandSheetDTO> findAll() {
-        return null;
-    }
-
-    @Override
-    public DemandSheetDTO find(Long id) {
-        return null;
-    }
-
-    @Override
-    public List<DemandSheetDTO> getAllDemandSheetsOfBRMWithNoProject(Long brmId){
-        List<DemandSheetDTO> result = new ArrayList<>();
-        demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(brmId).forEach(demandSheet -> result.add(demandSheetMapper.convertToDto(demandSheet)));
-        return result;
-    }
-
-    @Override
     public DemandSheetCreatedDTO save(DemandSheetCreationDTO demandSheetCreationDTO) {
         DemandSheet demandSheet = demandSheetMapper.convertCreationDtoToEntity(demandSheetCreationDTO);
         BusinessUnit businessUnit = businessUnitService.findInternal(demandSheetCreationDTO.getBusinessUnitId());
@@ -62,6 +45,23 @@ public class DemandSheetService extends RawService<DemandSheet> implements IDema
         saveInternal(demandSheet);
 
         return demandSheetMapper.convertEntityToCreatedDto(demandSheet);
+    }
+
+    @Override
+    public List<DemandSheetDTO> findAll() {
+        return null;
+    }
+
+    @Override
+    public DemandSheetDTO find(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<DemandSheetDTO> findAllDemandSheetsOfBRMWithNoProject(Long brmId){
+        List<DemandSheetDTO> result = new ArrayList<>();
+        demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(brmId).forEach(demandSheet -> result.add(demandSheetMapper.convertToDto(demandSheet)));
+        return result;
     }
 
     @Override

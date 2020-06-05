@@ -354,7 +354,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         businessLeaderDTO = testObjectsFactory.prepareBusinessLeaderDTOFromEntity(businessLeader);
         businessLeaderDTO.setEmployee(businessEmployeeDTO);
 
-        primaryBusinessUnitDTO = testObjectsFactory.prepareBusinessUnitDTO(firstBusinessUnit);
+        primaryBusinessUnitDTO = testObjectsFactory.prepareBusinessUnitDTOFromEntity(firstBusinessUnit);
 
     }
 

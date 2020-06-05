@@ -7,5 +7,5 @@ import com.mbor.model.creation.DemandSheetCreationDTO;
 import java.util.List;
 
 public interface IAPIDemandSheetService extends IAPIService<DemandSheetCreatedDTO, DemandSheetCreationDTO, DemandSheetDTO> {
-    List<DemandSheetDTO> getAllDemandSheetsOfBRMWithNoProject(Long brmId);
+    List<DemandSheetDTO> findAllDemandSheetsOfBRMWithNoProject(Long brmId);
 }

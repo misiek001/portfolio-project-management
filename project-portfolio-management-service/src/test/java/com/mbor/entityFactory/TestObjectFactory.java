@@ -4,6 +4,8 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.model.*;
+import com.mbor.model.creation.DemandSheetCreatedDTO;
+import com.mbor.model.creation.DemandSheetCreationDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import org.springframework.stereotype.Component;
@@ -53,7 +55,7 @@ public class TestObjectFactory {
     }
 
 
-    public BusinessUnitDTO prepareBusinessUnitDTO(BusinessUnit businessUnit){
+    public BusinessUnitDTO prepareBusinessUnitDTOFromEntity(BusinessUnit businessUnit){
         BusinessUnitDTO businessUnitDTO = new BusinessUnitDTO();
         businessUnitDTO.setId(businessUnit.getId());
         businessUnitDTO.setName(businessUnit.getName());
@@ -185,6 +187,36 @@ public class TestObjectFactory {
         projectAspectLine.setDeadlineAspect(deadlineAspect);
 
         return projectAspectLine;
+    }
+
+    public DemandSheetCreationDTO prepareDemandSheetCreationDTO(String projectName, String projectDescription, Long businessUnitId) {
+        DemandSheetCreationDTO demandSheetCreationDTO = new DemandSheetCreationDTO();
+        demandSheetCreationDTO.setProjectName(projectName);
+        demandSheetCreationDTO.setDescription(projectDescription);
+        demandSheetCreationDTO.setBusinessUnitId(businessUnitId);
+        return demandSheetCreationDTO;
+    }
+
+    public DemandSheetDTO prepareDemandSheetDTO(){
+        return new DemandSheetDTO();
+    }
+
+    public DemandSheet prepareDemandSheetFromCreationDTO(DemandSheetCreationDTO demandSheetCreationDTO){
+        DemandSheet demandSheet = new DemandSheet();
+        demandSheet.setProjectName(demandSheetCreationDTO.getProjectName());
+        demandSheet.setDescription(demandSheetCreationDTO.getDescription());
+        return demandSheet;
+    }
+
+    public DemandSheetCreatedDTO prepareDemandSheetCreatedDTOFromDemandSheet(DemandSheet demandSheet){
+        DemandSheetCreatedDTO demandSheetCreatedDTO = new DemandSheetCreatedDTO();
+        demandSheetCreatedDTO.setProjectName(demandSheet.getProjectName());
+        demandSheetCreatedDTO.setDescription(demandSheet.getDescription());
+        BusinessRelationManagerDTO businessRelationManagerDTO = prepareBusinessRelationManagerDTOFromEntity(demandSheet.getBusinessRelationManager());
+        BusinessUnitDTO businessUnitDTO = prepareBusinessUnitDTOFromEntity(demandSheet.getBusinessUnit());
+        demandSheetCreatedDTO.setBusinessRelationManager(businessRelationManagerDTO);
+        demandSheetCreatedDTO.setBusinessUnit(businessUnitDTO);
+        return demandSheetCreatedDTO;
     }
 
     public ProjectCreationDTO prepareProjectCreationDTO(String projectName, ProjectClassDTO projectClassDTO, Long businessRelationManagerId, Long businessLeaderId, Long primaryBusinessUnitId, List<Long> secondaryBusinessUnitIds) {

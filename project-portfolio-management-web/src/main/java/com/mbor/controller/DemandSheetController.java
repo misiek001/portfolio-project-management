@@ -43,7 +43,7 @@ public class DemandSheetController extends RawController {
     public ResponseEntity<List<DemandSheetDTO>> createDemandSheet(final Authentication authentication){
         String principal = (String) authentication.getPrincipal();
         Long brmId = employeeService.getDemandedEmployeeId(BusinessRelationManager.class, principal);
-        return new ResponseEntity(getService().getAllDemandSheetsOfBRMWithNoProject(brmId), HttpStatus.OK);
+        return new ResponseEntity(getService().findAllDemandSheetsOfBRMWithNoProject(brmId), HttpStatus.OK);
     }
 
     @Override
