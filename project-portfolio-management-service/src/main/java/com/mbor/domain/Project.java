@@ -31,6 +31,7 @@ public class Project implements IProjectDTO {
     @NaturalId
     private String projectName;
 
+    @Enumerated(EnumType.STRING)
     private ProjectClass projectClass;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
