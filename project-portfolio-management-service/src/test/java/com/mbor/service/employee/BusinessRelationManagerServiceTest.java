@@ -1,8 +1,14 @@
 package com.mbor.service.employee;
 
-import com.mbor.dao.IDao;
+import com.mbor.configuration.ServiceMockConfiguration;
+import com.mbor.configuration.TestConfiguration;
+import com.mbor.dao.IEmployeeDao;
 import com.mbor.domain.BusinessRelationManager;
-import com.mbor.domain.security.User;
+import com.mbor.domain.BusinessUnit;
+import com.mbor.domain.Director;
+import com.mbor.domain.Employee;
+import com.mbor.entityFactory.TestObjectFactory;
+import com.mbor.mapper.BusinessRelationManagerMapper;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
 import com.mbor.model.creation.EmployeeType;
@@ -17,48 +23,62 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import java.util.Random;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ServiceConfiguration.class)
-@ActiveProfiles("test")
+@ContextConfiguration(classes = {ServiceConfiguration.class, ServiceMockConfiguration.class, TestConfiguration.class})
+@ActiveProfiles({"test", "employee-tests-mock"})
 class BusinessRelationManagerServiceTest extends IServiceTestImpl<BusinessRelationManager> {
-
-    private static Random random = new Random();
-    private static Long firstBusinessRelationManagerId;
 
     @Autowired
     IEmployeeService employeeService;
 
-    @BeforeAll
-    static void init() throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+    @Autowired
+    IEmployeeDao employeeDao;
 
+    @Autowired
+    BusinessRelationManagerMapper businessRelationManagerMapper;
+
+    @Autowired
+    TestObjectFactory testObjectFactory;
+
+    @BeforeAll
+    static void init() {
+        for(long i = 0; i < createdEntitiesNumber; i++){
+            entityIdList.add(i);
+        }
     }
 
     @Test
     void saveFromDtoThenSuccess() {
-        EmployeeCreationDTO businessRelationManagerCreationDTO = prepareBusinessRelationManagerCreationDto();
-        EmployeeCreatedDTO businessRelationManagerCreatedDTO = employeeService.save(businessRelationManagerCreationDTO);
-        assertNotNull(employeeService.findInternal(businessRelationManagerCreatedDTO.getId()));
-        assertNotNull(businessRelationManagerCreatedDTO);
+        EmployeeCreationDTO businessRelationManagerCreationDTO = testObjectFactory.prepareEmployeeCreationDTO(EmployeeType.BusinessRelationManager, "BRMFirstName", "BRMLastName");
+
+        BusinessRelationManager businessRelationManagerFromCreationDTO = testObjectFactory.prepareBusinessRelationManagerFromEmployeeCreationDTO(businessRelationManagerCreationDTO);
+        BusinessUnit businessUnit = testObjectFactory.prepareBusinessUnit();
+        businessUnit.setId(prepareBusinessRelationManagerCreationDto().getBusinessUnitId());
+        businessRelationManagerFromCreationDTO.setBusinessUnit(businessUnit);
+
+        Director director = testObjectFactory.prepareDirector();
+        director.setId(businessRelationManagerCreationDTO.getDirectorId());
+        businessRelationManagerFromCreationDTO.setDirector(director);
+
+        Optional<Employee> businessRelationManagerOptional = Optional.of(businessRelationManagerFromCreationDTO);
+
+        EmployeeCreatedDTO businessRelationManagerCreatedDTO = new EmployeeCreatedDTO();
+        businessRelationManagerCreatedDTO.setFirstName(businessRelationManagerCreationDTO.getFirstName());
+        businessRelationManagerCreatedDTO.setLastName(businessRelationManagerCreationDTO.getLastName());
+        businessRelationManagerCreatedDTO.setEmployeeType(businessRelationManagerCreationDTO.getEmployeeType());
+        businessRelationManagerCreatedDTO.setBusinessUnitId(businessRelationManagerCreationDTO.getBusinessUnitId());
+
+        when(businessRelationManagerMapper.convertCreationDtoToEntity(businessRelationManagerCreationDTO)).thenReturn(businessRelationManagerFromCreationDTO);
+        when(employeeDao.save(businessRelationManagerFromCreationDTO)).thenReturn(businessRelationManagerOptional);
+        when(businessRelationManagerMapper.convertEntityToCreatedDto(businessRelationManagerFromCreationDTO)).thenReturn(businessRelationManagerCreatedDTO);
+
+        employeeService.save(businessRelationManagerCreationDTO);
     }
 
-    @Test
-    void saveFromDtoWithRoleAndPrivilege(){
-        EmployeeCreationDTO businessRelationManagerCreationDTO = prepareBusinessRelationManagerCreationDto();
-        EmployeeCreatedDTO businessRelationManagerCreatedDTO = employeeService.save(businessRelationManagerCreationDTO);
-        BusinessRelationManager savedBRM = (BusinessRelationManager) employeeService.findInternal(businessRelationManagerCreatedDTO.getId());
-        assertNotNull(savedBRM);
-        User savedUser = savedBRM.getUser();
-        assertNotNull(savedBRM);
-        assertNotNull(savedUser.getRoles());;
-    }
 
     private EmployeeCreationDTO prepareBusinessRelationManagerCreationDto() {
         EmployeeCreationDTO businessRelationManagerCreationDTO = new EmployeeCreationDTO();
@@ -83,7 +103,7 @@ class BusinessRelationManagerServiceTest extends IServiceTestImpl<BusinessRelati
     }
 
     @Override
-    protected IDao getDao() {
-        return null;
+    protected IEmployeeDao getDao() {
+        return employeeDao;
     }
 }

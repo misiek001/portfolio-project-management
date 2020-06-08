@@ -45,6 +45,7 @@ public class DemandSheetMapper  extends CreationPojoMapper<DemandSheetDTO, Deman
                 .addMappings(mapping -> mapping.map(DemandSheet::getBusinessRelationManager, DemandSheetDTO::setBusinessRelationManager))
                 .addMappings(mapping -> mapping.map(DemandSheet::getProject, DemandSheetDTO::setProject))
                 .addMappings(mapping -> mapping.map(DemandSheet::getId, DemandSheetDTO::setId))
+                .addMappings(mapping -> mapping.map(DemandSheet::getDescription, DemandSheetDTO::setDescription))
                 .addMappings(mapping -> mapping.map(DemandSheet::getProjectName, DemandSheetDTO::setProjectName));
         modelMapper.typeMap(BusinessUnit.class, BusinessUnitDTO.class)
                 .addMappings(mapping -> mapping.map(BusinessUnit::getId, BusinessUnitDTO::setId));

@@ -313,7 +313,6 @@ public class DevDataLoader {
         thirdProject.setProjectClass(ProjectClass.II);
         fourthProject.setProjectClass(ProjectClass.III);
 
-
         firstProject.setResourceManager(simpleFind(entityManager, ResourceManager.class, FIRST_RESOURCE_MANAGER_ID));
         firstProject.setProjectManager(simpleFind(entityManager, ProjectManager.class, FIRST_PROJECT_MANAGER_ID));
         firstProject.addSolutionArchitect(simpleFind(entityManager, SolutionArchitect.class, FIRST_SOLUTION_ARCHITECT_ID));
@@ -345,6 +344,28 @@ public class DevDataLoader {
 
         entityManager.persist(fourthProject);
         FOURTH_PROJECT_ID = fourthProject.getId();
+
+        ProjectStatusHistoryLine firstProjectAnalysisStatus = new ProjectStatusHistoryLine();
+        firstProjectAnalysisStatus.setPreviousStatus(ProjectStatus.ANALYSIS);
+        firstProjectAnalysisStatus.setCurrentStatus(ProjectStatus.ANALYSIS);
+        firstProject.addProjectStatusHistoryLine(firstProjectAnalysisStatus);
+
+        ProjectStatusHistoryLine secondProjectAnalysisStatus = new ProjectStatusHistoryLine();
+        secondProjectAnalysisStatus.setPreviousStatus(ProjectStatus.ANALYSIS);
+        secondProjectAnalysisStatus.setCurrentStatus(ProjectStatus.ANALYSIS);
+        secondProject.addProjectStatusHistoryLine(secondProjectAnalysisStatus);
+
+        ProjectStatusHistoryLine thirdProjectAwaitingStatus = new ProjectStatusHistoryLine();
+        thirdProjectAwaitingStatus.setPreviousStatus(ProjectStatus.ANALYSIS);
+        thirdProjectAwaitingStatus.setCurrentStatus(ProjectStatus.AWAITING);
+        thirdProject.addProjectStatusHistoryLine(thirdProjectAwaitingStatus);
+        entityManager.merge(thirdProject);
+
+        ProjectStatusHistoryLine thirdProjectInProgressStatus = new ProjectStatusHistoryLine();
+        thirdProjectInProgressStatus.setPreviousStatus(ProjectStatus.AWAITING);
+        thirdProjectInProgressStatus.setCurrentStatus(ProjectStatus.IN_PROGRESS);
+        thirdProject.addProjectStatusHistoryLine(thirdProjectInProgressStatus);
+
 
     };
 

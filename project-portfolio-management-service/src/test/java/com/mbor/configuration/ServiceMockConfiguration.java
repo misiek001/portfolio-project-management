@@ -33,12 +33,27 @@ public class ServiceMockConfiguration {
         return Mockito.mock((BusinessUnitDao.class));
     }
 
+    @Profile({"employee-tests-mock"})
+    @Bean
+    @Primary
+    IEmployeeDao employeeDao() {
+        return Mockito.mock((EmployeeDao.class));
+    }
+
     @Profile("project-tests-mock")
     @Bean
     @Primary
     ProjectMapper projectMapper() {
         return Mockito.mock(ProjectMapper.class);
     }
+
+    @Profile("employee-tests-mock")
+    @Bean
+    @Primary
+    BusinessRelationManagerMapper businessRelationManagerMapper() {
+        return Mockito.mock(BusinessRelationManagerMapper.class);
+    }
+
 
     @Profile("project-tests-mock")
     @Bean
