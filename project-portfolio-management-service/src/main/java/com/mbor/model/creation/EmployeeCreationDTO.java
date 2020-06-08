@@ -21,7 +21,6 @@ public class EmployeeCreationDTO {
     @Positive
     private Long businessUnitId;
 
-    //Todo Custom validation for emptyDirectorID and EmployeeType
     private Long directorId;
 
     private Long supervisorId;

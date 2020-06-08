@@ -75,6 +75,24 @@ public class TestObjectFactory {
         return businessUnitCreatedDTO;
     }
 
+    public EmployeeCreationDTO prepareEmployeeCreationDTO(EmployeeType employeeType, String firstName, String lastName){
+        EmployeeCreationDTO employeeCreationDTO = new EmployeeCreationDTO();
+        employeeCreationDTO.setFirstName(firstName);
+        employeeCreationDTO.setLastName(lastName);
+        employeeCreationDTO.setEmployeeType(employeeType);
+        return employeeCreationDTO;
+    }
+
+    public BusinessRelationManager prepareBusinessRelationManagerFromEmployeeCreationDTO(EmployeeCreationDTO employeeCreationDTO){
+        if (employeeCreationDTO.getEmployeeType() != EmployeeType.BusinessRelationManager) {
+            throw new RuntimeException("Bad Employee Type");
+        }
+        BusinessRelationManager businessRelationManager = new BusinessRelationManager();
+        businessRelationManager.setFirstName(employeeCreationDTO.getFirstName());
+        businessRelationManager.setLastName(employeeCreationDTO.getLastName());
+        return businessRelationManager;
+    }
+
     public BusinessRelationManager prepareBusinessRelationManager(){
         return prepareBusinessRelationManager("BRM UserName" + random.nextLong());
     }
@@ -92,6 +110,16 @@ public class TestObjectFactory {
         }
         businessRelationManagerDTO.setUserName(businessRelationManager.getUserName());
         return businessRelationManagerDTO;
+    }
+
+    public Director prepareDirector(){
+        return prepareDirector("Director" + random.nextLong());
+    }
+
+    public Director prepareDirector(String name){
+        Director director = new Director();
+        director.setUserName(name);
+        return director;
     }
 
     public Supervisor prepareSupervisor() {
