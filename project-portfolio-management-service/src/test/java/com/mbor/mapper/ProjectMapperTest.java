@@ -4,6 +4,7 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.BusinessLeader;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
+import com.mbor.mapper.project.ProjectMapper;
 import com.mbor.model.ProjectDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -11,7 +12,6 @@ import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,9 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 class ProjectMapperTest {
 
-
-
     private static ProjectCreationDTO projectCreationDTO;
+    private static DemandSheet demandSheet;
 
     private static Project expectedProject;
     private static BusinessUnit ITBusinessUnit;
@@ -53,27 +52,27 @@ class ProjectMapperTest {
     @Autowired
     ProjectMapper projectMapper;
 
-    @Mock
-    private BusinessLeaderMapper businessLeaderMapper;
-    @Mock
-    private BusinessEmployeeMapper businessEmployeeMapper;
-    @Mock
-    private BusinessRelationManagerMapper businessRelationManagerMapper;
-
     @BeforeAll
     static void setUp() {
         //ProjectCreationDTO
         projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName(PROJECT_NAME);
+
+        //DemandSheet
+        demandSheet = new DemandSheet();
+        demandSheet.setProjectName(PROJECT_NAME);
+        demandSheet.setDescription("Project Description");
+
         projectCreationDTO.setProjectClass(DTO_PROJECT_CLASS);
 
         //Expected Project from mapping CreationDTO
-
         expectedProject = new Project();
         expectedProject.setId(PROJECT_ID);
         expectedProject.setProjectName(projectCreationDTO.getProjectName());
         expectedProject.setProjectClass(PROJECT_CLASS);
         expectedProject.addProjectStatusHistoryLine(MapperUtils.prepareProjectStatusHistoryLine());
+
+        expectedProject.setDemandSheet(demandSheet);
 
         ITBusinessUnit = new BusinessUnit();
         ITBusinessUnit.setId(IT_BUSINESS_UNIT_ID);
@@ -84,12 +83,12 @@ class ProjectMapperTest {
         director.setUserName(DIRECTOR_USER_NAME);
         director.setBusinessUnit(ITBusinessUnit);
 
-
         businessRelationManager = new BusinessRelationManager();
         businessRelationManager.setId(BRM_ID);
         businessRelationManager.setUserName(BRM_USER_NAME);
         businessRelationManager.setBusinessUnit(ITBusinessUnit);
         businessRelationManager.setDirector(director);
+        demandSheet.setBusinessRelationManager(businessRelationManager);
 
         expectedProject.setBusinessRelationManager(businessRelationManager);
 
@@ -134,6 +133,9 @@ class ProjectMapperTest {
         businessUnitFirst.setId(FIRST_BUSINESS_UNIT_ID);
         businessUnitFirst.setName(FIRST_BUSINESS_UNIT_NAME);
         businessUnitFirst.getEmployees().add(businessEmployee);
+
+        demandSheet.setBusinessUnit(businessUnitFirst);
+
         businessEmployee.addProjectRole(businessLeader);
 
         businessUnitSecond = new BusinessUnit();
@@ -153,7 +155,6 @@ class ProjectMapperTest {
 
         expectedProject.addRealEndDate(firstRealEndDate);
         expectedProject.addRealEndDate(secondRealEndDate);
-
     }
 
     @Test
@@ -176,7 +177,7 @@ class ProjectMapperTest {
 
     @Test
     void convertToDto() {
-        ProjectDTO result = projectMapper.convertToDto(expectedProject);
+        ProjectDTO result = projectMapper.convertEntityToDto(expectedProject);
 
         assertEquals(expectedProject.getId(), result.getId());
         assertEquals(expectedProject.getProjectName(), result.getProjectName());
@@ -184,7 +185,6 @@ class ProjectMapperTest {
         assertEquals(expectedProject.getResourceManager().getId(), result.getResourceManager().getId());
         assertEquals(expectedProject.getResourceManager().getEmployee().getId(), result.getResourceManager().getEmployee().getId());
         assertEquals(expectedProject.getResourceManager().getEmployee().getUserName(), result.getResourceManager().getEmployee().getUserName());
-        assertEquals(0, result.getResourceManager().getEmployee().getBusinessUnit().getEmployees().size());
         assertEquals(expectedProject.getProjectManager().getId(), result.getProjectManager().getId());
         assertEquals(expectedProject.getProjectManager().getEmployee().getId(), result.getProjectManager().getEmployee().getId());
         assertEquals(expectedProject.getProjectManager().getEmployee().getUserName(), result.getProjectManager().getEmployee().getUserName());
@@ -196,10 +196,6 @@ class ProjectMapperTest {
         assertEquals(0, result.getPrimaryBusinessUnit().getPrimaryProjects().size());
         assertEquals(0, result.getPrimaryBusinessUnit().getSecondaryProjects().size());
 
-    }
-
-    @Test
-    void convertToEntity() {
     }
 
 

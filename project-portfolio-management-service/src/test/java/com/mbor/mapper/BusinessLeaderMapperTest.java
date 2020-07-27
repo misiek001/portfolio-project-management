@@ -2,6 +2,7 @@ package com.mbor.mapper;
 
 import com.mbor.domain.BusinessEmployee;
 import com.mbor.domain.employeeinproject.BusinessLeader;
+import com.mbor.mapper.employee.BusinessLeaderMapper;
 import com.mbor.model.BusinessEmployeeDTO;
 import com.mbor.model.BusinessLeaderDTO;
 import com.mbor.spring.ServiceConfiguration;
@@ -55,16 +56,9 @@ class BusinessLeaderMapperTest {
 
     @Test
     void convertToDto() {
-        BusinessLeaderDTO createdBusinessLeaderDTO = businessLeaderMapper.convertToDto(businessLeader);
+        BusinessLeaderDTO createdBusinessLeaderDTO = businessLeaderMapper.convertEntityToDto(businessLeader);
 
         assertEquals(createdBusinessLeaderDTO.getEmployee().getId(), businessLeaderDTO.getEmployee().getId());
     }
 
-    @Test
-    void convertToEntity() {
-        BusinessLeader createdBusinessLeader = businessLeaderMapper.convertToEntity(businessLeaderDTO);
-
-        assertEquals(createdBusinessLeader.getId(), businessLeader.getId());
-        assertEquals(createdBusinessLeader.getEmployee().getId(), businessLeader.getEmployee().getId());
-    }
 }

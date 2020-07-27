@@ -8,7 +8,7 @@ import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.DemandSheet;
 import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.exception.NoBRMAssignedToBusinessUnitException;
-import com.mbor.mapper.DemandSheetMapper;
+import com.mbor.mapper.project.DemandSheetMapper;
 import com.mbor.model.DemandSheetDTO;
 import com.mbor.model.creation.DemandSheetCreatedDTO;
 import com.mbor.model.creation.DemandSheetCreationDTO;
@@ -134,7 +134,7 @@ class DemandSheetServiceTest extends IServiceTestImpl<DemandSheet> {
         demandSheetDTOList.add(testObjectFactory.prepareDemandSheetDTO());
 
         when(demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(FIRST_BRM_ID)).thenReturn(demandSheetList);
-        when(demandSheetMapper.convertToDto(any(DemandSheet.class))).thenReturn(demandSheetDTOList.get(0), demandSheetDTOList.get(1), demandSheetDTOList.get(2));
+        when(demandSheetMapper.convertEntityToDto(any(DemandSheet.class))).thenReturn(demandSheetDTOList.get(0), demandSheetDTOList.get(1), demandSheetDTOList.get(2));
 
         assertEquals(3, demandSheetService.findAllDemandSheetsOfBRMWithNoProject(FIRST_BRM_ID).size());
     }

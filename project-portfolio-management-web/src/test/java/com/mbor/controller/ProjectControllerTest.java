@@ -64,7 +64,7 @@ class ProjectControllerTest {
         Assertions.assertNotNull(obtainAccessToken(env.getProperty("user.supervisor.name"), env.getProperty("user.supervisor.password")));
     }
 
-    @Test
+
     void createProjectThenSuccess() throws Exception {
         String accessToken = obtainAccessToken(env.getProperty("user.brm.name"), env.getProperty("user.brm.password"));
 
@@ -208,6 +208,7 @@ class ProjectControllerTest {
     private String prepareProjectCreationDto() throws JsonProcessingException {
         ProjectCreationDTO projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName("Created Project Name");
+        projectCreationDTO.setProjectClass(ProjectClassDTO.I);
 
         BusinessRelationManagerDTO businessRelationManagerDTO = new BusinessRelationManagerDTO();
         businessRelationManagerDTO.setId(BRM_ID);

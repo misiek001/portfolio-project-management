@@ -1,4 +1,4 @@
-package com.mbor.mapper;
+package com.mbor.mapper.employee;
 
 import com.mbor.domain.Supervisor;
 import com.mbor.model.SupervisorDTO;

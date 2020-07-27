@@ -5,7 +5,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 public class ServletConfiguration extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{ServiceConfiguration.class, SwaggerConfiguration.class};
+        return new Class<?>[]{ServiceConfiguration.class, SwaggerConfiguration.class, ModelMapperConfiguration.class};
     }
 
     protected Class<?>[] getServletConfigClasses() {

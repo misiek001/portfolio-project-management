@@ -8,7 +8,7 @@ import com.mbor.domain.security.Privilege;
 import com.mbor.domain.security.Role;
 import com.mbor.domain.security.User;
 import com.mbor.exception.WrongEmployeeTypeException;
-import com.mbor.mapper.*;
+import com.mbor.mapper.employee.*;
 import com.mbor.model.EmployeeDTO;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
@@ -54,14 +54,14 @@ public class EmployeeService extends RawService<Employee> implements IEmployeeSe
     public List<EmployeeDTO> findAll() {
         List<Employee> employees = findAllInternal();
         return  employees.stream()
-                .map(employee -> mappers.get(EmployeeType.valueOf(employee.getClass().getSimpleName())).convertToDto(employee))
+                .map(employee -> mappers.get(EmployeeType.valueOf(employee.getClass().getSimpleName())).convertEntityToDto(employee))
                 .collect(Collectors.toList());
     }
 
     @Override
     public EmployeeDTO find(Long id) {
         Employee employee = findInternal(id);
-        return mappers.get(EmployeeType.valueOf(employee.getClass().getSimpleName())).convertToDto(employee);
+        return mappers.get(EmployeeType.valueOf(employee.getClass().getSimpleName())).convertEntityToDto(employee);
     }
 
     @Override

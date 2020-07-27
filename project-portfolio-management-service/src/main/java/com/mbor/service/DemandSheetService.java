@@ -6,7 +6,7 @@ import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.DemandSheet;
 import com.mbor.exception.NoBRMAssignedToBusinessUnitException;
-import com.mbor.mapper.DemandSheetMapper;
+import com.mbor.mapper.project.DemandSheetMapper;
 import com.mbor.model.DemandSheetDTO;
 import com.mbor.model.creation.DemandSheetCreatedDTO;
 import com.mbor.model.creation.DemandSheetCreationDTO;
@@ -60,7 +60,7 @@ public class DemandSheetService extends RawService<DemandSheet> implements IDema
     @Override
     public List<DemandSheetDTO> findAllDemandSheetsOfBRMWithNoProject(Long brmId){
         List<DemandSheetDTO> result = new ArrayList<>();
-        demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(brmId).forEach(demandSheet -> result.add(demandSheetMapper.convertToDto(demandSheet)));
+        demandSheetDao.getAllDemandSheetsOfBRMWithNoProject(brmId).forEach(demandSheet -> result.add(demandSheetMapper.convertEntityToDto(demandSheet)));
         return result;
     }
 

@@ -10,9 +10,9 @@ import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.entityFactory.TestObjectFactory;
-import com.mbor.mapper.ProjectAspectLineMapper;
-import com.mbor.mapper.ProjectMapper;
-import com.mbor.mapper.RealEndDateMapper;
+import com.mbor.mapper.project.ProjectAspectLineMapper;
+import com.mbor.mapper.project.ProjectMapper;
+import com.mbor.mapper.project.RealEndDateMapper;
 import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -120,7 +120,6 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         entityIdList.clear();
     }
 
-    @Test
     void saveThenSuccess() {
         List<Long> secondaryBusinessUnitsId = new ArrayList<>();
         ProjectCreationDTO projectCreationDTO = testObjectsFactory.prepareProjectCreationDTO(firstProject.getProjectName(), ProjectClassDTO.I, businessRelationManager.getId(), businessLeader.getId(), firstBusinessUnit.getId(), secondaryBusinessUnitsId);
@@ -160,10 +159,10 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         }
 
         when(projectDao.findAll()).thenReturn(projects);
-        when(projectMapper.convertToDto(any(Project.class))).thenReturn(projectDTOs.get(0), projectDTOs.get(1), projectDTOs.get(2));
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(projectDTOs.get(0), projectDTOs.get(1), projectDTOs.get(2));
 
         List<ProjectDTO> result = projectService.findAll();
-        verify(projectMapper, times(3)).convertToDto(any());
+        verify(projectMapper, times(3)).convertEntityToDto(any());
         assertEquals(createdEntitiesNumber, result.size());
         result.forEach(projectDTO -> {
             assertNotNull(projectDTO.getProjectName());
@@ -177,7 +176,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
 
         when(projectDao.find(anyLong())).thenReturn(projectOptional);
-        when(projectMapper.convertToDto(any(Project.class))).thenReturn(projectDTO);
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(projectDTO);
 
         ProjectDTO result = projectService.find(1L);
         assertEquals(project.getProjectName(), result.getProjectName());
@@ -213,11 +212,11 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
 
         when(getDao().findByMultipleCriteria(anyString(), anyList(),anyString(),anyList(),any(LocalDate.class))).thenReturn(resultProjects);
-        when(projectMapper.convertToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0),resultProjectsDTO.get(2),resultProjectsDTO.get(2));
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0),resultProjectsDTO.get(2),resultProjectsDTO.get(2));
 
         List<ProjectDTO> result = projectService.findByMultipleCriteria(searchProjectDTO);
         assertEquals(resultProjectsDTO.size(), result.size());
-        verify(projectMapper, times(3)).convertToDto(any(Project.class));
+        verify(projectMapper, times(3)).convertEntityToDto(any(Project.class));
 
     }
 
@@ -237,8 +236,8 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
         when(projectDao.find(anyLong())).thenReturn(projectOptional);
         when(projectDao.update(project)).thenReturn(projectOptional);
-        when(projectAspectLineMapper.convertToEntity(projectAspectLineDTO)).thenReturn(projectAspectLine);
-        when(projectMapper.convertToDto(project)).thenReturn(projectDTO);
+        when(projectAspectLineMapper.convertDtoToEntity(projectAspectLineDTO)).thenReturn(projectAspectLine);
+        when(projectMapper.convertEntityToDto(project)).thenReturn(projectDTO);
 
         ProjectDTO result  = projectService.updateProjectAspects(firstProject.getId(), projectAspectLineDTO, firstProjectManager.getId());
 
@@ -268,8 +267,8 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
         when(projectDao.find(firstProject.getId())).thenReturn(projectOptional);
         when(projectDao.update(project)).thenReturn(projectOptional);
-        when(realEndDateMapper.convertToEntity(realEndDateDTO)).thenReturn(realEndDate);
-        when(projectMapper.convertToDto(project)).thenReturn(projectDTO);
+        when(realEndDateMapper.convertDtoToEntity(realEndDateDTO)).thenReturn(realEndDate);
+        when(projectMapper.convertEntityToDto(project)).thenReturn(projectDTO);
         ProjectDTO result = projectService.addProjectEndDate(project.getId(), realEndDateDTO, firstProjectManager.getId());
         assertEquals(1, result.getRealEndDates().size());
     }

@@ -3,7 +3,7 @@ package com.mbor.service;
 import com.mbor.dao.IBusinessUnitDao;
 import com.mbor.dao.IDao;
 import com.mbor.domain.BusinessUnit;
-import com.mbor.mapper.BusinessUnitMapper;
+import com.mbor.mapper.businessUnit.BusinessUnitMapper;
 import com.mbor.model.BusinessUnitDTO;
 import com.mbor.model.creation.BusinessUnitCreatedDTO;
 import com.mbor.model.creation.BusinessUnitCreationDTO;
@@ -38,13 +38,13 @@ public class BusinessUnitService extends RawService<BusinessUnit> implements IBu
     @Override
     public List<BusinessUnitDTO> findAll() {
         return super.findAllInternal().stream()
-                .map(businessUnitMapper::convertToDto)
+                .map(businessUnitMapper::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public BusinessUnitDTO find(Long id) {
-        return businessUnitMapper.convertToDto(findInternal(id));
+        return businessUnitMapper.convertEntityToDto(findInternal(id));
     }
 
     @Override

@@ -20,7 +20,6 @@ public class DemandSheetDTO extends IdDTO {
     @JsonView(Views.Public.class)
     private ProjectDTO project;
 
-
     public String getProjectName() {
         return projectName;
     }

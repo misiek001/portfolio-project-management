@@ -67,7 +67,7 @@ public class Project implements IProjectDTO {
     private LocalDateTime plannedEndDate;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<RealEndDate> realEndDateSet = new HashSet<>();
+    private Set<RealEndDate> realEndDates = new HashSet<>();
 
     @ManyToOne(cascade = CascadeType.MERGE)
     private BusinessUnit primaryBusinessUnit;
@@ -182,12 +182,12 @@ public class Project implements IProjectDTO {
         this.plannedEndDate = plannedEndDate;
     }
 
-    public Set<RealEndDate> getRealEndDateSet() {
-        return realEndDateSet;
+    public Set<RealEndDate> getRealEndDates() {
+        return realEndDates;
     }
 
-    public void setRealEndDateSet(Set<RealEndDate> realEndDateSet) {
-        this.realEndDateSet = realEndDateSet;
+    public void setRealEndDates(Set<RealEndDate> realEndDateSet) {
+        this.realEndDates = realEndDateSet;
     }
 
     public BusinessLeader getBusinessLeader() {
@@ -233,12 +233,12 @@ public class Project implements IProjectDTO {
     }
 
     public void addRealEndDate(RealEndDate realEndDate){
-        this.realEndDateSet.add(realEndDate);
+        this.realEndDates.add(realEndDate);
         realEndDate.setProject(this);
     }
 
     public void removeRealEndDate(RealEndDate realEndDate){
-        this.realEndDateSet.remove(realEndDate);
+        this.realEndDates.remove(realEndDate);
         realEndDate.setProject(null);
     }
 

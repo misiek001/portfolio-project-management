@@ -1,6 +1,7 @@
 package com.mbor.mapper;
 
 import com.mbor.domain.projectaspect.*;
+import com.mbor.mapper.project.ProjectAspectLineMapper;
 import com.mbor.model.projectaspect.*;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +34,7 @@ class ProjectAspectLineMapperTest {
 
     @Test
     void convertToDto() {
-        ProjectAspectLineDTO result = projectAspectLineMapper.convertToDto(projectAspectLine);
+        ProjectAspectLineDTO result = projectAspectLineMapper.convertEntityToDto(projectAspectLine);
         
         assertEquals(result.getBudgetAspect().getAspectStatusName(), projectAspectLine.getBudgetAspect().getAspectStatusName());
         assertEquals(result.getBudgetAspect().getDescription(), projectAspectLine.getBudgetAspect().getDescription());
@@ -50,7 +51,7 @@ class ProjectAspectLineMapperTest {
 
     @Test
     void convertToEntity() {
-        ProjectAspectLine result = projectAspectLineMapper.convertToEntity(projectAspectLineDTO);
+        ProjectAspectLine result = projectAspectLineMapper.convertDtoToEntity(projectAspectLineDTO);
 
         assertEquals(result.getBudgetAspect().getAspectStatusName(), projectAspectLineDTO.getBudgetAspect().getAspectStatusName());
         assertEquals(result.getBudgetAspect().getDescription(), projectAspectLineDTO.getBudgetAspect().getDescription());

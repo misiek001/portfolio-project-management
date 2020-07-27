@@ -4,7 +4,7 @@ import com.mbor.dao.IDao;
 import com.mbor.dao.IProjectRoleDao;
 import com.mbor.domain.employeeinproject.*;
 import com.mbor.exception.ProjectRoleClassNotFoundException;
-import com.mbor.mapper.ProjectRoleMapper;
+import com.mbor.mapper.projectRole.ProjectRoleMapper;
 import com.mbor.model.ProjectRoleDTO;
 import com.mbor.model.ProjectRolesDTO;
 import com.mbor.model.creation.ProjectRoleCreatedDTO;
@@ -69,7 +69,7 @@ public class ProjectRoleService extends RawService<ProjectRole> implements IProj
     public <T extends ProjectRole> ProjectRolesDTO findAllDemandRole(Class<T> t) {
         List<T> allDemandedRoles = projectRoleDao.findAllDemandedRole(t);
         List<ProjectRoleDTO> result = new ArrayList<>();
-        allDemandedRoles.forEach(projectRole -> result.add(projectRoleMapper.convertToDto(projectRole)));
+        allDemandedRoles.forEach(projectRole -> result.add(projectRoleMapper.convertEntityToDto(projectRole)));
         ProjectRolesDTO projectRolesDTO = new ProjectRolesDTO();
         projectRolesDTO.setProjectRoles(result);
         return projectRolesDTO;

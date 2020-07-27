@@ -1,16 +1,18 @@
-package com.mbor.mapper;
+package com.mbor.mapper.businessUnit;
 
 import com.mbor.domain.BusinessUnit;
+import com.mbor.mapper.CreationPojoMapper;
 import com.mbor.model.BusinessUnitDTO;
 import com.mbor.model.creation.BusinessUnitCreatedDTO;
 import com.mbor.model.creation.BusinessUnitCreationDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessUnitMapper extends CreationPojoMapper<BusinessUnitDTO, BusinessUnit, BusinessUnitCreationDTO, BusinessUnitCreatedDTO> {
 
-    public BusinessUnitMapper(ModelMapper modelMapper) {
+    public BusinessUnitMapper(@Qualifier("businessUnitModelMapper") ModelMapper modelMapper) {
         super(modelMapper);
     }
 
@@ -25,12 +27,8 @@ public class BusinessUnitMapper extends CreationPojoMapper<BusinessUnitDTO, Busi
     }
 
     @Override
-    public BusinessUnitDTO convertToDto(BusinessUnit businessUnit) {
+    public BusinessUnitDTO convertEntityToDto(BusinessUnit businessUnit) {
         return modelMapper.map(businessUnit, BusinessUnitDTO.class);
     }
 
-    @Override
-    public BusinessUnit convertToEntity(BusinessUnitDTO businessUnitDTO) {
-        return modelMapper.map(businessUnitDTO, BusinessUnit.class);
-    }
 }

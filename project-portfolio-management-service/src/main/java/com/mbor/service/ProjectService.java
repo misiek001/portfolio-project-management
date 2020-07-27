@@ -10,9 +10,9 @@ import com.mbor.domain.projectaspect.ProjectAspectLine;
 import com.mbor.exception.NoSetProjectManagerException;
 import com.mbor.exception.ProjectCannotBeOpenedException;
 import com.mbor.exception.WrongProjectManagerException;
-import com.mbor.mapper.ProjectAspectLineMapper;
-import com.mbor.mapper.ProjectMapper;
-import com.mbor.mapper.RealEndDateMapper;
+import com.mbor.mapper.project.ProjectAspectLineMapper;
+import com.mbor.mapper.project.ProjectMapper;
+import com.mbor.mapper.project.RealEndDateMapper;
 import com.mbor.model.*;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
@@ -59,36 +59,20 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     @Override
     public ProjectCreatedDTO save(ProjectCreationDTO projectCreationDTO) {
-        Project project = projectMapper.convertCreationDtoToEntity(projectCreationDTO);
-        saveInternal(project);
-        project.setBusinessRelationManager((BusinessRelationManager) employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId()));
-        project.setBusinessLeader((BusinessLeader) projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId()));
-        project.setPrimaryBusinessUnit(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId()));
-        if(projectCreationDTO.getSecondaryBusinessUnitIds() != null) {
-            projectCreationDTO.getSecondaryBusinessUnitIds().forEach(id -> {
-                project.addSecondaryBusinessUnit(businessUnitService.findInternal(id));
-            });
-        }
-        ProjectStatusHistoryLine projectStatusHistoryLine = new ProjectStatusHistoryLine();
-        projectStatusHistoryLine.setPreviousStatus(ProjectStatus.ANALYSIS);
-        projectStatusHistoryLine.setCurrentStatus(ProjectStatus.ANALYSIS);
-        projectStatusHistoryLine.setDescription("Project opened");
-        project.addProjectStatusHistoryLine(projectStatusHistoryLine);
-
-        return projectMapper.convertEntityToCreatedDto(project);
+        throw new RuntimeException("Method not supported");
     }
 
     @Override
     public List<ProjectDTO> findAll() {
         List<Project> projects =  super.findAllInternal();
         return projects.stream()
-                .map(projectMapper::convertToDto)
+                .map(projectMapper::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProjectDTO find(Long id) {
-        return projectMapper.convertToDto(findInternal(id));
+        return projectMapper.convertEntityToDto(findInternal(id));
     }
 
     @Override
@@ -112,7 +96,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         LocalDate projectStartDate = searchProjectDTO.getProjectStartDateLaterThat();
         List<Project> foundProject = getDao().findByMultipleCriteria(projectName, projectClass, businessUnitName, projectStatusList, projectStartDate);
         List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
         return projectDTOList;
     }
 
@@ -136,7 +120,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         }
         List<Project> foundProject = getDao().findResourceManagerProjects(resourceManagerId, projectId, projectName, projectClass, projectStatusList);
         List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
         return projectDTOList;
     }
 
@@ -174,7 +158,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         }
         List<Project> foundProject = getDao().findSupervisorProjects(supervisorId, projectId, projectName, projectClass, projectStatusList, projectManagerIdList, solutionArchitectsIdList);
         List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
         return projectDTOList;
     }
 
@@ -183,7 +167,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     public List<ProjectDTO> findConsultantProjects(Long consultantId){
         List<Project> foundProject = getDao().findConsultantProject(consultantId);
         List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertToDto(project)));
+        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
         return projectDTOList;
     }
 
@@ -203,7 +187,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         ProjectStatusHistoryLine projectStatusHistoryLine = prepareProjectStatusHistoryLine(ProjectStatus.ANALYSIS, ProjectStatus.AWAITING, "Project awaiting to start");
         project.addProjectStatusHistoryLine(projectStatusHistoryLine);
         updateInternal(project);
-        return projectMapper.convertToDto(project);
+        return projectMapper.convertEntityToDto(project);
     }
 
     @Override
@@ -211,15 +195,14 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         Project project = findInternal(projectId);
         ProjectStatusHistoryLine projectStatusHistoryLine = prepareProjectStatusHistoryLine(ProjectStatus.ANALYSIS, ProjectStatus.REJECTED, "Project rejected");
         project.addProjectStatusHistoryLine(projectStatusHistoryLine);
-        updateInternal(project);
     }
 
     @Override
     public ProjectDTO updateProjectAspects(Long projectId, ProjectAspectLineDTO projectAspectLineDTO, Long projectManagerId) {
         Project project = getProjectDedicatedToProjectManager(projectId, projectManagerId);
-        ProjectAspectLine projectAspectLine = projectAspectMapper.convertToEntity(projectAspectLineDTO);
+        ProjectAspectLine projectAspectLine = projectAspectMapper.convertDtoToEntity(projectAspectLineDTO);
         project.addProjectAspectLine(projectAspectLine);
-        return projectMapper.convertToDto(updateInternal(project));
+        return projectMapper.convertEntityToDto(updateInternal(project));
     }
 
     @Override
@@ -270,10 +253,10 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     @Override
     public ProjectDTO addProjectEndDate(Long projectId, RealEndDateDTO realEndDateDTO, Long projectManagerId){
         Project project = getProjectDedicatedToProjectManager(projectId, projectManagerId);
-        RealEndDate realEndDate = realEndDateMapper.convertToEntity(realEndDateDTO);
+        RealEndDate realEndDate = realEndDateMapper.convertDtoToEntity(realEndDateDTO);
         project.addRealEndDate(realEndDate);
 
-    return projectMapper.convertToDto(updateInternal(project));
+    return projectMapper.convertEntityToDto(updateInternal(project));
     }
 
     private Project getProjectDedicatedToProjectManager(Long projectId, Long projectManagerId) {
@@ -311,7 +294,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
             BusinessLeader   businessLeader = tryCast(BusinessLeader.class, projectRoleService.findInternal(employeeAssignDTO.getBusinessLeaderId()));
             project.setBusinessLeader(businessLeader);
         }
-        return projectMapper.convertToDto(updateInternal(project));
+        return projectMapper.convertEntityToDto(updateInternal(project));
     }
 
     private Function<ProjectClassDTO, ProjectClass> mapProjectClassDTOToProjectClass() {

@@ -1,7 +1,12 @@
 package com.mbor.configuration;
 
 import com.mbor.dao.*;
-import com.mbor.mapper.*;
+import com.mbor.mapper.businessUnit.BusinessUnitMapper;
+import com.mbor.mapper.employee.BusinessRelationManagerMapper;
+import com.mbor.mapper.project.DemandSheetMapper;
+import com.mbor.mapper.project.ProjectAspectLineMapper;
+import com.mbor.mapper.project.ProjectMapper;
+import com.mbor.mapper.project.RealEndDateMapper;
 import com.mbor.service.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;

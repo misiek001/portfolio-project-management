@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class BusinessRelationManagerDTO  extends EmployeeDTO {
 
+    public BusinessRelationManagerDTO (){
+        super.setEmployeeType(this.getClass().getSimpleName());
+    }
+
     @JsonView(Views.EmployeeInternal.class)
     private Set<ProjectDTO> projects = new HashSet<>();
 

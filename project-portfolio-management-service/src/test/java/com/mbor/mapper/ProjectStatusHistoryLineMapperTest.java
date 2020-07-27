@@ -1,6 +1,7 @@
 package com.mbor.mapper;
 
 import com.mbor.domain.ProjectStatusHistoryLine;
+import com.mbor.mapper.project.ProjectStatusHistoryLineMapper;
 import com.mbor.model.ProjectStatusHistoryLineDTO;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,7 +43,7 @@ class ProjectStatusHistoryLineMapperTest {
 
     @Test
     void convertToDto() {
-        ProjectStatusHistoryLineDTO result = projectStatusHistoryLineMapper.convertToDto(projectStatusHistoryLine);
+        ProjectStatusHistoryLineDTO result = projectStatusHistoryLineMapper.convertEntityToDto(projectStatusHistoryLine);
 
         assertEquals(result.getId(), MapperUtils.LINE_ID);
         assertEquals(result.getPreviousStatus(), DTO_PREVIOUS_STATUS);
@@ -53,7 +54,7 @@ class ProjectStatusHistoryLineMapperTest {
 
     @Test
     void convertToEntity() {
-        ProjectStatusHistoryLine result = projectStatusHistoryLineMapper.convertToEntity(projectStatusHistoryLineDTO);
+        ProjectStatusHistoryLine result = projectStatusHistoryLineMapper.convertDtoToEntity(projectStatusHistoryLineDTO);
 
         assertEquals(result.getId(), LINE_ID);
         assertEquals(result.getPreviousStatus(), PREVIOUS_STATUS);

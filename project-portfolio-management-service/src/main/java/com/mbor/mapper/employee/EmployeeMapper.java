@@ -1,6 +1,7 @@
-package com.mbor.mapper;
+package com.mbor.mapper.employee;
 
 import com.mbor.domain.Employee;
+import com.mbor.mapper.CreationPojoMapper;
 import com.mbor.model.EmployeeDTO;
 import org.modelmapper.ModelMapper;
 
@@ -20,13 +21,8 @@ public abstract class EmployeeMapper<T extends EmployeeDTO, U extends Employee, 
     }
 
     @Override
-    public T convertToDto(U u) {
+    public T convertEntityToDto(U u) {
         return modelMapper.map(u, dtoClazz);
-    }
-
-    @Override
-    public U convertToEntity(T t) {
-        return modelMapper.map(t, entityClazz);
     }
 
     @Override

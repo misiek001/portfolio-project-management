@@ -13,7 +13,6 @@ import java.util.Set;
         property = "name")
 public class BusinessUnitDTO extends IdDTO {
 
-
     @JsonView(Views.Public.class)
     private String name;
 

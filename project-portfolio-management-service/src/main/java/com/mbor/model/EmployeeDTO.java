@@ -22,6 +22,9 @@ public  class EmployeeDTO extends IdDTO {
     @JsonView(Views.Public.class)
     private String userName;
 
+    @JsonView(Views.Public.class)
+    protected String employeeType;
+
     @JsonView({Views.EmployeeInternal.class, Views.ProjectInternal.class})
     private BusinessUnitDTO businessUnit;
 
@@ -47,6 +50,15 @@ public  class EmployeeDTO extends IdDTO {
     public String getUserName() {
         return userName;
     }
+
+    public String getEmployeeType() {
+        return employeeType;
+    }
+
+    protected void setEmployeeType(String employeeType){
+        this.employeeType = employeeType;
+    }
+
 
     public void setUserName(String userName) {
         this.userName = userName;

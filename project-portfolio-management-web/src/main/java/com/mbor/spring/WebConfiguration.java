@@ -18,7 +18,7 @@ import java.util.Map;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = {"com.mbor.controller", "com.mbor.mapper", "com.mbor.security", "com.mbor.exceptionhandler" })
+@ComponentScan(basePackages = {"com.mbor.controller", "com.mbor.security", "com.mbor.exceptionhandler" })
 @EnableSwagger2
 public class WebConfiguration implements WebMvcConfigurer {
 

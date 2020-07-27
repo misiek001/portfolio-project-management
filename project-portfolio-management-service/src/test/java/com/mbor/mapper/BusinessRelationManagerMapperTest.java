@@ -3,6 +3,7 @@ package com.mbor.mapper;
 import com.mbor.domain.BusinessRelationManager;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.Director;
+import com.mbor.mapper.employee.BusinessRelationManagerMapper;
 import com.mbor.model.BusinessRelationManagerDTO;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,7 +66,7 @@ class BusinessRelationManagerMapperTest {
 
     @Test
     void convertToDto() {
-        BusinessRelationManagerDTO result = businessRelationManagerMapper.convertToDto(businessRelationManager);
+        BusinessRelationManagerDTO result = businessRelationManagerMapper.convertEntityToDto(businessRelationManager);
     }
 
     @Test

@@ -1,25 +1,25 @@
-package com.mbor.mapper;
+package com.mbor.mapper.project;
 
 import com.mbor.domain.RealEndDate;
+import com.mbor.mapper.ToEntityMapper;
 import com.mbor.model.RealEndDateDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RealEndDateMapper extends SimplePojoMapper <RealEndDateDTO, RealEndDate> {
+public class RealEndDateMapper extends ToEntityMapper<RealEndDateDTO, RealEndDate> {
 
     public RealEndDateMapper(ModelMapper modelMapper) {
         super(modelMapper);
     }
 
     @Override
-    public RealEndDateDTO convertToDto(RealEndDate realEndDate) {
+    public RealEndDateDTO convertEntityToDto(RealEndDate realEndDate) {
         return modelMapper.map(realEndDate, RealEndDateDTO.class);
     }
 
     @Override
-    public RealEndDate convertToEntity(RealEndDateDTO realEndDateDTO) {
+    public RealEndDate convertDtoToEntity(RealEndDateDTO realEndDateDTO) {
         return modelMapper.map(realEndDateDTO, RealEndDate.class);
     }
-
 }

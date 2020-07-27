@@ -1,6 +1,7 @@
 package com.mbor.mapper;
 
 import com.mbor.domain.BusinessEmployee;
+import com.mbor.mapper.employee.BusinessEmployeeMapper;
 import com.mbor.model.BusinessEmployeeDTO;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith({SpringExtension.class})
 @ContextConfiguration(classes = ServiceConfiguration.class)
 @ActiveProfiles("test")
-@Transactional
 class BusinessEmployeeMapperTest {
 
     private static Random random = new Random();
@@ -42,15 +41,10 @@ class BusinessEmployeeMapperTest {
 
     @Test
     void convertToDto() {
-        BusinessEmployeeDTO mappedBusinessEmployeeDTO = businessEmployeeMapper.convertToDto(businessEmployee);
+        BusinessEmployeeDTO mappedBusinessEmployeeDTO = businessEmployeeMapper.convertEntityToDto(businessEmployee);
 
         assertEquals(mappedBusinessEmployeeDTO.getId(), businessEmployeeDTO.getId());
     }
 
-    @Test
-    void convertToEntity() {
-        BusinessEmployee createdBusinessEmployee = businessEmployeeMapper.convertToEntity((businessEmployeeDTO));
 
-        assertEquals(createdBusinessEmployee.getId(), businessEmployee.getId());
-    }
 }

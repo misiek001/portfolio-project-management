@@ -5,7 +5,7 @@ import com.mbor.configuration.TestConfiguration;
 import com.mbor.dao.IBusinessUnitDao;
 import com.mbor.domain.BusinessUnit;
 import com.mbor.entityFactory.TestObjectFactory;
-import com.mbor.mapper.BusinessUnitMapper;
+import com.mbor.mapper.businessUnit.BusinessUnitMapper;
 import com.mbor.model.creation.BusinessUnitCreatedDTO;
 import com.mbor.model.creation.BusinessUnitCreationDTO;
 import com.mbor.spring.ServiceConfiguration;

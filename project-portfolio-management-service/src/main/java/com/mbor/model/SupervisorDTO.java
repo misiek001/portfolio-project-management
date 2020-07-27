@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class SupervisorDTO extends EmployeeDTO {
 
+    public SupervisorDTO (){
+        super.setEmployeeType(this.getClass().getSimpleName());
+    }
+
     @JsonView(Views.EmployeeInternal.class)
     private Set<ConsultantDTO> employees = new HashSet<>();
 

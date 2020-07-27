@@ -8,7 +8,7 @@ import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.Director;
 import com.mbor.domain.Employee;
 import com.mbor.entityFactory.TestObjectFactory;
-import com.mbor.mapper.BusinessRelationManagerMapper;
+import com.mbor.mapper.employee.BusinessRelationManagerMapper;
 import com.mbor.model.creation.EmployeeCreatedDTO;
 import com.mbor.model.creation.EmployeeCreationDTO;
 import com.mbor.model.creation.EmployeeType;

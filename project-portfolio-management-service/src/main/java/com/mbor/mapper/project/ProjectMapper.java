@@ -1,7 +1,8 @@
-package com.mbor.mapper;
+package com.mbor.mapper.project;
 
 import com.mbor.domain.Project;
 import com.mbor.domain.ProjectClass;
+import com.mbor.mapper.CreationPojoMapper;
 import com.mbor.model.ProjectDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -17,13 +18,8 @@ public class ProjectMapper extends CreationPojoMapper<ProjectDTO, Project, Proje
     }
 
     @Override
-    public ProjectDTO convertToDto(Project project) {
+    public ProjectDTO convertEntityToDto(Project project) {
         return  modelMapper.map(project, ProjectDTO.class);
-    }
-
-    @Override
-    public Project convertToEntity(ProjectDTO projectDTO) {
-        return modelMapper.map(projectDTO, Project.class);
     }
 
     @Override

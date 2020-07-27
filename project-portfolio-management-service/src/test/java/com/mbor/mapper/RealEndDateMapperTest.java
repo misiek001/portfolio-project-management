@@ -1,6 +1,7 @@
 package com.mbor.mapper;
 
 import com.mbor.domain.RealEndDate;
+import com.mbor.mapper.project.RealEndDateMapper;
 import com.mbor.model.RealEndDateDTO;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,14 +42,14 @@ class RealEndDateMapperTest {
 
     @Test
     void convertToDto() {
-        RealEndDateDTO result = realEndDateMapper.convertToDto(expectedEndDate);
+        RealEndDateDTO result = realEndDateMapper.convertEntityToDto(expectedEndDate);
         assertEquals(result.getEndDate(), expectedEndDateDTO.getEndDate());
         assertEquals(result.getReason(), expectedEndDateDTO.getReason());
     }
 
     @Test
     void convertToEntity() {
-        RealEndDate result = realEndDateMapper.convertToEntity(expectedEndDateDTO);
+        RealEndDate result = realEndDateMapper.convertDtoToEntity(expectedEndDateDTO);
         assertEquals(result.getEndDate(), expectedEndDate.getEndDate());
         assertEquals(result.getReason(), expectedEndDateDTO.getReason());
     }

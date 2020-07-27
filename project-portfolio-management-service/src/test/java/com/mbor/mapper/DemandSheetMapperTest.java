@@ -6,8 +6,8 @@ import com.mbor.domain.BusinessUnit;
 import com.mbor.domain.DemandSheet;
 import com.mbor.domain.Project;
 import com.mbor.entityFactory.TestObjectFactory;
+import com.mbor.mapper.project.DemandSheetMapper;
 import com.mbor.model.DemandSheetDTO;
-import com.mbor.model.creation.DemandSheetCreatedDTO;
 import com.mbor.model.creation.DemandSheetCreationDTO;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,6 +37,7 @@ class DemandSheetMapperTest {
     private static Long BUSINESS_UNIT_ID = 1L;
     private static Long BUSINESS_RELATION_MANAGER_ID = 1L;
     private static Long PROJECT_ID = 1l;
+
     @Autowired
     DemandSheetMapper demandSheetMapper;
 
@@ -76,20 +77,10 @@ class DemandSheetMapperTest {
         assertEquals(PROJECT_DESCRIPTION, result.getDescription());
     }
 
-    @Test
-    void convertEntityToCreatedDtoThenSuccess() {
-        DemandSheetCreatedDTO result = demandSheetMapper.convertEntityToCreatedDto(demandSheet);
-
-        assertEquals(demandSheet.getId(), result.getId());
-        assertEquals(demandSheet.getProjectName(), result.getProjectName());
-        assertEquals(demandSheet.getDescription(), result.getDescription());
-        assertEquals(demandSheet.getBusinessRelationManager().getId(), result.getBusinessRelationManager().getId());
-        assertEquals(demandSheet.getBusinessUnit().getId(), result.getBusinessUnit().getId());
-    }
 
     @Test
     void convertEntityToDtoThenSuccess() {
-        DemandSheetDTO result = demandSheetMapper.convertToDto(demandSheet);
+        DemandSheetDTO result = demandSheetMapper.convertEntityToDto(demandSheet);
 
         assertEquals(demandSheet.getId(), result.getId());
         assertEquals(demandSheet.getProjectName(), result.getProjectName());
