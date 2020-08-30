@@ -81,22 +81,21 @@ public class ModelMapperConfiguration {
                 }).map(BusinessUnit::getBusinessRelationManager, BusinessUnitDTO::setBusinessRelationManager))
                 .addMappings(mapping -> mapping.skip(BusinessUnitDTO::setPrimaryProjects))
                 .addMappings(mapping -> mapping.skip(BusinessUnitDTO::setSecondaryProjects));
-        modelMapper.validate();
         return modelMapper;
     }
 
     @Bean
-    ModelMapper demandSheetModelMapper() {
+    ModelMapper ProjectRequestModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setImplicitMappingEnabled(false)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.typeMap(DemandSheet.class, DemandSheetDTO.class)
-                .addMappings(mapping -> mapping.map(DemandSheet::getBusinessUnit, DemandSheetDTO::setBusinessUnit))
-                .addMappings(mapping -> mapping.map(DemandSheet::getProject, DemandSheetDTO::setProject))
-                .addMappings(mapping -> mapping.map(DemandSheet::getId, DemandSheetDTO::setId))
-                .addMappings(mapping -> mapping.map(DemandSheet::getDescription, DemandSheetDTO::setDescription))
-                .addMappings(mapping -> mapping.map(DemandSheet::getProjectName, DemandSheetDTO::setProjectName))
+        modelMapper.typeMap(ProjectRequest.class, ProjectRequestDTO.class)
+                .addMappings(mapping -> mapping.map(ProjectRequest::getBusinessUnit, ProjectRequestDTO::setBusinessUnit))
+                .addMappings(mapping -> mapping.map(ProjectRequest::getProject, ProjectRequestDTO::setProject))
+                .addMappings(mapping -> mapping.map(ProjectRequest::getId, ProjectRequestDTO::setId))
+                .addMappings(mapping -> mapping.map(ProjectRequest::getDescription, ProjectRequestDTO::setDescription))
+                .addMappings(mapping -> mapping.map(ProjectRequest::getProjectName, ProjectRequestDTO::setProjectName))
                 .addMappings(mapping -> mapping.using(new AbstractConverter<BusinessRelationManager, BusinessRelationManagerDTO>() {
                     @Override
                     protected BusinessRelationManagerDTO convert(BusinessRelationManager source) {
@@ -116,7 +115,7 @@ public class ModelMapperConfiguration {
                         }
                         return businessRelationManagerDTO;
                     }
-                }).map(DemandSheet::getBusinessRelationManager, DemandSheetDTO::setBusinessRelationManager));
+                }).map(ProjectRequest::getBusinessRelationManager, ProjectRequestDTO::setBusinessRelationManager));
         modelMapper.typeMap(BusinessUnit.class, BusinessUnitDTO.class)
                 .addMappings(mapping -> mapping.map(BusinessUnit::getId, BusinessUnitDTO::setId));
         modelMapper.typeMap(Project.class, ProjectDTO.class)
@@ -132,15 +131,15 @@ public class ModelMapperConfiguration {
                 .setImplicitMappingEnabled(false)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
         modelMapper.typeMap(Project.class, ProjectDTO.class)
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessUnit().setPrimaryProjects(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessUnit().setSecondaryProjects(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessUnit().setBusinessRelationManager(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessUnit().setEmployees(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessRelationManager().setBusinessUnit(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessRelationManager().setDirector(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessRelationManager().setProjects(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().getBusinessRelationManager().setAssignedBusinessUnits(null)))
-                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getDemandSheet().setProject(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessUnit().setPrimaryProjects(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessUnit().setSecondaryProjects(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessUnit().setBusinessRelationManager(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessUnit().setEmployees(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessRelationManager().setBusinessUnit(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessRelationManager().setDirector(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessRelationManager().setProjects(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().getBusinessRelationManager().setAssignedBusinessUnits(null)))
+                .addMappings(mapping -> mapping.skip((destination, value) -> destination.getProjectRequestDTO().setProject(null)))
                 .addMappings(mapping -> mapping.skip(((destination, value) -> destination.getResourceManager().getEmployee().setProjectRoleSet(null))))
                 .addMappings(mapping -> mapping.skip(((destination, value) -> destination.getResourceManager().getEmployee().setProjectRoleSet(null))))
                 .addMappings(mapping -> mapping.skip(((destination, value) -> destination.getResourceManager().getEmployee().setEmployees(null))))
@@ -171,7 +170,6 @@ public class ModelMapperConfiguration {
                 .addMappings(mapping -> mapping.skip((destination, value) -> destination.getPrimaryBusinessUnit().setPrimaryProjects(null)))
                 .addMappings(mapping -> mapping.skip((destination, value) -> destination.getPrimaryBusinessUnit().setSecondaryProjects(null)))
                 .implicitMappings();
-        modelMapper.validate();
         return modelMapper;
     }
 

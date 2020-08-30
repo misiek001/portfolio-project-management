@@ -19,7 +19,7 @@ public class ProjectDTO extends IdDTO implements IProjectDTO {
     private String projectName;
 
     @JsonView(Views.ProjectInternal.class)
-    private DemandSheetDTO demandSheet;
+    private ProjectRequestDTO projectRequestDTO;
 
     @JsonView(Views.Public.class)
     private ProjectClassDTO projectClass;
@@ -64,12 +64,12 @@ public class ProjectDTO extends IdDTO implements IProjectDTO {
         return projectName;
     }
 
-    public DemandSheetDTO getDemandSheet() {
-        return demandSheet;
+    public ProjectRequestDTO getProjectRequestDTO() {
+        return projectRequestDTO;
     }
 
-    public void setDemandSheet(DemandSheetDTO demandSheet) {
-        this.demandSheet = demandSheet;
+    public void setProjectRequestDTO(ProjectRequestDTO projectRequestDTO) {
+        this.projectRequestDTO = projectRequestDTO;
     }
 
     public void setProjectName(String projectName) {

@@ -4,6 +4,7 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.*;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.model.*;
+import com.mbor.model.ProjectRequestDTO;
 import com.mbor.model.creation.*;
 import org.springframework.stereotype.Component;
 
@@ -222,41 +223,41 @@ public class TestObjectFactory {
         return projectAspectLine;
     }
 
-    public DemandSheet prepareDemandSheet() {
-        DemandSheet demandSheet = new DemandSheet();
-        demandSheet.setProjectName("Project Name" + random.nextLong());
-        demandSheet.setDescription("Project Description" + random.nextLong());
-        return demandSheet;
+    public ProjectRequest prepareProjectRequest() {
+        ProjectRequest projectRequest = new ProjectRequest();
+        projectRequest.setProjectName("Project Name" + random.nextLong());
+        projectRequest.setDescription("Project Description" + random.nextLong());
+        return projectRequest;
     }
 
-    public DemandSheetDTO prepareDemandSheetDTO(){
-        return new DemandSheetDTO();
+    public ProjectRequestDTO prepareProjectRequestDTO(){
+        return new ProjectRequestDTO();
     }
 
-    public DemandSheetCreationDTO prepareDemandSheetCreationDTO(String projectName, String projectDescription, Long businessUnitId) {
-        DemandSheetCreationDTO demandSheetCreationDTO = new DemandSheetCreationDTO();
-        demandSheetCreationDTO.setProjectName(projectName);
-        demandSheetCreationDTO.setDescription(projectDescription);
-        demandSheetCreationDTO.setBusinessUnitId(businessUnitId);
-        return demandSheetCreationDTO;
+    public ProjectRequestCreationDTO prepareProjectRequestCreationDTO(String projectName, String projectDescription, Long businessUnitId) {
+        ProjectRequestCreationDTO projectRequestCreationDTO = new ProjectRequestCreationDTO();
+        projectRequestCreationDTO.setProjectName(projectName);
+        projectRequestCreationDTO.setDescription(projectDescription);
+        projectRequestCreationDTO.setBusinessUnitId(businessUnitId);
+        return projectRequestCreationDTO;
     }
 
-    public DemandSheet prepareDemandSheetFromCreationDTO(DemandSheetCreationDTO demandSheetCreationDTO){
-        DemandSheet demandSheet = new DemandSheet();
-        demandSheet.setProjectName(demandSheetCreationDTO.getProjectName());
-        demandSheet.setDescription(demandSheetCreationDTO.getDescription());
-        return demandSheet;
+    public ProjectRequest prepareProjectRequestFromCreationDTO(ProjectRequestCreationDTO projectRequestCreationDTO){
+        ProjectRequest projectRequest = new ProjectRequest();
+        projectRequest.setProjectName(projectRequestCreationDTO.getProjectName());
+        projectRequest.setDescription(projectRequestCreationDTO.getDescription());
+        return projectRequest;
     }
 
-    public DemandSheetCreatedDTO prepareDemandSheetCreatedDTOFromDemandSheet(DemandSheet demandSheet){
-        DemandSheetCreatedDTO demandSheetCreatedDTO = new DemandSheetCreatedDTO();
-        demandSheetCreatedDTO.setProjectName(demandSheet.getProjectName());
-        demandSheetCreatedDTO.setDescription(demandSheet.getDescription());
-        BusinessRelationManagerDTO businessRelationManagerDTO = prepareBusinessRelationManagerDTOFromEntity(demandSheet.getBusinessRelationManager());
-        BusinessUnitDTO businessUnitDTO = prepareBusinessUnitDTOFromEntity(demandSheet.getBusinessUnit());
-        demandSheetCreatedDTO.setBusinessRelationManager(businessRelationManagerDTO);
-        demandSheetCreatedDTO.setBusinessUnit(businessUnitDTO);
-        return demandSheetCreatedDTO;
+    public com.mbor.model.creation.ProjectRequestDTO prepareProjectRequestCreatedDTOFromProjectRequest(ProjectRequest projectRequest){
+        com.mbor.model.creation.ProjectRequestDTO projectRequestDTO = new com.mbor.model.creation.ProjectRequestDTO();
+        projectRequestDTO.setProjectName(projectRequest.getProjectName());
+        projectRequestDTO.setDescription(projectRequest.getDescription());
+        BusinessRelationManagerDTO businessRelationManagerDTO = prepareBusinessRelationManagerDTOFromEntity(projectRequest.getBusinessRelationManager());
+        BusinessUnitDTO businessUnitDTO = prepareBusinessUnitDTOFromEntity(projectRequest.getBusinessUnit());
+        projectRequestDTO.setBusinessRelationManager(businessRelationManagerDTO);
+        projectRequestDTO.setBusinessUnit(businessUnitDTO);
+        return projectRequestDTO;
     }
 
     public ProjectCreationDTO prepareProjectCreationDTO(String projectName, ProjectClassDTO projectClassDTO, Long businessRelationManagerId, Long businessLeaderId, Long primaryBusinessUnitId, List<Long> secondaryBusinessUnitIds) {

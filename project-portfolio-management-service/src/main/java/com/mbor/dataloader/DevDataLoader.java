@@ -115,11 +115,11 @@ public class DevDataLoader {
         assignEmployeePrivilege.setName("assign_employee");
         Privilege openProjectPrivilege = new Privilege();
         openProjectPrivilege.setName("open_project");
-        Privilege getAllDemandSheetsOfBrmWithNoProjectsPrivilege = new Privilege();
-        getAllDemandSheetsOfBrmWithNoProjectsPrivilege.setName("get_all_demandsheets_of_brm_with_no_projects");
+        Privilege getAllProjectRequestsOfBrmWithNoProjectsPrivilege = new Privilege();
+        getAllProjectRequestsOfBrmWithNoProjectsPrivilege.setName("get_all_ProjectRequests_of_brm_with_no_projects");
         brmRole.addPrivilege(createProjectPrivilege);
         brmRole.addPrivilege(assignEmployeePrivilege);
-        brmRole.addPrivilege(getAllDemandSheetsOfBrmWithNoProjectsPrivilege);
+        brmRole.addPrivilege(getAllProjectRequestsOfBrmWithNoProjectsPrivilege);
         brmRole.addPrivilege(openProjectPrivilege);
         entityManager.persist(brmRole);
         BRM_ROLE_ID = brmRole.getId();
@@ -143,9 +143,9 @@ public class DevDataLoader {
 
         Role businessEmployeeRole = new Role();
         businessEmployeeRole.setName("business-employee");
-        Privilege createDemandSheetPrivilege = new Privilege();
-        createDemandSheetPrivilege.setName("create_demandsheet");
-        businessEmployeeRole.addPrivilege(createDemandSheetPrivilege);
+        Privilege createProjectRequestPrivilege = new Privilege();
+        createProjectRequestPrivilege.setName("create_ProjectRequest");
+        businessEmployeeRole.addPrivilege(createProjectRequestPrivilege);
         entityManager.persist(businessEmployeeRole);
         BUSINESS_EMPLOYEE_ROLE_ID = businessEmployeeRole.getId();
 

@@ -26,7 +26,7 @@ public class Project implements IProjectDTO {
     private Long id;
 
     @OneToOne(mappedBy = "project", cascade = CascadeType.MERGE)
-    private DemandSheet demandSheet;
+    private ProjectRequest projectRequest;
 
     @NaturalId
     private String projectName;
@@ -91,13 +91,13 @@ public class Project implements IProjectDTO {
         this.id = id;
     }
 
-    public DemandSheet getDemandSheet() {
-        return demandSheet;
+    public ProjectRequest getProjectRequest() {
+        return projectRequest;
     }
 
-    public void setDemandSheet(DemandSheet demandSheet) {
-        this.demandSheet = demandSheet;
-        demandSheet.setProject(this);
+    public void setProjectRequest(ProjectRequest projectRequest) {
+        this.projectRequest = projectRequest;
+        projectRequest.setProject(this);
     }
 
     public String getProjectName() {

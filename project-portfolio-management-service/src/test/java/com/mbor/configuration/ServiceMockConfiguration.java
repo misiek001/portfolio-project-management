@@ -3,7 +3,7 @@ package com.mbor.configuration;
 import com.mbor.dao.*;
 import com.mbor.mapper.businessUnit.BusinessUnitMapper;
 import com.mbor.mapper.employee.BusinessRelationManagerMapper;
-import com.mbor.mapper.project.DemandSheetMapper;
+import com.mbor.mapper.project.ProjectRequestMapper;
 import com.mbor.mapper.project.ProjectAspectLineMapper;
 import com.mbor.mapper.project.ProjectMapper;
 import com.mbor.mapper.project.RealEndDateMapper;
@@ -24,11 +24,11 @@ public class ServiceMockConfiguration {
         return Mockito.mock((ProjectDao.class));
     }
 
-    @Profile({"demandsheet-tests-mock"})
+    @Profile({"ProjectRequest-tests-mock"})
     @Bean
     @Primary
-    IDemandSheetDao demandSheetDao() {
-        return Mockito.mock((DemandSheetDao.class));
+    IProjectRequestDao ProjectRequestDao() {
+        return Mockito.mock((ProjectRequestDao.class));
     }
 
     @Profile({"businessunit-tests-mock"})
@@ -74,11 +74,11 @@ public class ServiceMockConfiguration {
         return Mockito.mock(RealEndDateMapper.class);
     }
 
-    @Profile("demandsheet-tests-mock")
+    @Profile("ProjectRequest-tests-mock")
     @Bean
     @Primary
-    DemandSheetMapper demandSheetMapper() {
-        return Mockito.mock(DemandSheetMapper.class);
+    ProjectRequestMapper ProjectRequestMapper() {
+        return Mockito.mock(ProjectRequestMapper.class);
     }
 
     @Profile("businessunit-tests-mock")
@@ -102,7 +102,7 @@ public class ServiceMockConfiguration {
         return Mockito.mock(ProjectRoleService.class);
     }
 
-    @Profile({"project-tests-mock", "demandsheet-tests-mock"})
+    @Profile({"project-tests-mock", "ProjectRequest-tests-mock"})
     @Bean
     @Primary
     IBusinessUnitService businessUnitService() {

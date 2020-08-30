@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ProjectMapperTest {
 
     private static ProjectCreationDTO projectCreationDTO;
-    private static DemandSheet demandSheet;
+    private static ProjectRequest projectRequest;
 
     private static Project expectedProject;
     private static BusinessUnit ITBusinessUnit;
@@ -58,10 +58,10 @@ class ProjectMapperTest {
         projectCreationDTO = new ProjectCreationDTO();
         projectCreationDTO.setProjectName(PROJECT_NAME);
 
-        //DemandSheet
-        demandSheet = new DemandSheet();
-        demandSheet.setProjectName(PROJECT_NAME);
-        demandSheet.setDescription("Project Description");
+        //ProjectRequest
+        projectRequest = new ProjectRequest();
+        projectRequest.setProjectName(PROJECT_NAME);
+        projectRequest.setDescription("Project Description");
 
         projectCreationDTO.setProjectClass(DTO_PROJECT_CLASS);
 
@@ -72,7 +72,7 @@ class ProjectMapperTest {
         expectedProject.setProjectClass(PROJECT_CLASS);
         expectedProject.addProjectStatusHistoryLine(MapperUtils.prepareProjectStatusHistoryLine());
 
-        expectedProject.setDemandSheet(demandSheet);
+        expectedProject.setProjectRequest(projectRequest);
 
         ITBusinessUnit = new BusinessUnit();
         ITBusinessUnit.setId(IT_BUSINESS_UNIT_ID);
@@ -88,7 +88,7 @@ class ProjectMapperTest {
         businessRelationManager.setUserName(BRM_USER_NAME);
         businessRelationManager.setBusinessUnit(ITBusinessUnit);
         businessRelationManager.setDirector(director);
-        demandSheet.setBusinessRelationManager(businessRelationManager);
+        projectRequest.setBusinessRelationManager(businessRelationManager);
 
         expectedProject.setBusinessRelationManager(businessRelationManager);
 
@@ -134,7 +134,7 @@ class ProjectMapperTest {
         businessUnitFirst.setName(FIRST_BUSINESS_UNIT_NAME);
         businessUnitFirst.getEmployees().add(businessEmployee);
 
-        demandSheet.setBusinessUnit(businessUnitFirst);
+        projectRequest.setBusinessUnit(businessUnitFirst);
 
         businessEmployee.addProjectRole(businessLeader);
 
