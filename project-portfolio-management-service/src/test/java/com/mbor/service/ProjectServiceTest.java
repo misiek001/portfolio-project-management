@@ -9,14 +9,20 @@ import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
+import com.mbor.domain.search.ResourceManagerSearchProject;
+import com.mbor.domain.search.SearchProject;
 import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.mapper.project.ProjectAspectLineMapper;
 import com.mbor.mapper.project.ProjectMapper;
 import com.mbor.mapper.project.RealEndDateMapper;
+import com.mbor.mapper.search.ResourceManagerSearchProjectsMapper;
+import com.mbor.mapper.search.SearchProjectsMapper;
+import com.mbor.mapper.search.SupervisorSearchProjectMapper;
 import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.*;
+import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.AfterAll;
@@ -29,12 +35,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -74,22 +78,31 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
     IProjectService projectService;
 
     @Autowired
-     IEmployeeService employeeService;
+    IEmployeeService employeeService;
 
     @Autowired
-     IProjectRoleService projectRoleService;
+    IProjectRoleService projectRoleService;
 
     @Autowired
-     IBusinessUnitService businessUnitService;
+    IBusinessUnitService businessUnitService;
 
     @Autowired
-     IProjectDao projectDao;
+    IProjectDao projectDao;
 
     @Autowired
-     ProjectMapper projectMapper;
+    ProjectMapper projectMapper;
 
     @Autowired
-     ProjectAspectLineMapper projectAspectLineMapper;
+    ProjectAspectLineMapper projectAspectLineMapper;
+
+    @Autowired
+    SearchProjectsMapper searchProjectsMapper;
+
+    @Autowired
+    ResourceManagerSearchProjectsMapper resourceManagerSearchProjectsMapper;
+
+    @Autowired
+    SupervisorSearchProjectMapper supervisorSearchProjectMapper;
 
     @Autowired
     RealEndDateMapper realEndDateMapper;
@@ -105,172 +118,9 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         entityIdList.add(3L);
     }
 
-    @AfterEach
-     void resetMock(){
-        reset(employeeService);
-        reset(projectRoleService);
-        reset(businessUnitService);
-        reset(projectDao);
-        reset(projectMapper);
-        reset(projectAspectLineMapper);
-    }
-
     @AfterAll
-    static void clear(){
+    static void clear() {
         entityIdList.clear();
-    }
-
-    void saveThenSuccess() {
-        List<Long> secondaryBusinessUnitsId = new ArrayList<>();
-        ProjectCreationDTO projectCreationDTO = testObjectsFactory.prepareProjectCreationDTO(firstProject.getProjectName(), ProjectClassDTO.I, businessRelationManager.getId(), businessLeader.getId(), firstBusinessUnit.getId(), secondaryBusinessUnitsId);
-        Project projectFromCreationDTO = testObjectsFactory.prepareProjectFromProjectCreationDTO(projectCreationDTO);
-        projectFromCreationDTO.setId(1L);
-        Optional<Project> optionalProject = Optional.of(projectFromCreationDTO);
-
-        ProjectCreatedDTO projectCreatedDTO = testObjectsFactory.prepareProjectCreatedDTO(projectCreationDTO, projectFromCreationDTO, businessRelationManagerDTO, businessLeaderDTO, primaryBusinessUnitDTO );
-
-        when(projectMapper.convertCreationDtoToEntity(projectCreationDTO)).thenReturn(projectFromCreationDTO);
-        when(getDao().save(any(Project.class))).thenReturn(optionalProject);
-        when(employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId())).thenReturn(businessRelationManager);
-        when(projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId())).thenReturn(businessLeader);
-        when(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId())).thenReturn(firstBusinessUnit);
-        when(projectMapper.convertEntityToCreatedDto(any(Project.class))).thenReturn(projectCreatedDTO);
-
-        ProjectCreatedDTO result = projectService.save(projectCreationDTO);
-        assertNotNull(result);
-        assertEquals(result.getId(), projectCreatedDTO.getId());
-        assertEquals(result.getProjectStatusHistoryLines().size(), projectCreatedDTO.getProjectStatusHistoryLines().size());
-        assertEquals(result.getBusinessRelationManager().getId(), projectCreatedDTO.getBusinessRelationManager().getId());
-        assertEquals(result.getBusinessLeader().getId(), projectCreatedDTO.getBusinessLeader().getId());
-        assertEquals(result.getBusinessLeader().getEmployee(), projectCreatedDTO.getBusinessLeader().getEmployee());
-        assertEquals(result.getPrimaryBusinessUnit().getId(), projectCreatedDTO.getPrimaryBusinessUnit().getId());
-    }
-
-    @Test
-    void findAllThenSuccess() {
-
-        List<Project> projects = new ArrayList<>();
-        for (int i = 0; i < createdEntitiesNumber; i++) {
-            projects.add(testObjectsFactory.prepareProject());
-        }
-        List<ProjectDTO> projectDTOs = new ArrayList<>();
-        for (int i = 0; i < createdEntitiesNumber; i++) {
-            projectDTOs.add(testObjectsFactory.prepareProjectDTOFromEntity(projects.get(i)));
-        }
-
-        when(projectDao.findAll()).thenReturn(projects);
-        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(projectDTOs.get(0), projectDTOs.get(1), projectDTOs.get(2));
-
-        List<ProjectDTO> result = projectService.findAll();
-        verify(projectMapper, times(3)).convertEntityToDto(any());
-        assertEquals(createdEntitiesNumber, result.size());
-        result.forEach(projectDTO -> {
-            assertNotNull(projectDTO.getProjectName());
-        });
-    }
-
-    @Test
-    void findThenSuccess() {
-        Project project = testObjectsFactory.prepareProject();
-        Optional<Project> projectOptional = Optional.of(project);
-        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
-
-        when(projectDao.find(anyLong())).thenReturn(projectOptional);
-        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(projectDTO);
-
-        ProjectDTO result = projectService.find(1L);
-        assertEquals(project.getProjectName(), result.getProjectName());
-    }
-
-    @Test
-    void findByMultipleCriteriaThenSuccess(){
-        SearchProjectDTO searchProjectDTO = new SearchProjectDTO();
-        searchProjectDTO.setProjectName("Some Project");
-
-        List<ProjectClassDTO> projectClassList = new ArrayList<>();;
-        projectClassList.add(ProjectClassDTO.I);
-        projectClassList.add(ProjectClassDTO.II);
-        searchProjectDTO.setProjectClassDTOList(projectClassList);
-
-        searchProjectDTO.setBusinessUnitName("Some Business Unit");
-
-        List<ProjectStatusDTO> projectStatusDTOList = new ArrayList<>();
-        projectStatusDTOList.add(ProjectStatusDTO.ANALYSIS);
-        projectStatusDTOList.add(ProjectStatusDTO.IN_PROGRESS);
-        searchProjectDTO.setProjectStatusDTOList(projectStatusDTOList);
-
-        searchProjectDTO.setProjectStartDateLaterThat(LocalDate.now().minusDays(10));
-
-        List<Project> resultProjects = new ArrayList<>();
-        resultProjects.add(testObjectsFactory.prepareProject());
-        resultProjects.add(testObjectsFactory.prepareProject());
-        resultProjects.add(testObjectsFactory.prepareProject());
-
-        List<ProjectDTO> resultProjectsDTO = new ArrayList<>();
-        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
-        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
-        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
-
-        when(getDao().findByMultipleCriteria(anyString(), anyList(),anyString(),anyList(),any(LocalDate.class))).thenReturn(resultProjects);
-        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0),resultProjectsDTO.get(2),resultProjectsDTO.get(2));
-
-        List<ProjectDTO> result = projectService.findByMultipleCriteria(searchProjectDTO);
-        assertEquals(resultProjectsDTO.size(), result.size());
-        verify(projectMapper, times(3)).convertEntityToDto(any(Project.class));
-
-    }
-
-    @Test
-    void updateProjectAspectThenSuccess() {
-        ProjectAspectLineDTO projectAspectLineDTO = prepareTestProjectAspectLineDTO();
-        Project project = testObjectsFactory.prepareProject();
-        project.setId(firstProject.getId());
-        Optional<Project> projectOptional = Optional.of(project);
-        ProjectAspectLine projectAspectLine = prepareTestProjectAspectLine();
-        project.addProjectAspectLine(projectAspectLine);
-        project.setProjectManager(firstProjectManager);
-        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
-        Set<ProjectAspectLineDTO> projectAspectLines = new HashSet<>();
-        projectAspectLines.add(projectAspectLineDTO);
-        projectDTO.setProjectAspectLines(projectAspectLines);
-
-        when(projectDao.find(anyLong())).thenReturn(projectOptional);
-        when(projectDao.update(project)).thenReturn(projectOptional);
-        when(projectAspectLineMapper.convertDtoToEntity(projectAspectLineDTO)).thenReturn(projectAspectLine);
-        when(projectMapper.convertEntityToDto(project)).thenReturn(projectDTO);
-
-        ProjectDTO result  = projectService.updateProjectAspects(firstProject.getId(), projectAspectLineDTO, firstProjectManager.getId());
-
-        assertEquals(1, result.getProjectAspectLines().size());
-    }
-
-    @Test
-    void addRealEndDateThenSuccess() {
-        RealEndDateDTO realEndDateDTO = prepareRealEndDateDTO(10, "First Reason");
-        RealEndDate realEndDate = prepareRealEndDate(10, "First Reason");
-
-        Project project = testObjectsFactory.prepareProject();
-        project.setId(firstProject.getId());
-
-        ProjectManager projectManager = testObjectsFactory.prepareProjectManager();
-        projectManager.setId(firstProjectManager.getId());
-
-        project.setProjectManager(projectManager);
-
-        Optional<Project> projectOptional = Optional.of(project);
-
-        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
-        Set<RealEndDateDTO> realEndDateDTOSet = new HashSet<>();
-        realEndDateDTOSet.add(realEndDateDTO);
-        projectDTO.setRealEndDates(realEndDateDTOSet);
-
-
-        when(projectDao.find(firstProject.getId())).thenReturn(projectOptional);
-        when(projectDao.update(project)).thenReturn(projectOptional);
-        when(realEndDateMapper.convertDtoToEntity(realEndDateDTO)).thenReturn(realEndDate);
-        when(projectMapper.convertEntityToDto(project)).thenReturn(projectDTO);
-        ProjectDTO result = projectService.addProjectEndDate(project.getId(), realEndDateDTO, firstProjectManager.getId());
-        assertEquals(1, result.getRealEndDates().size());
     }
 
     private static void prepareTestData(TestObjectFactory testObjectsFactory) {
@@ -360,7 +210,189 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         businessLeaderDTO.setEmployee(businessEmployeeDTO);
 
         primaryBusinessUnitDTO = testObjectsFactory.prepareBusinessUnitDTOFromEntity(firstBusinessUnit);
+    }
 
+    @AfterEach
+    void resetMock() {
+        reset(employeeService);
+        reset(projectRoleService);
+        reset(businessUnitService);
+        reset(projectDao);
+        reset(projectMapper);
+        reset(projectAspectLineMapper);
+    }
+
+    void saveThenSuccess() {
+        List<Long> secondaryBusinessUnitsId = new ArrayList<>();
+        ProjectCreationDTO projectCreationDTO = testObjectsFactory.prepareProjectCreationDTO(firstProject.getProjectName(), ProjectClassDTO.I, businessRelationManager.getId(), businessLeader.getId(), firstBusinessUnit.getId(), secondaryBusinessUnitsId);
+        Project projectFromCreationDTO = testObjectsFactory.prepareProjectFromProjectCreationDTO(projectCreationDTO);
+        projectFromCreationDTO.setId(1L);
+        Optional<Project> optionalProject = Optional.of(projectFromCreationDTO);
+
+        ProjectCreatedDTO projectCreatedDTO = testObjectsFactory.prepareProjectCreatedDTO(projectCreationDTO, projectFromCreationDTO, businessRelationManagerDTO, businessLeaderDTO, primaryBusinessUnitDTO);
+
+        when(projectMapper.convertCreationDtoToEntity(projectCreationDTO)).thenReturn(projectFromCreationDTO);
+        when(getDao().save(any(Project.class))).thenReturn(optionalProject);
+        when(employeeService.findInternal(projectCreationDTO.getBusinessRelationManagerId())).thenReturn(businessRelationManager);
+        when(projectRoleService.findInternal(projectCreationDTO.getBusinessLeaderId())).thenReturn(businessLeader);
+        when(businessUnitService.findInternal(projectCreationDTO.getPrimaryBusinessUnitId())).thenReturn(firstBusinessUnit);
+        when(projectMapper.convertEntityToCreatedDto(any(Project.class))).thenReturn(projectCreatedDTO);
+
+        ProjectCreatedDTO result = projectService.save(projectCreationDTO);
+        assertNotNull(result);
+        assertEquals(result.getId(), projectCreatedDTO.getId());
+        assertEquals(result.getProjectStatusHistoryLines().size(), projectCreatedDTO.getProjectStatusHistoryLines().size());
+        assertEquals(result.getBusinessRelationManager().getId(), projectCreatedDTO.getBusinessRelationManager().getId());
+        assertEquals(result.getBusinessLeader().getId(), projectCreatedDTO.getBusinessLeader().getId());
+        assertEquals(result.getBusinessLeader().getEmployee(), projectCreatedDTO.getBusinessLeader().getEmployee());
+        assertEquals(result.getPrimaryBusinessUnit().getId(), projectCreatedDTO.getPrimaryBusinessUnit().getId());
+    }
+
+    @Test
+    void findAllThenSuccess() {
+        List<Project> projects = new ArrayList<>();
+        for (int i = 0; i < createdEntitiesNumber; i++) {
+            projects.add(testObjectsFactory.prepareProject());
+        }
+        List<ProjectDTO> projectDTOs = new ArrayList<>();
+        for (int i = 0; i < createdEntitiesNumber; i++) {
+            projectDTOs.add(testObjectsFactory.prepareProjectDTOFromEntity(projects.get(i)));
+        }
+
+        when(projectDao.findAll()).thenReturn(projects);
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(projectDTOs.get(0), projectDTOs.get(1), projectDTOs.get(2));
+
+        List<ProjectDTO> result = projectService.findAll();
+        verify(projectMapper, times(3)).convertEntityToDto(any());
+        assertEquals(createdEntitiesNumber, result.size());
+        result.forEach(projectDTO -> {
+            assertNotNull(projectDTO.getProjectName());
+        });
+    }
+
+    @Test
+    void findThenSuccess() {
+        Project project = testObjectsFactory.prepareProject();
+        Optional<Project> projectOptional = Optional.of(project);
+        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
+
+        when(projectDao.find(anyLong())).thenReturn(projectOptional);
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(projectDTO);
+
+        ProjectDTO result = projectService.find(1L);
+        assertEquals(project.getProjectName(), result.getProjectName());
+    }
+
+    @Test
+    void findByMultipleCriteriaThenSuccess() {
+        SearchProjectDTO searchProjectDTO = new SearchProjectDTO();
+        SearchProject searchProject = new SearchProject();
+
+
+        List<Project> resultProjects = new ArrayList<>();
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+
+        List<ProjectDTO> resultProjectsDTO = new ArrayList<>();
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+
+        when(getDao().findByMultipleCriteria(any(SearchProject.class))).thenReturn(resultProjects);
+        when(searchProjectsMapper.convertDtoToEntity(searchProjectDTO)).thenReturn(searchProject);
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0), resultProjectsDTO.get(2), resultProjectsDTO.get(2));
+
+        List<ProjectDTO> result = projectService.findByMultipleCriteria(searchProjectDTO);
+        assertEquals(resultProjectsDTO.size(), result.size());
+        verify(projectMapper, times(3)).convertEntityToDto(any(Project.class));
+    }
+
+    @Test
+    void findResourceManagerProjectsTest() {
+        ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO = new ResourceManagerSearchProjectDTO();
+        ResourceManagerSearchProject resourceManagerSearchProject = new ResourceManagerSearchProject();
+
+        List<Project> resultProjects = new ArrayList<>();
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+
+        List<ProjectDTO> resultProjectsDTO = new ArrayList<>();
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+
+        when(getDao().findResourceManagerProjects(anyLong(), any(ResourceManagerSearchProject.class))).thenReturn(resultProjects);
+        when(resourceManagerSearchProjectsMapper.convertDtoToEntity(resourceManagerSearchProjectDTO)).thenReturn(resourceManagerSearchProject);
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0), resultProjectsDTO.get(1), resultProjectsDTO.get(2));
+
+        List<ProjectDTO> result = projectService.findResourceManagerProjects(1L,resourceManagerSearchProjectDTO);
+        assertEquals(resultProjectsDTO.size(), result.size());
+        verify(getDao(), times(1)).findResourceManagerProjects(anyLong(), any(ResourceManagerSearchProject.class));
+        verify(projectMapper, times(3)).convertEntityToDto(any(Project.class));
+    }
+
+    @Test
+    void findSupervisorProjectsTest() {
+        fail();
+    }
+
+    @Test
+    void findConsultantProjectsTest() {
+        fail();
+    }
+
+    @Test
+    void updateProjectAspectThenSuccess() {
+        ProjectAspectLineDTO projectAspectLineDTO = prepareTestProjectAspectLineDTO();
+        Project project = testObjectsFactory.prepareProject();
+        project.setId(firstProject.getId());
+        Optional<Project> projectOptional = Optional.of(project);
+        ProjectAspectLine projectAspectLine = prepareTestProjectAspectLine();
+        project.addProjectAspectLine(projectAspectLine);
+        project.setProjectManager(firstProjectManager);
+        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
+        Set<ProjectAspectLineDTO> projectAspectLines = new HashSet<>();
+        projectAspectLines.add(projectAspectLineDTO);
+        projectDTO.setProjectAspectLines(projectAspectLines);
+
+        when(projectDao.find(anyLong())).thenReturn(projectOptional);
+        when(projectDao.update(project)).thenReturn(projectOptional);
+        when(projectAspectLineMapper.convertDtoToEntity(projectAspectLineDTO)).thenReturn(projectAspectLine);
+        when(projectMapper.convertEntityToDto(project)).thenReturn(projectDTO);
+
+        ProjectDTO result = projectService.updateProjectAspects(firstProject.getId(), projectAspectLineDTO, firstProjectManager.getId());
+
+        assertEquals(1, result.getProjectAspectLines().size());
+    }
+
+    @Test
+    void addRealEndDateThenSuccess() {
+        RealEndDateDTO realEndDateDTO = prepareRealEndDateDTO(10, "First Reason");
+        RealEndDate realEndDate = prepareRealEndDate(10, "First Reason");
+
+        Project project = testObjectsFactory.prepareProject();
+        project.setId(firstProject.getId());
+
+        ProjectManager projectManager = testObjectsFactory.prepareProjectManager();
+        projectManager.setId(firstProjectManager.getId());
+
+        project.setProjectManager(projectManager);
+
+        Optional<Project> projectOptional = Optional.of(project);
+
+        ProjectDTO projectDTO = testObjectsFactory.prepareProjectDTOFromEntity(project);
+        Set<RealEndDateDTO> realEndDateDTOSet = new HashSet<>();
+        realEndDateDTOSet.add(realEndDateDTO);
+        projectDTO.setRealEndDates(realEndDateDTOSet);
+
+        when(projectDao.find(firstProject.getId())).thenReturn(projectOptional);
+        when(projectDao.update(project)).thenReturn(projectOptional);
+        when(realEndDateMapper.convertDtoToEntity(realEndDateDTO)).thenReturn(realEndDate);
+        when(projectMapper.convertEntityToDto(project)).thenReturn(projectDTO);
+        ProjectDTO result = projectService.addProjectEndDate(project.getId(), realEndDateDTO, firstProjectManager.getId());
+        assertEquals(1, result.getRealEndDates().size());
     }
 
     private ProjectAspectLine prepareTestProjectAspectLine() {
@@ -422,12 +454,13 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         return realEndDateDTO;
     }
 
-    private RealEndDate prepareRealEndDate(int offset, String reason){
+    private RealEndDate prepareRealEndDate(int offset, String reason) {
         RealEndDate realEndDate = new RealEndDate();
         realEndDate.setEndDate(LocalDateTime.now().plusDays(offset));
         realEndDate.setReason(reason);
         return realEndDate;
     }
+
     @Override
     protected Project createNewEntity() {
         return testObjectsFactory.prepareProject();

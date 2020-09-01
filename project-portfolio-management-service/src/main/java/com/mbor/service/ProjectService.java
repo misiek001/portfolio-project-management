@@ -7,13 +7,22 @@ import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.ProjectAspectLine;
+import com.mbor.domain.search.ResourceManagerSearchProject;
+import com.mbor.domain.search.SearchProject;
+import com.mbor.domain.search.SupervisorSearchProject;
 import com.mbor.exception.NoSetProjectManagerException;
 import com.mbor.exception.ProjectCannotBeOpenedException;
 import com.mbor.exception.WrongProjectManagerException;
 import com.mbor.mapper.project.ProjectAspectLineMapper;
 import com.mbor.mapper.project.ProjectMapper;
 import com.mbor.mapper.project.RealEndDateMapper;
-import com.mbor.model.*;
+import com.mbor.mapper.search.ResourceManagerSearchProjectsMapper;
+import com.mbor.mapper.search.SearchProjectsMapper;
+import com.mbor.mapper.search.SupervisorSearchProjectMapper;
+import com.mbor.model.ProjectClassDTO;
+import com.mbor.model.ProjectDTO;
+import com.mbor.model.ProjectStatusDTO;
+import com.mbor.model.RealEndDateDTO;
 import com.mbor.model.assignment.EmployeeAssignDTO;
 import com.mbor.model.creation.ProjectCreatedDTO;
 import com.mbor.model.creation.ProjectCreationDTO;
@@ -25,11 +34,9 @@ import com.mbor.model.search.SupervisorSearchProjectDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.mbor.service.ServiceUtils.tryCast;
 
@@ -46,8 +53,11 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     private final ProjectMapper projectMapper;
     private final ProjectAspectLineMapper projectAspectMapper;
     private final RealEndDateMapper realEndDateMapper;
+    private final SearchProjectsMapper searchProjectsMapper;
+    private final ResourceManagerSearchProjectsMapper resourceManagerSearchProjectsMapper;
+    private final SupervisorSearchProjectMapper supervisorSearchProjectMapper;
 
-    public ProjectService(IProjectDao projectDao, IInternalEmployeeService employeeService, IInternalBusinessUnitService businessUnitService, IInternalProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper, RealEndDateMapper realEndDateMapper) {
+    public ProjectService(IProjectDao projectDao, IInternalEmployeeService employeeService, IInternalBusinessUnitService businessUnitService, IInternalProjectRoleService projectRoleService, ProjectMapper projectMapper, ProjectAspectLineMapper projectAspectMapper, RealEndDateMapper realEndDateMapper, SearchProjectsMapper searchProjectsMapper, ResourceManagerSearchProjectsMapper resourceManagerSearchProjectsMapper, SupervisorSearchProjectMapper supervisorSearchProjectMapper) {
         this.projectDao = projectDao;
         this.employeeService = employeeService;
         this.businessUnitService = businessUnitService;
@@ -55,6 +65,9 @@ public class ProjectService extends RawService<Project> implements IProjectServi
         this.projectMapper = projectMapper;
         this.projectAspectMapper = projectAspectMapper;
         this.realEndDateMapper = realEndDateMapper;
+        this.searchProjectsMapper = searchProjectsMapper;
+        this.resourceManagerSearchProjectsMapper = resourceManagerSearchProjectsMapper;
+        this.supervisorSearchProjectMapper = supervisorSearchProjectMapper;
     }
 
     @Override
@@ -65,9 +78,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
     @Override
     public List<ProjectDTO> findAll() {
         List<Project> projects =  super.findAllInternal();
-        return projects.stream()
-                .map(projectMapper::convertEntityToDto)
-                .collect(Collectors.toList());
+        return convertResultsToDTO(projects);
     }
 
     @Override
@@ -77,98 +88,36 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     @Override
     public List<ProjectDTO> findByMultipleCriteria(SearchProjectDTO searchProjectDTO) {
-        String projectName = searchProjectDTO.getProjectName();
-        List<ProjectClass> projectClass = null;
-        if (searchProjectDTO.getProjectClassDTOList() != null) {
-            projectClass = searchProjectDTO.getProjectClassDTOList()
-                    .stream()
-                    .map(mapProjectClassDTOToProjectClass())
-                    .collect(Collectors.toList());
-        }
-        String businessUnitName = searchProjectDTO.getBusinessUnitName();
-        List<ProjectStatus> projectStatusList = null;
-        if (searchProjectDTO.getProjectStatusDTOList() != null) {
-            projectStatusList = searchProjectDTO.getProjectStatusDTOList()
-                    .stream()
-                    .map(mapProjectStatusDTOToProjectStatus())
-                    .collect(Collectors.toList());
-        }
-        LocalDate projectStartDate = searchProjectDTO.getProjectStartDateLaterThat();
-        List<Project> foundProject = getDao().findByMultipleCriteria(projectName, projectClass, businessUnitName, projectStatusList, projectStartDate);
+        SearchProject searchProject = searchProjectsMapper.convertDtoToEntity(searchProjectDTO);
+        List<Project> foundProjects = getDao().findByMultipleCriteria(searchProject);
+        return convertResultsToDTO(foundProjects);
+    }
+
+    private List<ProjectDTO> convertResultsToDTO(List<Project> foundProjects){
         List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
+        foundProjects.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
         return projectDTOList;
     }
 
     @Override
     public List<ProjectDTO> findResourceManagerProjects(Long resourceManagerId, ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO){
-        Long projectId = resourceManagerSearchProjectDTO.getProjectId();
-        String projectName = resourceManagerSearchProjectDTO.getProjectName();
-        List<ProjectClass> projectClass = null;
-        if (resourceManagerSearchProjectDTO.getProjectClassDTOList() != null) {
-            projectClass = resourceManagerSearchProjectDTO.getProjectClassDTOList()
-                    .stream()
-                    .map(mapProjectClassDTOToProjectClass())
-                    .collect(Collectors.toList());
-        }
-        List<ProjectStatus> projectStatusList = null;
-        if (resourceManagerSearchProjectDTO.getProjectStatusDTOList() != null) {
-            projectStatusList = resourceManagerSearchProjectDTO.getProjectStatusDTOList()
-                    .stream()
-                    .map(mapProjectStatusDTOToProjectStatus())
-                    .collect(Collectors.toList());
-        }
-        List<Project> foundProject = getDao().findResourceManagerProjects(resourceManagerId, projectId, projectName, projectClass, projectStatusList);
-        List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
-        return projectDTOList;
+        ResourceManagerSearchProject resourceManagerSearchProject = resourceManagerSearchProjectsMapper.convertDtoToEntity(resourceManagerSearchProjectDTO);
+        List<Project> foundProjects = getDao().findResourceManagerProjects(resourceManagerId, resourceManagerSearchProject);
+        return convertResultsToDTO(foundProjects);
     }
 
     @Override
     public List<ProjectDTO> findSupervisorProjects(Long supervisorId, SupervisorSearchProjectDTO supervisorSearchProjectDTO){
-        Long projectId = supervisorSearchProjectDTO.getProjectId();
-        String projectName = supervisorSearchProjectDTO.getProjectName();
-        List<ProjectClass> projectClass = null;
-        if (supervisorSearchProjectDTO.getProjectClassDTOList() != null) {
-            projectClass = supervisorSearchProjectDTO.getProjectClassDTOList()
-                    .stream()
-                    .map(mapProjectClassDTOToProjectClass())
-                    .collect(Collectors.toList());
-        }
-        List<ProjectStatus> projectStatusList = null;
-        if (supervisorSearchProjectDTO.getProjectStatusDTOList() != null) {
-            projectStatusList = supervisorSearchProjectDTO.getProjectStatusDTOList()
-                    .stream()
-                    .map(mapProjectStatusDTOToProjectStatus())
-                    .collect(Collectors.toList());
-        }
-        List<Long> projectManagerIdList = null;
-        if (supervisorSearchProjectDTO.getProjectManagerDTOList() != null) {
-            projectManagerIdList = supervisorSearchProjectDTO.getProjectManagerDTOList()
-                    .stream()
-                    .map(IdDTO::getId)
-                    .collect(Collectors.toList());
-        }
-        List<Long> solutionArchitectsIdList = null;
-        if (supervisorSearchProjectDTO.getSolutionArchitectDTOList() != null) {
-            solutionArchitectsIdList = supervisorSearchProjectDTO.getSolutionArchitectDTOList()
-                    .stream()
-                    .map(IdDTO::getId)
-                    .collect(Collectors.toList());
-        }
-        List<Project> foundProject = getDao().findSupervisorProjects(supervisorId, projectId, projectName, projectClass, projectStatusList, projectManagerIdList, solutionArchitectsIdList);
-        List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
-        return projectDTOList;
+        SupervisorSearchProject supervisorSearchProject = supervisorSearchProjectMapper.convertDtoToEntity(supervisorSearchProjectDTO);
+        List<Project> foundProjects = getDao().findSupervisorProjects(supervisorId, supervisorSearchProject);
+        return convertResultsToDTO(foundProjects);
     }
 
 
     @Override
     public List<ProjectDTO> findConsultantProjects(Long consultantId){
-        List<Project> foundProject = getDao().findConsultantProject(consultantId);
-        List<ProjectDTO> projectDTOList = new ArrayList<>();
-        foundProject.forEach(project -> projectDTOList.add(projectMapper.convertEntityToDto(project)));
-        return projectDTOList;
+        List<Project> foundProjects = getDao().findConsultantProject(consultantId);
+        return convertResultsToDTO(foundProjects);
     }
 
 

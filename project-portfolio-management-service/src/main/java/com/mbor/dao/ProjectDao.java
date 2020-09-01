@@ -4,11 +4,13 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ProjectRole;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
+import com.mbor.domain.search.ResourceManagerSearchProject;
+import com.mbor.domain.search.SearchProject;
+import com.mbor.domain.search.SupervisorSearchProject;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,33 +24,33 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
     }
 
     @Override
-    public List<Project> findByMultipleCriteria(String projectName, List<ProjectClass> projectClassList, String businessUnitName, List<ProjectStatus> projectStatusList, LocalDate projectStartDateLaterThat) {
+    public List<Project> findByMultipleCriteria(SearchProject searchProject) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
         Root<Project> project = criteriaQuery.from(Project.class);
         List<Predicate> predicates = new ArrayList<>();
-        if (projectName != null) {
-            predicates.add(criteriaBuilder.like(project.get("projectName"), "%" + projectName + "%"));
+        if (searchProject.getProjectName() != null) {
+            predicates.add(criteriaBuilder.like(project.get("projectName"), "%" + searchProject.getProjectName() + "%"));
         }
-        if (projectClassList != null) {
+        if (searchProject.getProjectClassList() != null) {
             CriteriaBuilder.In<ProjectClass> projectClassClause = criteriaBuilder.in(project.get("projectClass"));
-            for (ProjectClass projectClass : projectClassList) {
+            for (ProjectClass projectClass : searchProject.getProjectClassList()) {
                 projectClassClause.value(projectClass);
             }
             predicates.add(projectClassClause);
         }
-        if (businessUnitName != null) {
-            predicates.add(criteriaBuilder.like(project.join("businessUnits").get("name"), "%" + businessUnitName + "%"));
+        if (searchProject.getBusinessUnitName() != null) {
+            predicates.add(criteriaBuilder.like(project.join("businessUnits").get("name"), "%" + searchProject.getBusinessUnitName() + "%"));
         }
-        if (projectStatusList != null) {
+        if (searchProject.getProjectStatusList() != null) {
             CriteriaBuilder.In<ProjectStatus> projectStatusClause = criteriaBuilder.in(project.get("projectStatus"));
-            for (ProjectStatus projectStatus : projectStatusList) {
+            for (ProjectStatus projectStatus : searchProject.getProjectStatusList()) {
                 projectStatusClause.value(projectStatus);
             }
             predicates.add(projectStatusClause);
         }
-        if (projectStartDateLaterThat != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(project.get("startDate"), projectStartDateLaterThat));
+        if (searchProject.getProjectStartDateLaterThat() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(project.get("startDate"), searchProject.getProjectStartDateLaterThat()));
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Project> allQuery = entityManager.createQuery(criteriaQuery);
@@ -56,26 +58,26 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
     }
 
     @Override
-    public List<Project> findResourceManagerProjects(Long resourceManagerId, Long projectId, String projectName, List<ProjectClass> projectClassList, List<ProjectStatus> projectStatusList) {
+    public List<Project> findResourceManagerProjects(Long resourceManagerId, ResourceManagerSearchProject resourceManagerSearchProject) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
         Root<Project> projectRoot = criteriaQuery.from(Project.class);
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(criteriaBuilder.equal(projectRoot.get("resourceManager").get("id"), resourceManagerId));
-        if (projectId != null) {
-            predicates.add(criteriaBuilder.like(projectRoot.get("id").as(String.class), projectId + "%"));
+        if (resourceManagerSearchProject.getProjectId() != null) {
+            predicates.add(criteriaBuilder.like(projectRoot.get("id").as(String.class), resourceManagerSearchProject.getProjectId() + "%"));
         }
-        if (projectName != null) {
-            predicates.add(criteriaBuilder.like(projectRoot.get("projectName"), "%" + projectName + "%"));
+        if (resourceManagerSearchProject.getProjectName() != null) {
+            predicates.add(criteriaBuilder.like(projectRoot.get("projectName"), "%" + resourceManagerSearchProject.getProjectName() + "%"));
         }
-        if (projectClassList != null) {
+        if (resourceManagerSearchProject.getProjectClassList() != null) {
             CriteriaBuilder.In<ProjectClass> projectClassClause = criteriaBuilder.in(projectRoot.get("projectClass"));
-            for (ProjectClass projectStatus : projectClassList) {
+            for (ProjectClass projectStatus : resourceManagerSearchProject.getProjectClassList()) {
                 projectClassClause.value(projectStatus);
             }
             predicates.add(projectClassClause);
         }
-        if (projectStatusList != null) {
+        if (resourceManagerSearchProject.getProjectStatusList()  != null) {
 
             SetJoin<Project, ProjectStatusHistoryLine> join = projectRoot.joinSet("projectStatusHistoryLines");
 
@@ -88,7 +90,7 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
             predicates.add(criteriaBuilder.equal(join.get("creationTime"), recentDateOfHistoryLinesQuery));
 
             CriteriaBuilder.In<ProjectStatus> projectStatusClause = criteriaBuilder.in(join.get("currentStatus"));
-            for(ProjectStatus projectStatus : projectStatusList){
+            for(ProjectStatus projectStatus : resourceManagerSearchProject.getProjectStatusList()){
                 projectStatusClause.value(ProjectStatus.valueOf(projectStatus.name()));
             }
 
@@ -101,22 +103,22 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
     }
 
     @Override
-    public List<Project> findSupervisorProjects(Long supervisorId, Long projectId, String projectName, List<ProjectClass> projectClassList, List<ProjectStatus> projectStatusList, List<Long> projectManagerIdList, List<Long> solutionArchitectsIdList) {
+    public List<Project> findSupervisorProjects(Long supervisorId, SupervisorSearchProject supervisorSearchProject) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
         criteriaQuery.distinct(true);
         Root<Project> projectRoot = criteriaQuery.from(Project.class);
         List<Predicate> predicates = new ArrayList<>();
-        if (projectId != null) {
-            predicates.add(criteriaBuilder.like(projectRoot.get("id").as(String.class), projectId + "%"));
+        if (supervisorSearchProject.getProjectId() != null) {
+            predicates.add(criteriaBuilder.like(projectRoot.get("id").as(String.class), supervisorSearchProject.getProjectId()  + "%"));
         }
-        if (projectName != null) {
-            predicates.add(criteriaBuilder.like(projectRoot.get("projectName"), "%" + projectName + "%"));
+        if (supervisorSearchProject.getProjectName() != null) {
+            predicates.add(criteriaBuilder.like(projectRoot.get("projectName"), "%" + supervisorSearchProject.getProjectName()  + "%"));
         }
-        if (projectClassList != null) {
-            predicates.add(projectRoot.get("projectClass").in(projectClassList));
+        if (supervisorSearchProject.getProjectClassList() != null) {
+            predicates.add(projectRoot.get("projectClass").in(supervisorSearchProject.getProjectClassList()));
         }
-        if (projectStatusList != null) {
+        if (supervisorSearchProject.getProjectStatusList() != null) {
 
             SetJoin<Project, ProjectStatusHistoryLine> join = projectRoot.joinSet("projectStatusHistoryLines");
 
@@ -129,27 +131,27 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
             predicates.add(criteriaBuilder.equal(join.get("creationTime"), recentDateOfHistoryLinesQuery));
 
             CriteriaBuilder.In<ProjectStatus> projectStatusClause = criteriaBuilder.in(join.get("currentStatus"));
-            for(ProjectStatus projectStatus : projectStatusList){
+            for(ProjectStatus projectStatus : supervisorSearchProject.getProjectStatusList()){
                 projectStatusClause.value(ProjectStatus.valueOf(projectStatus.name()));
             }
             predicates.add(projectStatusClause);
         }
-        if (projectManagerIdList != null && solutionArchitectsIdList != null) {
-            Predicate projectManagerListPredicate = projectRoot.get("projectManager").get("id").in(projectManagerIdList);
+        if (supervisorSearchProject.getProjectManagerIdList()!= null && supervisorSearchProject.getSolutionArchitectIdList() != null) {
+            Predicate projectManagerListPredicate = projectRoot.get("projectManager").get("id").in(supervisorSearchProject.getSolutionArchitectIdList());
             Predicate supervisorOfProjectManagerPredicate = prepareSupervisorOfConsultantPredicate(projectRoot, criteriaBuilder, "projectManager", supervisorId);
             Predicate projectManagerPredicate = criteriaBuilder.and(projectManagerListPredicate, supervisorOfProjectManagerPredicate);
 
-            Predicate solutionArchitectListPredicate = projectRoot.join("solutionArchitects").get("id").in(solutionArchitectsIdList);
+            Predicate solutionArchitectListPredicate = projectRoot.join("solutionArchitects").get("id").in(supervisorSearchProject.getSolutionArchitectIdList());
             Predicate supervisorOfSolutionArchitectPredicate = prepareSupervisorOfConsultantPredicate(projectRoot, criteriaBuilder, "solutionArchitects", supervisorId);
             Predicate solutionArchitectPredicate = criteriaBuilder.and(solutionArchitectListPredicate, supervisorOfSolutionArchitectPredicate);
 
             predicates.add(criteriaBuilder.or(projectManagerPredicate, solutionArchitectPredicate));
-        } else if (projectManagerIdList != null) {
-            Predicate projectManagerListPredicate = projectRoot.get("projectManager").get("id").in(projectManagerIdList);
+        } else if (supervisorSearchProject.getProjectManagerIdList() != null) {
+            Predicate projectManagerListPredicate = projectRoot.get("projectManager").get("id").in(supervisorSearchProject.getProjectManagerIdList());
             Predicate supervisorOfProjectManagerPredicate = prepareSupervisorOfConsultantPredicate(projectRoot, criteriaBuilder, "projectManager", supervisorId);
             predicates.add(criteriaBuilder.and(projectManagerListPredicate, supervisorOfProjectManagerPredicate));
-        } else if (solutionArchitectsIdList != null) {
-            Predicate solutionArchitectListPredicate = projectRoot.join("solutionArchitects").get("id").in(solutionArchitectsIdList);
+        } else if (supervisorSearchProject.getSolutionArchitectIdList() != null) {
+            Predicate solutionArchitectListPredicate = projectRoot.join("solutionArchitects").get("id").in(supervisorSearchProject.getSolutionArchitectIdList());
             Predicate supervisorOfSolutionArchitectPredicate = prepareSupervisorOfConsultantPredicate(projectRoot, criteriaBuilder, "solutionArchitects", supervisorId);
             predicates.add(criteriaBuilder.and(solutionArchitectListPredicate, supervisorOfSolutionArchitectPredicate));
         } else {

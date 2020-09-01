@@ -1,19 +1,23 @@
-package com.mbor.model.search;
+package com.mbor.domain.search;
 
-import com.mbor.model.ProjectClassDTO;
-import com.mbor.model.ProjectStatusDTO;
+import com.mbor.domain.ProjectClass;
+import com.mbor.domain.ProjectStatus;
 
 import java.util.List;
 
-public class SupervisorSearchProjectDTO implements ISearchProjectDTO {
+public class SupervisorSearchProject extends AbstractSearchProject{
+
+    public SupervisorSearchProject(List<ProjectClass> projectClassList, List<ProjectStatus> projectStatusList, Long projectId, String projectName, List<Long> projectManagerIdList, List<Long> solutionArchitectIdList) {
+        super(projectClassList, projectStatusList);
+        this.projectId = projectId;
+        this.projectName = projectName;
+        this.projectManagerIdList = projectManagerIdList;
+        this.solutionArchitectIdList = solutionArchitectIdList;
+    }
 
     private Long projectId;
 
     private String projectName;
-
-    private List<ProjectClassDTO> projectClassDTOList;
-
-    private List<ProjectStatusDTO> projectStatusDTOList;
 
     private List<Long> projectManagerIdList;
 
@@ -33,22 +37,6 @@ public class SupervisorSearchProjectDTO implements ISearchProjectDTO {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
-    }
-
-    public List<ProjectClassDTO> getProjectClassDTOList() {
-        return projectClassDTOList;
-    }
-
-    public void setProjectClassDTOList(List<ProjectClassDTO> projectClassDTOList) {
-        this.projectClassDTOList = projectClassDTOList;
-    }
-
-    public List<ProjectStatusDTO> getProjectStatusDTOList() {
-        return projectStatusDTOList;
-    }
-
-    public void setProjectStatusDTOList(List<ProjectStatusDTO> projectStatusDTOList) {
-        this.projectStatusDTOList = projectStatusDTOList;
     }
 
     public List<Long> getProjectManagerIdList() {

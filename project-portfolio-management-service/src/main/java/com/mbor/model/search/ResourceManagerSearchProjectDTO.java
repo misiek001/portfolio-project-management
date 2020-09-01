@@ -5,7 +5,7 @@ import com.mbor.model.ProjectStatusDTO;
 
 import java.util.List;
 
-public class ResourceManagerSearchProjectDTO {
+public class ResourceManagerSearchProjectDTO implements ISearchProjectDTO{
 
     private Long projectId;
 

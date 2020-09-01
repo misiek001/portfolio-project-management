@@ -3,10 +3,13 @@ package com.mbor.configuration;
 import com.mbor.dao.*;
 import com.mbor.mapper.businessUnit.BusinessUnitMapper;
 import com.mbor.mapper.employee.BusinessRelationManagerMapper;
-import com.mbor.mapper.project.ProjectRequestMapper;
 import com.mbor.mapper.project.ProjectAspectLineMapper;
 import com.mbor.mapper.project.ProjectMapper;
+import com.mbor.mapper.project.ProjectRequestMapper;
 import com.mbor.mapper.project.RealEndDateMapper;
+import com.mbor.mapper.search.ResourceManagerSearchProjectsMapper;
+import com.mbor.mapper.search.SearchProjectsMapper;
+import com.mbor.mapper.search.SupervisorSearchProjectMapper;
 import com.mbor.service.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +62,6 @@ public class ServiceMockConfiguration {
         return Mockito.mock(BusinessRelationManagerMapper.class);
     }
 
-
     @Profile("project-tests-mock")
     @Bean
     @Primary
@@ -72,6 +74,27 @@ public class ServiceMockConfiguration {
     @Primary
     RealEndDateMapper realEndDateMapper() {
         return Mockito.mock(RealEndDateMapper.class);
+    }
+
+    @Profile("project-tests-mock")
+    @Bean
+    @Primary
+    ResourceManagerSearchProjectsMapper resourceManagerSearchProjectsMapper() {
+        return Mockito.mock(ResourceManagerSearchProjectsMapper.class);
+    }
+
+    @Profile("project-tests-mock")
+    @Bean
+    @Primary
+    SupervisorSearchProjectMapper supervisorSearchProjectMapper() {
+        return Mockito.mock(SupervisorSearchProjectMapper.class);
+    }
+
+    @Profile("project-tests-mock")
+    @Bean
+    @Primary
+    SearchProjectsMapper searchProjectsMapper() {
+        return Mockito.mock(SearchProjectsMapper.class);
     }
 
     @Profile("ProjectRequest-tests-mock")

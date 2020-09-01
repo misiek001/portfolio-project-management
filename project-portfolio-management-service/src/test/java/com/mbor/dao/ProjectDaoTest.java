@@ -5,6 +5,8 @@ import com.mbor.domain.*;
 import com.mbor.domain.employeeinproject.ProjectManager;
 import com.mbor.domain.employeeinproject.ResourceManager;
 import com.mbor.domain.employeeinproject.SolutionArchitect;
+import com.mbor.domain.search.ResourceManagerSearchProject;
+import com.mbor.domain.search.SupervisorSearchProject;
 import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.AfterAll;
@@ -173,20 +175,20 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Test
     public void findResourceManagerProjectsIndependentCriteriaThenSuccess() {
-        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, null, null, null, null).size());
-        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId, getElementIndex(3), null, null, null).size());
+        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null,null,null, null, null, null)).size());
+        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId , new ResourceManagerSearchProject(null, null, getElementIndex(3),  null, null, null)).size());
 
         List<ProjectClass> projectClasses = new ArrayList<>();
         projectClasses.add(ProjectClass.I);
-        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId, null, null, projectClasses, null).size());
+        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId,new ResourceManagerSearchProject( projectClasses, null, null , null, null, null)).size());
         projectClasses.add(ProjectClass.II);
-        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, null, null, projectClasses, null).size());
+        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId,new ResourceManagerSearchProject( projectClasses, null, null , null, null, null)).size());
 
         List<ProjectStatus> projectStatuses = new ArrayList<>();
         projectStatuses.add(ProjectStatus.ANALYSIS);
-        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId, null, null, null, projectStatuses).size());
+        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null, projectStatuses, null, null, null, null)).size());
         projectStatuses.add(ProjectStatus.IN_PROGRESS);
-        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, null, null, null, projectStatuses).size());
+        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null, projectStatuses, null, null, null, null)).size());
     }
 
     @Test
@@ -196,21 +198,21 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
         List<ProjectStatus> projectStatuses = new ArrayList<>();
         projectStatuses.add(ProjectStatus.ANALYSIS);
-        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId, getElementIndex(3), "Name", projectClasses, projectStatuses).size());
+        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(projectClasses, projectStatuses,  getElementIndex(3), "Name", null ,null )).size());
     }
 
     @Test
     public void findSupervisorProjectsIndependentCriteriaThenSuccess() {
-        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, null).size());
-        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId)).size());
-        assertEquals(1, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, null, Collections.singletonList(thirdSolutionArchitectId)).size());
-        assertEquals(1, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Collections.singletonList(firstProjectManagerId), null).size());
-        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Arrays.asList(firstProjectManagerId, secondProjectManagerId), null).size());
+        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, new SupervisorSearchProject( null, null, null, null, null, null)).size());
+        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, new SupervisorSearchProject( null, null, null, null, null, Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId))).size());
+        assertEquals(1, projectDao.findSupervisorProjects(superVisorId, new SupervisorSearchProject(null, null, null, null, null, Collections.singletonList(thirdSolutionArchitectId))).size());
+        assertEquals(1, projectDao.findSupervisorProjects(superVisorId, new SupervisorSearchProject(null, null, null, null, Collections.singletonList(firstProjectManagerId), null)).size());
+        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, new SupervisorSearchProject(null, null, null, null, Arrays.asList(firstProjectManagerId, secondProjectManagerId), null)).size());
     }
 
     @Test
     public void findSupervisorProjectsCombinedCriteriaThenSuccess() {
-        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, null, null, null, null, Collections.singletonList(firstProjectManagerId), Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId)).size());
+        assertEquals(2, projectDao.findSupervisorProjects(superVisorId, new SupervisorSearchProject(null, null, null, null, Collections.singletonList(firstProjectManagerId), Arrays.asList(firstSolutionArchitectId, secondSolutionArchitectId))).size());
     }
 
     @Test
