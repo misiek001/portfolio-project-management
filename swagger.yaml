@@ -1,0 +1,2179 @@
+swagger: '2.0'
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Api Documentation
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:8080'
+basePath: /api
+tags:
+  - name: authorization-endpoint
+    description: Authorization Endpoint
+  - name: business-unit-controller
+    description: Business Unit Controller
+  - name: check-token-endpoint
+    description: Check Token Endpoint
+  - name: employee-controller
+    description: Employee Controller
+  - name: project-controller
+    description: Project Controller
+  - name: project-request-controller
+    description: Project Request Controller
+  - name: project-role-controller
+    description: Project Role Controller
+  - name: test-controller
+    description: Test Controller
+  - name: token-endpoint
+    description: Token Endpoint
+  - name: token-key-endpoint
+    description: Token Key Endpoint
+  - name: whitelabel-approval-endpoint
+    description: Whitelabel Approval Endpoint
+  - name: whitelabel-error-endpoint
+    description: Whitelabel Error Endpoint
+paths:
+  /ProjectRequests:
+    get:
+      tags:
+        - project-request-controller
+      summary: findAll
+      operationId: findAllUsingGET_3
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - project-request-controller
+      summary: createProjectRequest
+      operationId: createProjectRequestUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: projectRequestCreationDTO
+          description: projectRequestCreationDTO
+          required: true
+          schema:
+            $ref: '#/definitions/ProjectRequestCreationDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProjectRequestDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/ProjectRequests/{id}':
+    delete:
+      tags:
+        - project-request-controller
+      summary: delete
+      operationId: deleteUsingDELETE_3
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /businessunits:
+    get:
+      tags:
+        - business-unit-controller
+      summary: findAll
+      operationId: findAllUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - business-unit-controller
+      summary: save
+      operationId: saveUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: businessUnitCreationDTO
+          description: businessUnitCreationDTO
+          required: true
+          schema:
+            $ref: '#/definitions/BusinessUnitCreationDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/BusinessUnitCreatedDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/businessunits/{id}':
+    delete:
+      tags:
+        - business-unit-controller
+      summary: delete
+      operationId: deleteUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /employees:
+    get:
+      tags:
+        - employee-controller
+      summary: findAll
+      operationId: findAllUsingGET_1
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - employee-controller
+      summary: save
+      operationId: saveUsingPOST_1
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: employeeCreationDTO
+          description: employeeCreationDTO
+          required: true
+          schema:
+            $ref: '#/definitions/EmployeeCreationDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/EmployeeCreatedDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/employees/{id}':
+    delete:
+      tags:
+        - employee-controller
+      summary: delete
+      operationId: deleteUsingDELETE_1
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /oauth/authorize:
+    get:
+      tags:
+        - authorization-endpoint
+      summary: authorize
+      operationId: authorizeUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: complete
+          in: query
+          required: false
+          type: boolean
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    head:
+      tags:
+        - authorization-endpoint
+      summary: authorize
+      operationId: authorizeUsingHEAD
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: complete
+          in: query
+          required: false
+          type: boolean
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    post:
+      tags:
+        - authorization-endpoint
+      summary: authorize
+      operationId: authorizeUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: complete
+          in: query
+          required: false
+          type: boolean
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - authorization-endpoint
+      summary: authorize
+      operationId: authorizeUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: complete
+          in: query
+          required: false
+          type: boolean
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    delete:
+      tags:
+        - authorization-endpoint
+      summary: authorize
+      operationId: authorizeUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: complete
+          in: query
+          required: false
+          type: boolean
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    options:
+      tags:
+        - authorization-endpoint
+      summary: authorize
+      operationId: authorizeUsingOPTIONS
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: complete
+          in: query
+          required: false
+          type: boolean
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    patch:
+      tags:
+        - authorization-endpoint
+      summary: authorize
+      operationId: authorizeUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: complete
+          in: query
+          required: false
+          type: boolean
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /oauth/check_token:
+    post:
+      tags:
+        - check-token-endpoint
+      summary: checkToken
+      operationId: checkTokenUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: token
+          in: query
+          description: token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /oauth/confirm_access:
+    get:
+      tags:
+        - whitelabel-approval-endpoint
+      summary: getAccessConfirmation
+      operationId: getAccessConfirmationUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    head:
+      tags:
+        - whitelabel-approval-endpoint
+      summary: getAccessConfirmation
+      operationId: getAccessConfirmationUsingHEAD
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    post:
+      tags:
+        - whitelabel-approval-endpoint
+      summary: getAccessConfirmation
+      operationId: getAccessConfirmationUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - whitelabel-approval-endpoint
+      summary: getAccessConfirmation
+      operationId: getAccessConfirmationUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    delete:
+      tags:
+        - whitelabel-approval-endpoint
+      summary: getAccessConfirmation
+      operationId: getAccessConfirmationUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    options:
+      tags:
+        - whitelabel-approval-endpoint
+      summary: getAccessConfirmation
+      operationId: getAccessConfirmationUsingOPTIONS
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    patch:
+      tags:
+        - whitelabel-approval-endpoint
+      summary: getAccessConfirmation
+      operationId: getAccessConfirmationUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: model
+          in: query
+          description: model
+          required: false
+          type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /oauth/error:
+    get:
+      tags:
+        - whitelabel-error-endpoint
+      summary: handleError
+      operationId: handleErrorUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    head:
+      tags:
+        - whitelabel-error-endpoint
+      summary: handleError
+      operationId: handleErrorUsingHEAD
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    post:
+      tags:
+        - whitelabel-error-endpoint
+      summary: handleError
+      operationId: handleErrorUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - whitelabel-error-endpoint
+      summary: handleError
+      operationId: handleErrorUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    delete:
+      tags:
+        - whitelabel-error-endpoint
+      summary: handleError
+      operationId: handleErrorUsingDELETE
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    options:
+      tags:
+        - whitelabel-error-endpoint
+      summary: handleError
+      operationId: handleErrorUsingOPTIONS
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+    patch:
+      tags:
+        - whitelabel-error-endpoint
+      summary: handleError
+      operationId: handleErrorUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ModelAndView'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /oauth/token:
+    get:
+      tags:
+        - token-endpoint
+      summary: getAccessToken
+      operationId: getAccessTokenUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/OAuth2AccessToken'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - token-endpoint
+      summary: postAccessToken
+      operationId: postAccessTokenUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: name
+          in: query
+          required: false
+          type: string
+        - name: parameters
+          in: query
+          description: parameters
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/OAuth2AccessToken'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /oauth/token_key:
+    get:
+      tags:
+        - token-key-endpoint
+      summary: getKey
+      operationId: getKeyUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: name
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /projectRoles:
+    get:
+      tags:
+        - project-role-controller
+      summary: findAllDemandedRole
+      operationId: findAllDemandedRoleUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: action
+          in: query
+          required: true
+          type: string
+          default: getAllSpecificProjectRoles
+          enum:
+            - getAllSpecificProjectRoles
+        - name: projectRole
+          in: query
+          description: projectRole
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProjectRolesDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/projectRoles/{id}':
+    delete:
+      tags:
+        - project-role-controller
+      summary: delete
+      operationId: deleteUsingDELETE_4
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /projects:
+    get:
+      tags:
+        - project-controller
+      summary: findConsultantProjects
+      operationId: findConsultantProjectsUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: authenticated
+          in: query
+          required: false
+          type: boolean
+        - name: 'authorities[0].authority'
+          in: query
+          required: false
+          type: string
+        - name: credentials
+          in: query
+          required: false
+          type: object
+        - name: details
+          in: query
+          required: false
+          type: object
+        - name: principal
+          in: query
+          required: false
+          type: object
+        - name: searchingEmployee
+          in: query
+          required: true
+          type: string
+          default: consultant
+          enum:
+            - consultant
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProjectDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - project-controller
+      summary: findResourceManagerProjects
+      operationId: findResourceManagerProjectsUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: authenticated
+          in: query
+          required: false
+          type: boolean
+        - name: 'authorities[0].authority'
+          in: query
+          required: false
+          type: string
+        - name: credentials
+          in: query
+          required: false
+          type: object
+        - name: details
+          in: query
+          required: false
+          type: object
+        - name: principal
+          in: query
+          required: false
+          type: object
+        - in: body
+          name: resourceManagerSearchProjectDTO
+          description: resourceManagerSearchProjectDTO
+          required: true
+          schema:
+            $ref: '#/definitions/ResourceManagerSearchProjectDTO'
+        - name: searchingEmployee
+          in: query
+          required: true
+          type: string
+          default: resource-manager
+          enum:
+            - resource-manager
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProjectDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/projects/{id}':
+    delete:
+      tags:
+        - project-controller
+      summary: delete
+      operationId: deleteUsingDELETE_2
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  '/projects/{projectId}':
+    post:
+      tags:
+        - project-controller
+      summary: openProject
+      operationId: openProjectUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: openProjectDTO
+          description: openProjectDTO
+          required: true
+          schema:
+            $ref: '#/definitions/OpenProjectDTO'
+        - name: projectAction
+          in: query
+          required: true
+          type: string
+          default: open
+          enum:
+            - open
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProjectDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    patch:
+      tags:
+        - project-controller
+      summary: addRealEndDateToProject
+      operationId: addRealEndDateToProjectUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: action
+          in: query
+          required: true
+          type: string
+          default: add-real-end-date
+          enum:
+            - add-real-end-date
+        - name: authenticated
+          in: query
+          required: false
+          type: boolean
+        - name: 'authorities[0].authority'
+          in: query
+          required: false
+          type: string
+        - name: credentials
+          in: query
+          required: false
+          type: object
+        - name: details
+          in: query
+          required: false
+          type: object
+        - name: principal
+          in: query
+          required: false
+          type: object
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: realEndDateDTO
+          description: realEndDateDTO
+          required: true
+          schema:
+            $ref: '#/definitions/RealEndDateDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProjectDTO'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /test:
+    get:
+      tags:
+        - test-controller
+      summary: getBusinessUnit
+      operationId: getBusinessUnitUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: creationDto
+          in: query
+          required: true
+          type: string
+          default: businessUnit
+          enum:
+            - businessUnit
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/BusinessUnitCreationDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /test/saveProject:
+    post:
+      tags:
+        - test-controller
+      summary: saveTest
+      operationId: saveTestUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: projectCreationDTO
+          description: projectCreationDTO
+          required: true
+          schema:
+            $ref: '#/definitions/ProjectCreationDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProjectCreatedDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+definitions:
+  BudgetAspectDTO:
+    type: object
+    properties:
+      aspectStatus:
+        type: string
+        enum:
+          - RED
+          - YELLOW
+          - GREEN
+      aspectStatusName:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    title: BudgetAspectDTO
+  BusinessLeaderDTO:
+    type: object
+    properties:
+      employee:
+        $ref: '#/definitions/EmployeeDTO'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: BusinessLeaderDTO
+  BusinessRelationManagerDTO:
+    type: object
+    properties:
+      assignedBusinessUnits:
+        type: array
+        items:
+          $ref: '#/definitions/BusinessUnitDTO'
+      businessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      director:
+        $ref: '#/definitions/DirectorDTO'
+      employeeType:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastName:
+        type: string
+      projectRoleSet:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectRoleDTO'
+      projects:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectDTO'
+      userName:
+        type: string
+    title: BusinessRelationManagerDTO
+  BusinessUnitCreatedDTO:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: BusinessUnitCreatedDTO
+  BusinessUnitCreationDTO:
+    type: object
+    properties:
+      name:
+        type: string
+    title: BusinessUnitCreationDTO
+  BusinessUnitDTO:
+    type: object
+    properties:
+      businessRelationManager:
+        $ref: '#/definitions/BusinessRelationManagerDTO'
+      employees:
+        type: array
+        items:
+          $ref: '#/definitions/EmployeeDTO'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      primaryProjects:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectDTO'
+      secondaryProjects:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectDTO'
+    title: BusinessUnitDTO
+  ConsultantDTO:
+    type: object
+    properties:
+      businessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      employeeType:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastName:
+        type: string
+      projectRoleSet:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectRoleDTO'
+      supervisor:
+        $ref: '#/definitions/SupervisorDTO'
+      userName:
+        type: string
+    title: ConsultantDTO
+  DeadlineAspectDTO:
+    type: object
+    properties:
+      aspectStatus:
+        type: string
+        enum:
+          - RED
+          - YELLOW
+          - GREEN
+      aspectStatusName:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    title: DeadlineAspectDTO
+  DirectorDTO:
+    type: object
+    properties:
+      businessRelationManagers:
+        type: array
+        items:
+          $ref: '#/definitions/BusinessRelationManagerDTO'
+      businessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      employeeType:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastName:
+        type: string
+      projectRoleSet:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectRoleDTO'
+      supervisors:
+        type: array
+        items:
+          $ref: '#/definitions/SupervisorDTO'
+      userName:
+        type: string
+    title: DirectorDTO
+  EmployeeAssignDTO:
+    type: object
+    properties:
+      businessLeaderId:
+        type: integer
+        format: int64
+      businessRelationManagerId:
+        type: integer
+        format: int64
+      projectManagerId:
+        type: integer
+        format: int64
+      resourceManagerId:
+        type: integer
+        format: int64
+      solutionArchitectIdSet:
+        type: array
+        items:
+          type: integer
+          format: int64
+    title: EmployeeAssignDTO
+  EmployeeCreatedDTO:
+    type: object
+    properties:
+      businessUnitId:
+        type: integer
+        format: int64
+      employeeType:
+        type: string
+        enum:
+          - BusinessEmployee
+          - Consultant
+          - Supervisor
+          - Director
+          - BusinessRelationManager
+      firstName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastName:
+        type: string
+      userName:
+        type: string
+    title: EmployeeCreatedDTO
+  EmployeeCreationDTO:
+    type: object
+    properties:
+      businessUnitId:
+        type: integer
+        format: int64
+      directorId:
+        type: integer
+        format: int64
+      employeeType:
+        type: string
+        enum:
+          - BusinessEmployee
+          - Consultant
+          - Supervisor
+          - Director
+          - BusinessRelationManager
+      firstName:
+        type: string
+      lastName:
+        type: string
+      supervisorId:
+        type: integer
+        format: int64
+    title: EmployeeCreationDTO
+  EmployeeDTO:
+    type: object
+    properties:
+      businessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      employeeType:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastName:
+        type: string
+      projectRoleSet:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectRoleDTO'
+      userName:
+        type: string
+    title: EmployeeDTO
+  ModelAndView:
+    type: object
+    properties:
+      empty:
+        type: boolean
+      model:
+        type: object
+      modelMap:
+        type: object
+        additionalProperties:
+          type: object
+      reference:
+        type: boolean
+      status:
+        type: string
+        enum:
+          - '100'
+          - '101'
+          - '102'
+          - '103'
+          - '200'
+          - '201'
+          - '202'
+          - '203'
+          - '204'
+          - '205'
+          - '206'
+          - '207'
+          - '208'
+          - '226'
+          - '300'
+          - '301'
+          - '302'
+          - '303'
+          - '304'
+          - '305'
+          - '307'
+          - '308'
+          - '400'
+          - '401'
+          - '402'
+          - '403'
+          - '404'
+          - '405'
+          - '406'
+          - '407'
+          - '408'
+          - '409'
+          - '410'
+          - '411'
+          - '412'
+          - '413'
+          - '414'
+          - '415'
+          - '416'
+          - '417'
+          - '418'
+          - '419'
+          - '420'
+          - '421'
+          - '422'
+          - '423'
+          - '424'
+          - '426'
+          - '428'
+          - '429'
+          - '431'
+          - '451'
+          - '500'
+          - '501'
+          - '502'
+          - '503'
+          - '504'
+          - '505'
+          - '506'
+          - '507'
+          - '508'
+          - '509'
+          - '510'
+          - '511'
+      view:
+        $ref: '#/definitions/View'
+      viewName:
+        type: string
+    title: ModelAndView
+  OAuth2AccessToken:
+    type: object
+    properties:
+      additionalInformation:
+        type: object
+      expiration:
+        type: string
+        format: date-time
+      expired:
+        type: boolean
+      expiresIn:
+        type: integer
+        format: int32
+      refreshToken:
+        $ref: '#/definitions/OAuth2RefreshToken'
+      scope:
+        type: array
+        items:
+          type: string
+      tokenType:
+        type: string
+      value:
+        type: string
+    title: OAuth2AccessToken
+  OAuth2RefreshToken:
+    type: object
+    properties:
+      value:
+        type: string
+    title: OAuth2RefreshToken
+  OpenProjectDTO:
+    type: object
+    properties:
+      projectManagerId:
+        type: integer
+        format: int64
+      resourceManagerId:
+        type: integer
+        format: int64
+      solutionArchitects:
+        type: array
+        items:
+          type: integer
+          format: int64
+    title: OpenProjectDTO
+  ProjectAspectLineDTO:
+    type: object
+    properties:
+      budgetAspect:
+        $ref: '#/definitions/BudgetAspectDTO'
+      deadlineAspect:
+        $ref: '#/definitions/DeadlineAspectDTO'
+      resourcesAspect:
+        $ref: '#/definitions/ResourcesAspectDTO'
+      scopeAspect:
+        $ref: '#/definitions/ScopeAspectDTO'
+    title: ProjectAspectLineDTO
+  ProjectCreatedDTO:
+    type: object
+    properties:
+      businessLeader:
+        $ref: '#/definitions/BusinessLeaderDTO'
+      businessRelationManager:
+        $ref: '#/definitions/BusinessRelationManagerDTO'
+      id:
+        type: integer
+        format: int64
+      primaryBusinessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      projectName:
+        type: string
+      projectStatusHistoryLines:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectStatusHistoryLineDTO'
+    title: ProjectCreatedDTO
+  ProjectCreationDTO:
+    type: object
+    properties:
+      businessLeaderId:
+        type: integer
+        format: int64
+      businessRelationManagerId:
+        type: integer
+        format: int64
+      description:
+        type: string
+      primaryBusinessUnitId:
+        type: integer
+        format: int64
+      projectClass:
+        type: string
+        enum:
+          - I
+          - II
+          - III
+          - IV
+      projectName:
+        type: string
+      secondaryBusinessUnitIds:
+        type: array
+        items:
+          type: integer
+          format: int64
+    title: ProjectCreationDTO
+  ProjectDTO:
+    type: object
+    properties:
+      businessLeader:
+        $ref: '#/definitions/BusinessLeaderDTO'
+      businessRelationManager:
+        $ref: '#/definitions/BusinessRelationManagerDTO'
+      id:
+        type: integer
+        format: int64
+      plannedEndDate:
+        type: string
+        format: date-time
+      primaryBusinessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      projectAspectLines:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectAspectLineDTO'
+      projectClass:
+        type: string
+        enum:
+          - I
+          - II
+          - III
+          - IV
+      projectManager:
+        $ref: '#/definitions/ProjectManagerDTO'
+      projectName:
+        type: string
+      projectRequestDTO:
+        $ref: '#/definitions/ProjectRequestDTO'
+      projectStatusHistoryLines:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectStatusHistoryLineDTO'
+      realEndDates:
+        type: array
+        items:
+          $ref: '#/definitions/RealEndDateDTO'
+      resourceManager:
+        $ref: '#/definitions/ResourceManagerDTO'
+      secondaryBusinessUnits:
+        type: array
+        items:
+          $ref: '#/definitions/BusinessUnitDTO'
+      solutionArchitects:
+        type: array
+        items:
+          $ref: '#/definitions/SolutionArchitectDTO'
+      startDate:
+        type: string
+        format: date-time
+    title: ProjectDTO
+  ProjectManagerDTO:
+    type: object
+    properties:
+      employee:
+        $ref: '#/definitions/EmployeeDTO'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: ProjectManagerDTO
+  ProjectRequestCreationDTO:
+    type: object
+    properties:
+      businessUnitId:
+        type: integer
+        format: int64
+      description:
+        type: string
+      projectName:
+        type: string
+    title: ProjectRequestCreationDTO
+  ProjectRequestDTO:
+    type: object
+    properties:
+      businessRelationManager:
+        $ref: '#/definitions/BusinessRelationManagerDTO'
+      businessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      project:
+        $ref: '#/definitions/ProjectDTO'
+      projectName:
+        type: string
+    title: ProjectRequestDTO
+  ProjectRoleDTO:
+    type: object
+    properties:
+      employee:
+        $ref: '#/definitions/EmployeeDTO'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: ProjectRoleDTO
+  ProjectRolesDTO:
+    type: object
+    properties:
+      projectRoles:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectRoleDTO'
+    title: ProjectRolesDTO
+  ProjectStatusHistoryLineDTO:
+    type: object
+    properties:
+      creationTime:
+        type: string
+        format: date-time
+      currentStatus:
+        type: string
+        enum:
+          - ANALYSIS
+          - REJECTED
+          - AWAITING
+          - IN_PROGRESS
+          - HALTED
+          - CANCELLED
+          - FINISHED
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      previousStatus:
+        type: string
+        enum:
+          - ANALYSIS
+          - REJECTED
+          - AWAITING
+          - IN_PROGRESS
+          - HALTED
+          - CANCELLED
+          - FINISHED
+    title: ProjectStatusHistoryLineDTO
+  RealEndDateDTO:
+    type: object
+    properties:
+      endDate:
+        type: string
+        format: date-time
+      reason:
+        type: string
+    title: RealEndDateDTO
+  ResourceManagerDTO:
+    type: object
+    properties:
+      employee:
+        $ref: '#/definitions/SupervisorDTO'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: ResourceManagerDTO
+  ResourceManagerSearchProjectDTO:
+    type: object
+    properties:
+      projectClassDTOList:
+        type: array
+        items:
+          type: string
+          enum:
+            - I
+            - II
+            - III
+            - IV
+      projectId:
+        type: integer
+        format: int64
+      projectName:
+        type: string
+      projectStatusDTOList:
+        type: array
+        items:
+          type: string
+          enum:
+            - ANALYSIS
+            - REJECTED
+            - AWAITING
+            - IN_PROGRESS
+            - HALTED
+            - CANCELLED
+            - FINISHED
+    title: ResourceManagerSearchProjectDTO
+  ResourcesAspectDTO:
+    type: object
+    properties:
+      aspectStatus:
+        type: string
+        enum:
+          - RED
+          - YELLOW
+          - GREEN
+      aspectStatusName:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    title: ResourcesAspectDTO
+  ScopeAspectDTO:
+    type: object
+    properties:
+      aspectStatus:
+        type: string
+        enum:
+          - RED
+          - YELLOW
+          - GREEN
+      aspectStatusName:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    title: ScopeAspectDTO
+  SearchProjectDTO:
+    type: object
+    properties:
+      businessUnitName:
+        type: string
+      projectClassDTOList:
+        type: array
+        items:
+          type: string
+          enum:
+            - I
+            - II
+            - III
+            - IV
+      projectName:
+        type: string
+      projectStartDateLaterThat:
+        type: string
+        format: date
+      projectStatusDTOList:
+        type: array
+        items:
+          type: string
+          enum:
+            - ANALYSIS
+            - REJECTED
+            - AWAITING
+            - IN_PROGRESS
+            - HALTED
+            - CANCELLED
+            - FINISHED
+    title: SearchProjectDTO
+  SolutionArchitectDTO:
+    type: object
+    properties:
+      employee:
+        $ref: '#/definitions/EmployeeDTO'
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: SolutionArchitectDTO
+  SupervisorDTO:
+    type: object
+    properties:
+      businessUnit:
+        $ref: '#/definitions/BusinessUnitDTO'
+      director:
+        $ref: '#/definitions/DirectorDTO'
+      employeeType:
+        type: string
+      employees:
+        type: array
+        items:
+          $ref: '#/definitions/ConsultantDTO'
+      firstName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastName:
+        type: string
+      projectRoleSet:
+        type: array
+        items:
+          $ref: '#/definitions/ProjectRoleDTO'
+      userName:
+        type: string
+    title: SupervisorDTO
+  SupervisorSearchProjectDTO:
+    type: object
+    properties:
+      projectClassDTOList:
+        type: array
+        items:
+          type: string
+          enum:
+            - I
+            - II
+            - III
+            - IV
+      projectId:
+        type: integer
+        format: int64
+      projectManagerIdList:
+        type: array
+        items:
+          type: integer
+          format: int64
+      projectName:
+        type: string
+      projectStatusDTOList:
+        type: array
+        items:
+          type: string
+          enum:
+            - ANALYSIS
+            - REJECTED
+            - AWAITING
+            - IN_PROGRESS
+            - HALTED
+            - CANCELLED
+            - FINISHED
+      solutionArchitectIdList:
+        type: array
+        items:
+          type: integer
+          format: int64
+    title: SupervisorSearchProjectDTO
+  View:
+    type: object
+    properties:
+      contentType:
+        type: string
+    title: View
