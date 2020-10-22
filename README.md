@@ -2,6 +2,8 @@
 Purpose of this Application is to help employees of IT Department with Project Portfolio Management process.
 Application has a Client-Server, monolithic, layer based architecture. App is built according to REST model.
 
+[API Documentation](https://misiek001.github.io/project-portfolio-management/)
+
 # Domain
 
 As contexts, one can distinguish:
