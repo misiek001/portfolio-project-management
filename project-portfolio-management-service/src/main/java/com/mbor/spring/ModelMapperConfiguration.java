@@ -1,8 +1,10 @@
 package com.mbor.spring;
 
 import com.mbor.domain.*;
+import com.mbor.domain.search.ResourceManagerSearchProject;
 import com.mbor.model.*;
 import com.mbor.model.creation.ProjectCreatedDTO;
+import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -11,7 +13,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
 @ComponentScan(basePackages = {"com.mbor.mapper"})
@@ -21,7 +25,30 @@ public class ModelMapperConfiguration {
     ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.validate();
+        return modelMapper;
+    }
+
+    @Bean
+    ModelMapper resourceManagerSearchProjectModelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.typeMap(ResourceManagerSearchProject.class, ResourceManagerSearchProjectDTO.class)
+                .addMappings(mapping -> mapping.using(new AbstractConverter<List<ProjectClass>, List<ProjectClassDTO>>() {
+                    @Override
+                    protected List<ProjectClassDTO> convert(List<ProjectClass> source) {
+                        return source.stream()
+                                .map(element -> ProjectClassDTO.valueOf(element.name()))
+                                .collect(Collectors.toList());
+                    }
+                }).map(ResourceManagerSearchProject::getProjectClassList, ResourceManagerSearchProjectDTO::setProjectClassDTOList))
+                .addMappings(mapping -> mapping.using(new AbstractConverter<List<ProjectStatus>, List<ProjectStatusDTO>>() {
+                    @Override
+                    protected List<ProjectStatusDTO> convert(List<ProjectStatus> source) {
+                        return source.stream()
+                                .map(element -> ProjectStatusDTO.valueOf(element.name()))
+                                .collect(Collectors.toList());
+                    }
+                }).map(ResourceManagerSearchProject::getProjectStatusList, ResourceManagerSearchProjectDTO::setProjectStatusDTOList));
         return modelMapper;
     }
 

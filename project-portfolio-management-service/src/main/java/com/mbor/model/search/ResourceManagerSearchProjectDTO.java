@@ -5,15 +5,25 @@ import com.mbor.model.ProjectStatusDTO;
 
 import java.util.List;
 
-public class ResourceManagerSearchProjectDTO implements ISearchProjectDTO{
+public class ResourceManagerSearchProjectDTO implements ISearchProjectDTO {
+
+    private List<ProjectClassDTO> projectClassDTOList;
+
+    private List<ProjectStatusDTO> projectStatusDTOList;
 
     private Long projectId;
 
     private String projectName;
 
-    private List<ProjectClassDTO> projectClassDTOList;
+    public ResourceManagerSearchProjectDTO(List<ProjectClassDTO> projectClassDTOList, List<ProjectStatusDTO> projectStatusDTOList, Long projectId, String projectName) {
+        this.projectClassDTOList = projectClassDTOList;
+        this.projectStatusDTOList = projectStatusDTOList;
+        this.projectId = projectId;
+        this.projectName = projectName;
+    }
 
-    private List<ProjectStatusDTO> projectStatusDTOList;
+    public ResourceManagerSearchProjectDTO() {
+    }
 
     public Long getProjectId() {
         return projectId;

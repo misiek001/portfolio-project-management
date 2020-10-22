@@ -166,7 +166,7 @@ public class ProjectDao extends RawDao<Project> implements IProjectDao {
     }
 
     @Override
-    public List<Project> findConsultantProject(Long consultantId) {
+    public List<Project> findConsultantProjects(Long consultantId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Project> criteriaQuery = criteriaBuilder.createQuery(Project.class);
 

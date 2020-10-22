@@ -15,5 +15,5 @@ public interface IProjectDao extends IDao<Project> {
 
      List<Project> findSupervisorProjects(Long supervisorId, SupervisorSearchProject supervisorSearchProject);
 
-    List<Project> findConsultantProject(Long consultantId);
+    List<Project> findConsultantProjects(Long consultantId);
 }

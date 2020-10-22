@@ -116,7 +116,7 @@ public class ProjectService extends RawService<Project> implements IProjectServi
 
     @Override
     public List<ProjectDTO> findConsultantProjects(Long consultantId){
-        List<Project> foundProjects = getDao().findConsultantProject(consultantId);
+        List<Project> foundProjects = getDao().findConsultantProjects(consultantId);
         return convertResultsToDTO(foundProjects);
     }
 

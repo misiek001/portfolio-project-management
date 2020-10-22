@@ -175,20 +175,20 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Test
     public void findResourceManagerProjectsIndependentCriteriaThenSuccess() {
-        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null,null,null, null, null, null)).size());
-        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId , new ResourceManagerSearchProject(null, null, getElementIndex(3),  null, null, null)).size());
+        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null,null,null, null )).size());
+        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId , new ResourceManagerSearchProject(null, null, getElementIndex(3),  null)).size());
 
         List<ProjectClass> projectClasses = new ArrayList<>();
         projectClasses.add(ProjectClass.I);
-        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId,new ResourceManagerSearchProject( projectClasses, null, null , null, null, null)).size());
+        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId,new ResourceManagerSearchProject( projectClasses, null, null , null)).size());
         projectClasses.add(ProjectClass.II);
-        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId,new ResourceManagerSearchProject( projectClasses, null, null , null, null, null)).size());
+        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId,new ResourceManagerSearchProject( projectClasses, null, null , null)).size());
 
         List<ProjectStatus> projectStatuses = new ArrayList<>();
         projectStatuses.add(ProjectStatus.ANALYSIS);
-        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null, projectStatuses, null, null, null, null)).size());
+        assertEquals(2, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null, projectStatuses, null, null)).size());
         projectStatuses.add(ProjectStatus.IN_PROGRESS);
-        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null, projectStatuses, null, null, null, null)).size());
+        assertEquals(3, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(null, projectStatuses, null, null)).size());
     }
 
     @Test
@@ -198,7 +198,7 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
         List<ProjectStatus> projectStatuses = new ArrayList<>();
         projectStatuses.add(ProjectStatus.ANALYSIS);
-        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(projectClasses, projectStatuses,  getElementIndex(3), "Name", null ,null )).size());
+        assertEquals(1, projectDao.findResourceManagerProjects(resourceManagerId, new ResourceManagerSearchProject(projectClasses, projectStatuses,  getElementIndex(3), "Name" )).size());
     }
 
     @Test
@@ -217,9 +217,9 @@ class ProjectDaoTest extends IDaoImplTest<Project> {
 
     @Test
     public void findConsultantProjectThenSuccess() {
-        assertEquals(1, projectDao.findConsultantProject(firstConsultantId).size());
-        assertEquals(2, projectDao.findConsultantProject(secondConsultantId).size());
-        assertEquals(2, projectDao.findConsultantProject(thirdConsultantId).size());
+        assertEquals(1, projectDao.findConsultantProjects(firstConsultantId).size());
+        assertEquals(2, projectDao.findConsultantProjects(secondConsultantId).size());
+        assertEquals(2, projectDao.findConsultantProjects(thirdConsultantId).size());
     }
 
     @Test

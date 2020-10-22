@@ -5,7 +5,15 @@ import com.mbor.domain.ProjectStatus;
 
 import java.util.List;
 
-public class SupervisorSearchProject extends AbstractSearchProject{
+public class SupervisorSearchProject extends AbstractSearchProject {
+
+    private Long projectId;
+    private String projectName;
+    private List<Long> projectManagerIdList;
+    private List<Long> solutionArchitectIdList;
+
+    public SupervisorSearchProject() {
+    }
 
     public SupervisorSearchProject(List<ProjectClass> projectClassList, List<ProjectStatus> projectStatusList, Long projectId, String projectName, List<Long> projectManagerIdList, List<Long> solutionArchitectIdList) {
         super(projectClassList, projectStatusList);
@@ -14,14 +22,6 @@ public class SupervisorSearchProject extends AbstractSearchProject{
         this.projectManagerIdList = projectManagerIdList;
         this.solutionArchitectIdList = solutionArchitectIdList;
     }
-
-    private Long projectId;
-
-    private String projectName;
-
-    private List<Long> projectManagerIdList;
-
-    private List<Long> solutionArchitectIdList;
 
     public Long getProjectId() {
         return projectId;

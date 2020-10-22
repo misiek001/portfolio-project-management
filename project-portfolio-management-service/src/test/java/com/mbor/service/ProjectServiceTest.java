@@ -11,6 +11,7 @@ import com.mbor.domain.employeeinproject.SolutionArchitect;
 import com.mbor.domain.projectaspect.*;
 import com.mbor.domain.search.ResourceManagerSearchProject;
 import com.mbor.domain.search.SearchProject;
+import com.mbor.domain.search.SupervisorSearchProject;
 import com.mbor.entityFactory.TestObjectFactory;
 import com.mbor.mapper.project.ProjectAspectLineMapper;
 import com.mbor.mapper.project.ProjectMapper;
@@ -24,6 +25,7 @@ import com.mbor.model.creation.ProjectCreationDTO;
 import com.mbor.model.projectaspect.*;
 import com.mbor.model.search.ResourceManagerSearchProjectDTO;
 import com.mbor.model.search.SearchProjectDTO;
+import com.mbor.model.search.SupervisorSearchProjectDTO;
 import com.mbor.spring.ServiceConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +40,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -288,7 +291,6 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         SearchProjectDTO searchProjectDTO = new SearchProjectDTO();
         SearchProject searchProject = new SearchProject();
 
-
         List<Project> resultProjects = new ArrayList<>();
         resultProjects.add(testObjectsFactory.prepareProject());
         resultProjects.add(testObjectsFactory.prepareProject());
@@ -310,6 +312,7 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
 
     @Test
     void findResourceManagerProjectsTest() {
+
         ResourceManagerSearchProjectDTO resourceManagerSearchProjectDTO = new ResourceManagerSearchProjectDTO();
         ResourceManagerSearchProject resourceManagerSearchProject = new ResourceManagerSearchProject();
 
@@ -327,20 +330,59 @@ public class ProjectServiceTest extends IServiceTestImpl<Project> {
         when(resourceManagerSearchProjectsMapper.convertDtoToEntity(resourceManagerSearchProjectDTO)).thenReturn(resourceManagerSearchProject);
         when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0), resultProjectsDTO.get(1), resultProjectsDTO.get(2));
 
-        List<ProjectDTO> result = projectService.findResourceManagerProjects(1L,resourceManagerSearchProjectDTO);
+        List<ProjectDTO> result = projectService.findResourceManagerProjects(1L, resourceManagerSearchProjectDTO);
+
         assertEquals(resultProjectsDTO.size(), result.size());
+        verify(resourceManagerSearchProjectsMapper, times(1)).convertDtoToEntity(any(ResourceManagerSearchProjectDTO.class));
         verify(getDao(), times(1)).findResourceManagerProjects(anyLong(), any(ResourceManagerSearchProject.class));
         verify(projectMapper, times(3)).convertEntityToDto(any(Project.class));
     }
 
     @Test
     void findSupervisorProjectsTest() {
-        fail();
+        SupervisorSearchProjectDTO SupervisorSearchProjectDTO = new SupervisorSearchProjectDTO();
+        SupervisorSearchProject SupervisorSearchProject = new SupervisorSearchProject();
+
+        List<Project> resultProjects = new ArrayList<>();
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+
+        List<ProjectDTO> resultProjectsDTO = new ArrayList<>();
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+
+        when(getDao().findSupervisorProjects(anyLong(), any(SupervisorSearchProject.class))).thenReturn(resultProjects);
+        when(supervisorSearchProjectMapper.convertDtoToEntity(SupervisorSearchProjectDTO)).thenReturn(SupervisorSearchProject);
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0), resultProjectsDTO.get(1), resultProjectsDTO.get(2));
+
+        List<ProjectDTO> result = projectService.findSupervisorProjects(1L, SupervisorSearchProjectDTO);
+        assertEquals(resultProjectsDTO.size(), result.size());
+        verify(supervisorSearchProjectMapper, times(1)).convertDtoToEntity(any(SupervisorSearchProjectDTO.class));
+        verify(getDao(), times(1)).findSupervisorProjects(anyLong(), any(SupervisorSearchProject.class));
+        verify(projectMapper, times(3)).convertEntityToDto(any(Project.class));
     }
 
     @Test
     void findConsultantProjectsTest() {
-        fail();
+        List<Project> resultProjects = new ArrayList<>();
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+        resultProjects.add(testObjectsFactory.prepareProject());
+
+        List<ProjectDTO> resultProjectsDTO = new ArrayList<>();
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+        resultProjectsDTO.add(testObjectsFactory.prepareProjectDTO());
+
+        when(getDao().findConsultantProjects(anyLong())).thenReturn(resultProjects);
+        when(projectMapper.convertEntityToDto(any(Project.class))).thenReturn(resultProjectsDTO.get(0), resultProjectsDTO.get(1), resultProjectsDTO.get(2));
+
+        List<ProjectDTO> result = projectService.findConsultantProjects(1L);
+        assertEquals(resultProjectsDTO.size(), result.size());
+        verify(getDao(), times(1)).findConsultantProjects(anyLong());
+        verify(projectMapper, times(3)).convertEntityToDto(any(Project.class));
     }
 
     @Test
